@@ -3,9 +3,10 @@ import Image from "next/image";
 
 import { useEffect, useState } from "react";
 import Papa from "papaparse";
-import { DataTable } from "@/components/data-table";
+import { AllDataTable } from "@/components/all-data-table/all-data-table";
 import { ColumnDef } from "@tanstack/react-table";
-import { generateColumns, SheetRow } from "@/components/columns";
+import { generateColumns, SheetRow } from "@/components/all-data-table/columns";
+import { EmployeeStatsTable } from "@/components/employee-stats/employee-stats-table";
 
 export default function SheetPage() {
   const [data, setData] = useState<SheetRow[]>([]);
@@ -44,7 +45,8 @@ export default function SheetPage() {
         <Image alt="FT" src="/FT.png" height={50} width={50} />
         <span>FT Session Reports</span>
       </h1>
-      <DataTable columns={columns} data={data} />
+      <AllDataTable columns={columns} data={data} />
+      <EmployeeStatsTable  data={data} />
     </div>
   );
 }

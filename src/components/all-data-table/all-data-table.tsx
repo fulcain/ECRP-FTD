@@ -28,7 +28,7 @@ interface DataTableProps<T> {
   data: T[];
 }
 
-export function DataTable<T>({ columns, data }: DataTableProps<T>) {
+export function AllDataTable<T>({ columns, data }: DataTableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -36,7 +36,7 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
   const [pageSizeInput, setPageSizeInput] = React.useState(10);
 
   const table = useReactTable({
-    data: [...data].reverse(),
+    data,
     columns,
     state: {
       sorting,
@@ -74,7 +74,12 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
             {table.getFilteredRowModel().rows.length}
           </span>
         </div>
-      </div>
+			</div>
+
+
+      <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-6">
+        Field Training Session Reports
+      </h2>
 
       {/* Table */}
       <div className="overflow-x-auto rounded-md border">
