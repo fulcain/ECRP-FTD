@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 import { useEffect, useState } from "react";
 import Papa from "papaparse";
@@ -39,8 +40,9 @@ export default function SheetPage() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">
-        FT Session Reports
+      <h1 className="flex items-center justify-center text-3xl font-bold mb-6 space-x-3">
+        <Image alt="FT" src="/FT.png" height={50} width={50} />
+        <span>FT Session Reports</span>
       </h1>
       <DataTable columns={columns} data={data} />
     </div>
