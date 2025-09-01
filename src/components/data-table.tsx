@@ -22,7 +22,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-// import { DateRangeFilter } from "@/helpers/DateRangeFilter";
 
 interface DataTableProps<T> {
   columns: ColumnDef<T>[];
@@ -34,15 +33,10 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
-
   const [pageSizeInput, setPageSizeInput] = React.useState(10);
-  // const [timestampFilter, setTimestampFilter] = React.useState<{
-  //   start?: string;
-  //   end?: string;
-  // }>({});
 
   const table = useReactTable({
-    data,
+    data: [...data].reverse(),
     columns,
     state: {
       sorting,
@@ -54,47 +48,8 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    filterFns: {
-      dateRange: (
-        row,
-        columnId,
-        filterValue: { start?: string; end?: string },
-      ) => {
-        const cellValue = row.getValue(columnId) as string;
-
-        // Parse the timestamp string "M/D/YYYY H:mm:ss"
-        const [datePart, timePart] = cellValue.split(" ");
-        if (!datePart) return false;
-
-        const [month, day, year] = datePart.split("/").map(Number);
-        const [hours = 0, minutes = 0, seconds = 0] = timePart
-          ? timePart.split(":").map(Number)
-          : [];
-
-        const cellDate = new Date(
-          year,
-          month - 1,
-          day,
-          hours,
-          minutes,
-          seconds,
-        );
-
-        const start = filterValue.start
-          ? new Date(filterValue.start)
-          : undefined;
-        const end = filterValue.end ? new Date(filterValue.end) : undefined;
-
-        if (start && end) return cellDate >= start && cellDate <= end;
-        if (start) return cellDate >= start;
-        if (end) return cellDate <= end;
-
-        return true;
-      },
-    },
   });
 
-  // Update page size when input changes
   React.useEffect(() => {
     table.setPageSize(Number(pageSizeInput) || 1);
   }, [pageSizeInput, table]);
@@ -113,14 +68,6 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
           }
           className="max-w-sm"
         />
-
-        {/* <DateRangeFilter */}
-        {/*   columnFilterValue={timestampFilter} */}
-        {/*   setColumnFilter={(val) => { */}
-        {/*     setTimestampFilter(val); */}
-        {/*     table.getColumn("Timestamp")?.setFilterValue(val); */}
-        {/*   }} */}
-        {/* /> */}
         <div className="text-xl">
           <span>Total Sessions: </span>
           <span className="font-bold text-red-400">
