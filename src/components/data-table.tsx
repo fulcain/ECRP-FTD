@@ -121,9 +121,12 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
         {/*     table.getColumn("Timestamp")?.setFilterValue(val); */}
         {/*   }} */}
         {/* /> */}
-        <span className="text-sm text-gray-700">
-          Total Sessions: {table.getFilteredRowModel().rows.length}
-        </span>
+        <div className="text-xl">
+          <span>Total Sessions: </span>
+          <span className="font-bold text-red-400">
+            {table.getFilteredRowModel().rows.length}
+          </span>
+        </div>
       </div>
 
       {/* Table */}
