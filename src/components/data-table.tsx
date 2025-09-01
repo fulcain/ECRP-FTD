@@ -113,6 +113,7 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
           }
           className="max-w-sm"
         />
+
         {/* <DateRangeFilter */}
         {/*   columnFilterValue={timestampFilter} */}
         {/*   setColumnFilter={(val) => { */}
@@ -120,9 +121,8 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
         {/*     table.getColumn("Timestamp")?.setFilterValue(val); */}
         {/*   }} */}
         {/* /> */}
-
         <span className="text-sm text-gray-700">
-          Total Sessions: {table.getRowModel().rows.length}
+          Total Sessions: {table.getFilteredRowModel().rows.length}
         </span>
       </div>
 
