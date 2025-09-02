@@ -13,7 +13,9 @@ export default function SheetPage() {
   const [loadingAll, setLoadingAll] = useState(true);
   const [loadingEmployee, setLoadingEmployee] = useState(true);
 
-  const columns: ColumnDef<SheetRow>[] = generateColumns(allData, ["email address"]);
+  const columns: ColumnDef<SheetRow>[] = generateColumns(allData, [
+    "email address",
+  ]);
 
   // Fetch all data for main table
   useEffect(() => {
@@ -21,7 +23,10 @@ export default function SheetPage() {
       try {
         const res = await fetch("/api/all-data");
         const csvText = await res.text();
-        const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+        const parsed = Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+        });
         setAllData(parsed.data as SheetRow[]);
       } catch (error) {
         console.error(error);
@@ -38,9 +43,29 @@ export default function SheetPage() {
       try {
         const res = await fetch("/api/employee-stats");
         const csvText = await res.text();
-				const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
-				console.log(parsed)
-        setEmployeeData(parsed.data as SheetRow[]);
+
+        // Parse CSV
+        const parsed = Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+        });
+        const data: SheetRow[] = parsed.data as SheetRow[];
+
+        // Find the row where Names === "Ex FTOs"
+        const stopIndex = data.findIndex((obj) => obj["Names"] === "Ex FTOs");
+
+        // Slice from index 1 up to (but not including) that row
+        let sliced = stopIndex > -1 ? data.slice(1, stopIndex) : data.slice(1);
+
+        // Remove last object if it's empty
+        if (
+          sliced.length &&
+          Object.values(sliced[sliced.length - 1]).every((v) => !v)
+        ) {
+          sliced = sliced.slice(0, -1);
+        }
+
+        setEmployeeData(sliced);
       } catch (error) {
         console.error(error);
       } finally {

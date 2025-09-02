@@ -1,5 +1,3 @@
-"use client";
-
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
@@ -8,16 +6,44 @@ export type SheetRow = {
   [key: string]: string | number;
 };
 
-/**
- * Generates two columns:
- * - Employee Name (unique)
- * - Total Sessions (based on filtered rows)
- * Total Sessions has a clickable sort button
- */
-export const employeeColumns: ColumnDef<SheetRow>[] = [
+// Define a mapped type where ribbons are strings and Total Sessions is number
+export type MappedEmployeeRow = {
+  "Employee Name": string;
+  "Total Sessions": number;
+  "15 Session Ribbons": string;
+  "40 Session Ribbon": string;
+  "100 Session Ribbons": string;
+  "165 Session Ribbons": string;
+};
+
+// Map raw CSV object keys to table-friendly keys, including ribbons
+export function mapEmployeeData(rawData: SheetRow[]): MappedEmployeeRow[] {
+  return rawData.map((row) => ({
+    "Employee Name": String(row["Names"] ?? ""),
+    "Total Sessions": Number(row["_1"] ?? 0),
+    "15 Session Ribbons": String(row["_3"] ?? ""),
+    "40 Session Ribbon": String(row["_4"] ?? ""),
+    "100 Session Ribbons": String(row["_5"] ?? ""),
+    "165 Session Ribbons": String(row["_6"] ?? ""),
+  }));
+}
+
+// Helper to render a colored box for TRUE/FALSE
+const RibbonBox = ({ value }: { value: string }) => {
+  const isTrue = value === "TRUE";
+  return (
+    <div
+      className={`w-4 h-4 rounded-full ${isTrue ? "bg-green-500" : "bg-red-500"}`}
+      title={isTrue ? "Completed" : "Not Completed"}
+    />
+  );
+};
+
+// Columns for your table
+export const employeeColumns: ColumnDef<MappedEmployeeRow>[] = [
   {
-    accessorKey: "Your Name",
-    header: "Employee Name", // plain text header
+    accessorKey: "Employee Name",
+    header: "Employee Name",
     cell: (info) => info.getValue(),
     enableSorting: true,
   },
@@ -37,27 +63,24 @@ export const employeeColumns: ColumnDef<SheetRow>[] = [
     enableSorting: true,
     sortingFn: "basic",
   },
+   {
+    accessorKey: "15 Session Ribbons",
+    header: "15 Session Ribbons",
+    cell: (info) => <RibbonBox value={info.getValue() as string} />,
+  },
+  {
+    accessorKey: "40 Session Ribbon",
+    header: "40 Session Ribbon",
+    cell: (info) => <RibbonBox value={info.getValue() as string} />,
+  },
+  {
+    accessorKey: "100 Session Ribbons",
+    header: "100 Session Ribbons",
+    cell: (info) => <RibbonBox value={info.getValue() as string} />,
+  },
+  {
+    accessorKey: "165 Session Ribbons",
+    header: "165 Session Ribbons",
+    cell: (info) => <RibbonBox value={info.getValue() as string} />,
+  },
 ];
-
-/**
- * Returns unique rows with numeric Total Sessions for sorting
- */
-export function getUniqueEmployeeRows(data: SheetRow[], nameFilter = ""): SheetRow[] {
-  const filtered = data.filter((row) =>
-    (row["Your Name"] || "Unknown")
-      .toString()
-      .toLowerCase()
-      .includes(nameFilter.toLowerCase())
-  );
-
-  const aggregated: Record<string, number> = {};
-  filtered.forEach((row) => {
-    const name = (row["Your Name"] || "Unknown").toString().trim();
-    aggregated[name] = (aggregated[name] || 0) + 1;
-  });
-
-  return Object.entries(aggregated).map(([name, total]) => ({
-    "Your Name": name,
-    "Total Sessions": total,
-  }));
-}

@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { SheetRow, employeeColumns, getUniqueEmployeeRows } from "./columns";
+import { SheetRow, employeeColumns, mapEmployeeData } from "./columns";
 
 interface EmployeeStatsTableProps {
   data: SheetRow[];
@@ -35,9 +35,26 @@ export function EmployeeStatsTable({ data }: EmployeeStatsTableProps) {
   const [pageSizeInput, setPageSizeInput] = React.useState(10);
   const [nameFilter, setNameFilter] = React.useState("");
 
+  // Map raw CSV data to table-friendly keys & cast Total Sessions to number
+  const mappedData = React.useMemo(
+    () =>
+      mapEmployeeData(data).map((row) => ({
+        ...row,
+        "Total Sessions": Number(row["Total Sessions"] || 0),
+      })),
+    [data]
+  );
+
+  // Filter rows by Employee Name
   const tableRows = React.useMemo(
-    () => getUniqueEmployeeRows(data, nameFilter).reverse(),
-    [data, nameFilter],
+    () =>
+      mappedData.filter((row) =>
+        (row["Employee Name"] || "")
+          .toString()
+          .toLowerCase()
+          .includes(nameFilter.toLowerCase())
+      ),
+    [mappedData, nameFilter]
   );
 
   const table = useReactTable({
@@ -59,16 +76,16 @@ export function EmployeeStatsTable({ data }: EmployeeStatsTableProps) {
     <div className="space-y-4">
       <div className="flex items-center py-4 space-x-4">
         <Input
-          placeholder="Filter Your Name..."
+          placeholder="Filter Employee Name..."
           value={nameFilter}
           onChange={(e) => setNameFilter(e.target.value)}
           className="max-w-sm"
         />
       </div>
 
-<h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-6">
-  Employee Stats Table
-</h2>
+      <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-6">
+        Employee Stats Table
+      </h2>
 
       <div className="overflow-x-auto rounded-md border">
         <Table>
@@ -81,7 +98,7 @@ export function EmployeeStatsTable({ data }: EmployeeStatsTableProps) {
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext(),
+                          header.getContext()
                         )}
                   </TableHead>
                 ))}
@@ -97,7 +114,7 @@ export function EmployeeStatsTable({ data }: EmployeeStatsTableProps) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}
