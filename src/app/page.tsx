@@ -5,6 +5,7 @@ import Papa from "papaparse";
 import { AllDataTable } from "@/components/all-data-table/all-data-table";
 import { AllDataType } from "@/components/all-data-table/columns";
 import { EmployeeStatsTable } from "@/components/employee-stats/employee-stats-table";
+import { SheetRow } from "@/components/employee-stats/columns";
 
 export default function Home() {
   const [allData, setAllData] = useState<AllDataType[]>([]);
