@@ -1,7 +1,18 @@
 "use client";
+
+import * as React from "react";
+import { format, isAfter, isBefore } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import * as React from "react";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -28,15 +39,35 @@ interface DataTableProps<T> {
   data: T[];
 }
 
-export function AllDataTable<T>({ columns, data }: DataTableProps<T>) {
+export function AllDataTable<T extends { Date?: string }>({
+  columns,
+  data,
+}: DataTableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
+    []
   );
   const [pageSizeInput, setPageSizeInput] = React.useState(10);
 
+  const [startDate, setStartDate] = React.useState<Date>();
+  const [endDate, setEndDate] = React.useState<Date>();
+
+  const filteredData = React.useMemo(() => {
+    if (!startDate && !endDate) return data;
+
+    return data.filter((row) => {
+      const dateStr = row["Date"] as string | undefined;
+      if (!dateStr) return true;
+
+      const rowDate = new Date(dateStr);
+      if (startDate && isBefore(rowDate, startDate)) return false;
+      if (endDate && isAfter(rowDate, endDate)) return false;
+      return true;
+    });
+  }, [data, startDate, endDate]);
+
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     state: {
       sorting,
@@ -56,11 +87,11 @@ export function AllDataTable<T>({ columns, data }: DataTableProps<T>) {
 
   return (
     <div className="space-y-4 mt-40">
-      <h2 className="text-2xl md:text-3xl font-bold  text-gray-300 mb-6">
+      <h2 className="text-2xl md:text-3xl font-bold text-gray-300 mb-6">
         Field Training Session Reports
       </h2>
 
-      {/* Filter and Total Sessions */}
+      {/* Filters */}
       <div className="flex items-center py-4 space-x-4">
         <Input
           placeholder="Filter Your Name..."
@@ -72,6 +103,59 @@ export function AllDataTable<T>({ columns, data }: DataTableProps<T>) {
           }
           className="max-w-sm"
         />
+
+        {/* Start Date Picker */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              data-empty={!startDate}
+              className="data-[empty=true]:text-muted-foreground w-[180px] justify-start text-left font-normal"
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {startDate ? format(startDate, "PPP") : <span>Start date</span>}
+            </Button>
+          </PopoverTrigger>
+<PopoverContent
+  align="start"
+  className="w-auto p-2 rounded-md border shadow-md 
+             bg-white border-gray-200 
+             dark:bg-gray-800 dark:border-gray-700"
+>
+  <Calendar
+    mode="single"
+    selected={startDate}
+    onSelect={setStartDate}
+  />
+</PopoverContent>
+        </Popover>
+
+        {/* End Date Picker */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              data-empty={!endDate}
+              className="data-[empty=true]:text-muted-foreground w-[180px] justify-start text-left font-normal"
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {endDate ? format(endDate, "PPP") : <span>End date</span>}
+            </Button>
+          </PopoverTrigger>
+<PopoverContent
+  align="start"
+  className="w-auto p-2 rounded-md border shadow-md 
+             bg-white border-gray-200 
+             dark:bg-gray-800 dark:border-gray-700"
+>
+  <Calendar
+    mode="single"
+    selected={endDate}
+    onSelect={setEndDate}
+  />
+</PopoverContent>
+        </Popover>
+
         <div className="text-xl">
           <span>Total Sessions: </span>
           <span className="font-bold text-red-400">
@@ -92,7 +176,7 @@ export function AllDataTable<T>({ columns, data }: DataTableProps<T>) {
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext(),
+                          header.getContext()
                         )}
                   </TableHead>
                 ))}
@@ -108,7 +192,7 @@ export function AllDataTable<T>({ columns, data }: DataTableProps<T>) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}
@@ -116,10 +200,7 @@ export function AllDataTable<T>({ columns, data }: DataTableProps<T>) {
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
