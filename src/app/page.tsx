@@ -44,7 +44,7 @@ export default function Home() {
           header: true,
           skipEmptyLines: true,
         });
-        const data: SheetRow[] = parsed.data as SheetRow[];
+        const data: AllDataType[] = parsed.data as AllDataType[];
 
         // Find the row where Names === "Ex FTOs"
         const stopIndex = data.findIndex((obj) => obj["Names"] === "Ex FTOs");
