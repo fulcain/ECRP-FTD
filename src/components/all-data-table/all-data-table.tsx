@@ -7,11 +7,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import {
   ColumnDef,
@@ -25,37 +21,26 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-import {
-  generateColumns,
-  AllDataType,
-} from "@/components/all-data-table/columns";
+import { generateColumns, AllDataType } from "@/components/all-data-table/columns";
 
 interface DataTableProps<T> {
   data: T[];
 }
 
-export function AllDataTable<T extends { Date?: string }>({
-  data,
-}: DataTableProps<T>) {
+export function AllDataTable<T extends { Date?: string }>({ data }: DataTableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const columns: ColumnDef<AllDataType>[] = generateColumns();
 
   const [pageSizeInput, setPageSizeInput] = React.useState(10);
 
+  // Date picker states
   const [startDate, setStartDate] = React.useState<Date>();
   const [endDate, setEndDate] = React.useState<Date>();
+  const [startOpen, setStartOpen] = React.useState(false);
+  const [endOpen, setEndOpen] = React.useState(false);
 
   const filteredData = React.useMemo(() => {
     if (!startDate && !endDate) return data;
@@ -74,10 +59,7 @@ export function AllDataTable<T extends { Date?: string }>({
   const table = useReactTable({
     data: filteredData,
     columns,
-    state: {
-      sorting,
-      columnFilters,
-    },
+    state: { sorting, columnFilters },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -100,68 +82,56 @@ export function AllDataTable<T extends { Date?: string }>({
       <div className="flex items-center py-4 space-x-4">
         <Input
           placeholder="Filter Your Name..."
-          value={
-            (table.getColumn("Your Name")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("Your Name")?.setFilterValue(event.target.value)
-          }
+          value={(table.getColumn("Your Name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) => table.getColumn("Your Name")?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
 
         {/* Start Date Picker */}
-        <Popover>
+        <Popover open={startOpen} onOpenChange={setStartOpen}>
           <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              data-empty={!startDate}
-              className="data-[empty=true]:text-muted-foreground w-[180px] justify-start text-left font-normal"
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {startDate ? format(startDate, "PPP") : <span>Start date</span>}
+            <Button variant="outline" data-empty={!startDate} className="w-[180px] justify-between font-normal">
+              {startDate ? format(startDate, "PPP") : "Start date"}
+              <CalendarIcon className="ml-2 h-4 w-4" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent
-            align="start"
-            className="w-auto p-2 rounded-md border shadow-md 
-             bg-white border-gray-200 
-             dark:bg-gray-800 dark:border-gray-700"
-          >
+          <PopoverContent className="w-auto p-0" align="start">
             <Calendar
               mode="single"
               selected={startDate}
-              onSelect={setStartDate}
+              captionLayout="dropdown"
+              onSelect={(date) => {
+                setStartDate(date);
+                setStartOpen(false);
+              }}
             />
           </PopoverContent>
         </Popover>
 
         {/* End Date Picker */}
-        <Popover>
+        <Popover open={endOpen} onOpenChange={setEndOpen}>
           <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              data-empty={!endDate}
-              className="data-[empty=true]:text-muted-foreground w-[180px] justify-start text-left font-normal"
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {endDate ? format(endDate, "PPP") : <span>End date</span>}
+            <Button variant="outline" data-empty={!endDate} className="w-[180px] justify-between font-normal">
+              {endDate ? format(endDate, "PPP") : "End date"}
+              <CalendarIcon className="ml-2 h-4 w-4" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent
-            align="start"
-            className="w-auto p-2 rounded-md border shadow-md 
-             bg-white border-gray-200 
-             dark:bg-gray-800 dark:border-gray-700"
-          >
-            <Calendar mode="single" selected={endDate} onSelect={setEndDate} />
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={endDate}
+              captionLayout="dropdown"
+              onSelect={(date) => {
+                setEndDate(date);
+                setEndOpen(false);
+              }}
+            />
           </PopoverContent>
         </Popover>
 
         <div className="text-xl">
           <span>Total Sessions: </span>
-          <span className="font-bold text-red-400">
-            {table.getFilteredRowModel().rows.length}
-          </span>
+          <span className="font-bold text-red-400">{table.getFilteredRowModel().rows.length}</span>
         </div>
       </div>
 
@@ -175,10 +145,7 @@ export function AllDataTable<T extends { Date?: string }>({
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -191,20 +158,14 @@ export function AllDataTable<T extends { Date?: string }>({
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -215,26 +176,15 @@ export function AllDataTable<T extends { Date?: string }>({
 
       {/* Pagination Controls */}
       <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
+        <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
           Previous
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
+        <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
           Next
         </Button>
 
         <span className="ml-2 text-sm text-gray-500">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </span>
 
         <span className="ml-4 text-sm text-gray-500">Rows per page:</span>
