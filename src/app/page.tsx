@@ -89,7 +89,6 @@ export default function SheetPage() {
       <AllDataTable columns={columns} data={allData} />
 
       {/* Employee stats table */}
-      <h2 className="text-2xl font-semibold mb-4">Employee Stats</h2>
       <EmployeeStatsTable data={employeeData} />
     </div>
   );

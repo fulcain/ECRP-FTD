@@ -55,7 +55,11 @@ export function AllDataTable<T>({ columns, data }: DataTableProps<T>) {
   }, [pageSizeInput, table]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 mt-40">
+      <h2 className="text-2xl md:text-3xl font-bold  text-gray-300 mb-6">
+        Field Training Session Reports
+      </h2>
+
       {/* Filter and Total Sessions */}
       <div className="flex items-center py-4 space-x-4">
         <Input
@@ -74,12 +78,7 @@ export function AllDataTable<T>({ columns, data }: DataTableProps<T>) {
             {table.getFilteredRowModel().rows.length}
           </span>
         </div>
-			</div>
-
-
-      <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-6">
-        Field Training Session Reports
-      </h2>
+      </div>
 
       {/* Table */}
       <div className="overflow-x-auto rounded-md border">

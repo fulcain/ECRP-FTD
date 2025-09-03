@@ -42,7 +42,7 @@ export function EmployeeStatsTable({ data }: EmployeeStatsTableProps) {
         ...row,
         "Total Sessions": Number(row["Total Sessions"] || 0),
       })),
-    [data]
+    [data],
   );
 
   // Filter rows by Employee Name
@@ -52,9 +52,9 @@ export function EmployeeStatsTable({ data }: EmployeeStatsTableProps) {
         (row["Employee Name"] || "")
           .toString()
           .toLowerCase()
-          .includes(nameFilter.toLowerCase())
+          .includes(nameFilter.toLowerCase()),
       ),
-    [mappedData, nameFilter]
+    [mappedData, nameFilter],
   );
 
   const table = useReactTable({
@@ -74,6 +74,10 @@ export function EmployeeStatsTable({ data }: EmployeeStatsTableProps) {
 
   return (
     <div className="space-y-4">
+      <h2 className="text-2xl md:text-3xl font-bold  text-gray-300 mb-6">
+        Employee Stats Table
+      </h2>
+
       <div className="flex items-center py-4 space-x-4">
         <Input
           placeholder="Filter Employee Name..."
@@ -82,10 +86,6 @@ export function EmployeeStatsTable({ data }: EmployeeStatsTableProps) {
           className="max-w-sm"
         />
       </div>
-
-      <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-6">
-        Employee Stats Table
-      </h2>
 
       <div className="overflow-x-auto rounded-md border">
         <Table>
@@ -98,7 +98,7 @@ export function EmployeeStatsTable({ data }: EmployeeStatsTableProps) {
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
                 ))}
@@ -114,7 +114,7 @@ export function EmployeeStatsTable({ data }: EmployeeStatsTableProps) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
