@@ -6,7 +6,7 @@ import { AllDataTable } from "@/components/all-data-table/all-data-table";
 import { AllDataType } from "@/components/all-data-table/columns";
 import { EmployeeStatsTable } from "@/components/employee-stats/employee-stats-table";
 
-export default function SheetPage() {
+export default function Home() {
   const [allData, setAllData] = useState<AllDataType[]>([]);
   const [employeeData, setEmployeeData] = useState<AllDataType[]>([]);
   const [loadingAll, setLoadingAll] = useState(true);

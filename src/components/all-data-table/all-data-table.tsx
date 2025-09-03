@@ -37,7 +37,7 @@ import {
 import {
   generateColumns,
   AllDataType,
-} from "@/components/ui/all-data-table/columns";
+} from "@/components/all-data-table/columns";
 
 interface DataTableProps<T> {
   data: T[];

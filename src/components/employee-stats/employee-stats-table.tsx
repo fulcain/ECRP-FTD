@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { SheetRow, employeeColumns, mapEmployeeData } from "./columns";
+import { SheetRow, employeeColumns, mapEmployeeData } from "@/components/employee-stats/columns";
 
 interface EmployeeStatsTableProps {
   data: SheetRow[];
