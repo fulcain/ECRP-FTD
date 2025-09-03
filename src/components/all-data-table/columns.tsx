@@ -4,15 +4,14 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 
-export type SheetRow = {
+export type AllDataType = {
   [key: string]: string;
 };
 
 /**
- * Manually defines columns in desired order:
  * Date, Instructor's Name, EMR's Name, Session Conducted, Time Start, Time Finish, Timestamp
  */
-export const generateColumns = (): ColumnDef<SheetRow>[] => [
+export const generateColumns = (): ColumnDef<AllDataType>[] => [
   {
     accessorKey: "Date",
     header: ({ column }) => (

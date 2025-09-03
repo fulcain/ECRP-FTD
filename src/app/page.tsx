@@ -3,19 +3,14 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Papa from "papaparse";
 import { AllDataTable } from "@/components/all-data-table/all-data-table";
-import { ColumnDef } from "@tanstack/react-table";
-import { generateColumns, SheetRow } from "@/components/all-data-table/columns";
+import { AllDataType } from "@/components/all-data-table/columns";
 import { EmployeeStatsTable } from "@/components/employee-stats/employee-stats-table";
 
 export default function SheetPage() {
-  const [allData, setAllData] = useState<SheetRow[]>([]);
-  const [employeeData, setEmployeeData] = useState<SheetRow[]>([]);
+  const [allData, setAllData] = useState<AllDataType[]>([]);
+  const [employeeData, setEmployeeData] = useState<AllDataType[]>([]);
   const [loadingAll, setLoadingAll] = useState(true);
   const [loadingEmployee, setLoadingEmployee] = useState(true);
-
-  const columns: ColumnDef<SheetRow>[] = generateColumns(allData, [
-    "email address",
-  ]);
 
   // Fetch all data for main table
   useEffect(() => {
@@ -86,7 +81,7 @@ export default function SheetPage() {
       </h1>
 
       {/* Full data table */}
-      <AllDataTable columns={columns} data={allData} />
+      <AllDataTable data={allData} />
 
       {/* Employee stats table */}
       <EmployeeStatsTable data={employeeData} />

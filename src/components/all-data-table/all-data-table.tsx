@@ -34,19 +34,24 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import {
+  generateColumns,
+  AllDataType,
+} from "@/components/ui/all-data-table/columns";
+
 interface DataTableProps<T> {
-  columns: ColumnDef<T>[];
   data: T[];
 }
 
 export function AllDataTable<T extends { Date?: string }>({
-  columns,
   data,
 }: DataTableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
+  const columns: ColumnDef<AllDataType>[] = generateColumns();
+
   const [pageSizeInput, setPageSizeInput] = React.useState(10);
 
   const [startDate, setStartDate] = React.useState<Date>();
@@ -116,18 +121,18 @@ export function AllDataTable<T extends { Date?: string }>({
               {startDate ? format(startDate, "PPP") : <span>Start date</span>}
             </Button>
           </PopoverTrigger>
-<PopoverContent
-  align="start"
-  className="w-auto p-2 rounded-md border shadow-md 
+          <PopoverContent
+            align="start"
+            className="w-auto p-2 rounded-md border shadow-md 
              bg-white border-gray-200 
              dark:bg-gray-800 dark:border-gray-700"
->
-  <Calendar
-    mode="single"
-    selected={startDate}
-    onSelect={setStartDate}
-  />
-</PopoverContent>
+          >
+            <Calendar
+              mode="single"
+              selected={startDate}
+              onSelect={setStartDate}
+            />
+          </PopoverContent>
         </Popover>
 
         {/* End Date Picker */}
@@ -142,18 +147,14 @@ export function AllDataTable<T extends { Date?: string }>({
               {endDate ? format(endDate, "PPP") : <span>End date</span>}
             </Button>
           </PopoverTrigger>
-<PopoverContent
-  align="start"
-  className="w-auto p-2 rounded-md border shadow-md 
+          <PopoverContent
+            align="start"
+            className="w-auto p-2 rounded-md border shadow-md 
              bg-white border-gray-200 
              dark:bg-gray-800 dark:border-gray-700"
->
-  <Calendar
-    mode="single"
-    selected={endDate}
-    onSelect={setEndDate}
-  />
-</PopoverContent>
+          >
+            <Calendar mode="single" selected={endDate} onSelect={setEndDate} />
+          </PopoverContent>
         </Popover>
 
         <div className="text-xl">
@@ -176,7 +177,7 @@ export function AllDataTable<T extends { Date?: string }>({
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
                 ))}
@@ -192,7 +193,7 @@ export function AllDataTable<T extends { Date?: string }>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -200,7 +201,10 @@ export function AllDataTable<T extends { Date?: string }>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
