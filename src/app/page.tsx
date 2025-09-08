@@ -1,10 +1,12 @@
 "use client";
+
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Papa from "papaparse";
 import { AllDataTable } from "@/components/all-data-table/all-data-table";
 import { AllDataType } from "@/components/all-data-table/columns";
 import { EmployeeStatsTable } from "@/components/employee-stats/employee-stats-table";
+import { MonthlySessionStatsTable } from "@/components/session-stats/monthly-session-stats-table";
 
 export default function Home() {
   const [allData, setAllData] = useState<AllDataType[]>([]);
@@ -85,6 +87,7 @@ export default function Home() {
 
       {/* Employee stats table */}
       <EmployeeStatsTable data={employeeData} />
+      <MonthlySessionStatsTable />
     </div>
   );
 }
