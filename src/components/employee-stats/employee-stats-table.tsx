@@ -95,7 +95,7 @@ export function EmployeeStatsTable() {
           <Skeleton className="h-10 w-full rounded" />
         ) : (
           <Input
-            placeholder="Filter Employee Name..."
+            placeholder="Filter Your Name..."
             value={nameFilter}
             onChange={(e) => setNameFilter(e.target.value)}
             className="max-w-sm"
