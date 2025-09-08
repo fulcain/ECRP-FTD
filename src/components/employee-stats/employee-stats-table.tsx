@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useMemo, useState } from "react";
@@ -26,6 +25,7 @@ import {
 
 import { SheetRow, employeeColumns, mapEmployeeData } from "@/components/employee-stats/columns";
 import { fetchEmployeeStats } from "@/components/employee-stats/fetchEmployeeStats";
+import { Pagination } from "../pagination";
 
 export function EmployeeStatsTable() {
   const [sorting, setSorting] = useState<SortingState>([{ id: "Total Sessions", desc: true }]);
@@ -140,39 +140,13 @@ export function EmployeeStatsTable() {
         )}
       </div>
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       {!loading && (
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-
-          <span className="ml-2 text-sm text-gray-500">
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-          </span>
-
-          <span className="ml-4 text-sm text-gray-500">Rows per page:</span>
-          <input
-            type="number"
-            min={1}
-            className="border rounded px-2 py-1 w-16"
-            value={pageSizeInput}
-            onChange={(e) => setPageSizeInput(Number(e.target.value))}
-          />
-        </div>
+        <Pagination
+          table={table}
+          pageSize={pageSizeInput}
+          setPageSize={setPageSizeInput}
+        />
       )}
     </div>
   );

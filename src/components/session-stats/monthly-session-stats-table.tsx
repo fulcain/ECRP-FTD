@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Pagination } from "@/components/pagination";
 import {
   SortingState,
   flexRender,
@@ -22,6 +22,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { useState, useEffect,useMemo } from "react";
+
 import {
   mappedMonthlySessionData,
   monthlySessionStatsColumns,
@@ -30,14 +32,16 @@ import {
 import { fetchSessionStats } from "@/components/session-stats/fetchMonthlySession";
 
 export function MonthlySessionStatsTable() {
-  const [sorting, setSorting] = React.useState<SortingState>([{ id: "Sessions", desc: true }]);
-  const [pageSizeInput, setPageSizeInput] = React.useState(10);
-  const [nameFilter, setNameFilter] = React.useState("");
-  const [data, setData] = React.useState<SheetRow[]>([]);
-  const [totalMonthSessions, setTotalMonthSessions] = React.useState(0);
-  const [loading, setLoading] = React.useState(true);
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "Sessions", desc: true },
+  ]);
+  const [pageSizeInput, setPageSizeInput] = useState(10);
+  const [nameFilter, setNameFilter] = useState("");
+  const [data, setData] = useState<SheetRow[]>([]);
+  const [totalMonthSessions, setTotalMonthSessions] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const loadData = async () => {
       try {
         const { totalMonthSessions, monthlyData } = await fetchSessionStats();
@@ -52,20 +56,20 @@ export function MonthlySessionStatsTable() {
     loadData();
   }, []);
 
-  const mappedData = React.useMemo(
+  const mappedData = useMemo(
     () => mappedMonthlySessionData(data).map((row) => ({ ...row })),
-    [data]
+    [data],
   );
 
-  const tableRows = React.useMemo(
+  const tableRows = useMemo(
     () =>
       mappedData.filter((row) =>
         (row["Employee Name"] || "")
           .toString()
           .toLowerCase()
-          .includes(nameFilter.toLowerCase())
+          .includes(nameFilter.toLowerCase()),
       ),
-    [mappedData, nameFilter]
+    [mappedData, nameFilter],
   );
 
   const table = useReactTable({
@@ -79,7 +83,7 @@ export function MonthlySessionStatsTable() {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     table.setPageSize(Number(pageSizeInput) || 1);
   }, [pageSizeInput, table]);
 
@@ -103,7 +107,9 @@ export function MonthlySessionStatsTable() {
             />
             <div className="text-xl">
               <span>Total Sessions: </span>
-              <span className="font-bold text-red-400">{totalMonthSessions}</span>
+              <span className="font-bold text-red-400">
+                {totalMonthSessions}
+              </span>
             </div>
           </>
         )}
@@ -113,7 +119,7 @@ export function MonthlySessionStatsTable() {
       <div className="overflow-x-auto rounded-md border">
         {loading ? (
           <>
-            <Skeleton className="h-96 w-full rounded-b" /> 
+            <Skeleton className="h-96 w-full rounded-b" />
           </>
         ) : (
           <Table>
@@ -124,7 +130,10 @@ export function MonthlySessionStatsTable() {
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -137,7 +146,10 @@ export function MonthlySessionStatsTable() {
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -159,37 +171,11 @@ export function MonthlySessionStatsTable() {
 
       {/* Pagination */}
       {!loading && (
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-
-          <span className="ml-2 text-sm text-gray-500">
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-          </span>
-
-          <span className="ml-4 text-sm text-gray-500">Rows per page:</span>
-          <input
-            type="number"
-            min={1}
-            className="border rounded px-2 py-1 w-16"
-            value={pageSizeInput}
-            onChange={(e) => setPageSizeInput(Number(e.target.value))}
-          />
-        </div>
+        <Pagination
+          table={table}
+          pageSize={pageSizeInput}
+          setPageSize={setPageSizeInput}
+        />
       )}
     </div>
   );

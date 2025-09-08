@@ -7,7 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 import {
   ColumnDef,
@@ -31,6 +35,7 @@ import {
 } from "@/components/ui/table";
 import { generateColumns, AllDataType } from "./columns";
 import { fetchAllData } from "./fetchAllData";
+import { Pagination } from "../pagination";
 
 export function AllDataTable() {
   const [data, setData] = useState<AllDataType[]>([]);
@@ -100,7 +105,9 @@ export function AllDataTable() {
           <>
             <Input
               placeholder="Filter Your Name..."
-              value={(table.getColumn("Your Name")?.getFilterValue() as string) ?? ""}
+              value={
+                (table.getColumn("Your Name")?.getFilterValue() as string) ?? ""
+              }
               onChange={(event) =>
                 table.getColumn("Your Name")?.setFilterValue(event.target.value)
               }
@@ -171,7 +178,7 @@ export function AllDataTable() {
       <div className="overflow-x-auto rounded-md border">
         {loading ? (
           <>
-            <Skeleton className="h-96 w-full rounded-b" /> 
+            <Skeleton className="h-96 w-full rounded-b" />
           </>
         ) : (
           <Table>
@@ -182,7 +189,10 @@ export function AllDataTable() {
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -195,14 +205,20 @@ export function AllDataTable() {
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
                     No results.
                   </TableCell>
                 </TableRow>
@@ -212,39 +228,13 @@ export function AllDataTable() {
         )}
       </div>
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       {!loading && (
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-
-          <span className="ml-2 text-sm text-gray-500">
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-          </span>
-
-          <span className="ml-4 text-sm text-gray-500">Rows per page:</span>
-          <input
-            type="number"
-            min={1}
-            className="border rounded px-2 py-1 w-16"
-            value={pageSizeInput}
-            onChange={(e) => setPageSizeInput(Number(e.target.value))}
-          />
-        </div>
+        <Pagination
+          table={table}
+          pageSize={pageSizeInput}
+          setPageSize={setPageSizeInput}
+        />
       )}
     </div>
   );
