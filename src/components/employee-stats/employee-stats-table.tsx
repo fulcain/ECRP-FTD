@@ -23,15 +23,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { SheetRow, employeeColumns, mapEmployeeData } from "@/components/employee-stats/columns";
+import {
+  employeeColumns,
+  mapEmployeeData,
+} from "@/components/employee-stats/columns";
 import { fetchEmployeeStats } from "@/components/employee-stats/fetchEmployeeStats";
-import { Pagination } from "../pagination";
+import { Pagination } from "@/components/pagination";
+import { TableDataType } from "@/app/page";
 
 export function EmployeeStatsTable() {
-  const [sorting, setSorting] = useState<SortingState>([{ id: "Total Sessions", desc: true }]);
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "Total Sessions", desc: true },
+  ]);
   const [pageSizeInput, setPageSizeInput] = useState(10);
   const [nameFilter, setNameFilter] = useState("");
-  const [data, setData] = useState<SheetRow[]>([]);
+  const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,15 +55,17 @@ export function EmployeeStatsTable() {
         ...row,
         "Total Sessions": Number(row["Total Sessions"] || 0),
       })),
-    [data]
+    [data],
   );
 
   const tableRows = useMemo(
     () =>
       mappedData.filter((row) =>
-        (row["Employee Name"] || "").toString().toLowerCase().includes(nameFilter.toLowerCase())
+        ((row as any)["Employee Name"] || "")
+          .toLowerCase()
+          .includes(nameFilter.toLowerCase()),
       ),
-    [mappedData, nameFilter]
+    [mappedData, nameFilter],
   );
 
   const table = useReactTable({
@@ -99,7 +107,7 @@ export function EmployeeStatsTable() {
       <div className="overflow-x-auto rounded-md border">
         {loading ? (
           <>
-            <Skeleton className="h-96 w-full rounded-b" /> 
+            <Skeleton className="h-96 w-full rounded-b" />
           </>
         ) : (
           <Table>
@@ -110,7 +118,10 @@ export function EmployeeStatsTable() {
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -123,14 +134,20 @@ export function EmployeeStatsTable() {
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={employeeColumns.length} className="h-24 text-center">
+                  <TableCell
+                    colSpan={employeeColumns.length}
+                    className="h-24 text-center"
+                  >
                     No results.
                   </TableCell>
                 </TableRow>

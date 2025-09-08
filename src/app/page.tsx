@@ -5,6 +5,10 @@ import { EmployeeStatsTable } from "@/components/employee-stats/employee-stats-t
 import { AllDataTable } from "@/components/all-data-table/all-data-table";
 import { MonthlySessionStatsTable } from "@/components/session-stats/monthly-session-stats-table";
 
+export type TableDataType = {
+  [key: string]: string | number;
+};
+
 export default function Home() {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-10">

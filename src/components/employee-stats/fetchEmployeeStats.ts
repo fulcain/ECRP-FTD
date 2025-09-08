@@ -1,10 +1,10 @@
 import Papa from "papaparse";
-import { SheetRow } from "@/components/employee-stats/columns";
+import { TableDataType } from "@/app/page";
 
 /**
  * Fetches and parses employee stats data from /api/employee-stats
  */
-export async function fetchEmployeeStats(): Promise<SheetRow[]> {
+export async function fetchEmployeeStats(): Promise<TableDataType[]> {
   try {
     const res = await fetch("/api/employee-stats");
     const csvText = await res.text();
@@ -14,7 +14,7 @@ export async function fetchEmployeeStats(): Promise<SheetRow[]> {
       skipEmptyLines: true,
     });
 
-    const rawData: SheetRow[] = parsed.data as SheetRow[];
+    const rawData: TableDataType[] = parsed.data as TableDataType[];
 
     // Find the row where Names === "Ex FTOs"
     const stopIndex = rawData.findIndex((obj) => obj["Names"] === "Ex FTOs");

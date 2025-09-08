@@ -3,15 +3,13 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
+import { TableDataType } from "@/app/page";
 
-export type AllDataType = {
-  [key: string]: string;
-};
 
 /**
  * Date, Instructor's Name, EMR's Name, Session Conducted, Time Start, Time Finish, Timestamp
  */
-export const generateColumns = (): ColumnDef<AllDataType>[] => [
+export const generateColumns = (): ColumnDef<TableDataType>[] => [
   {
     accessorKey: "Date",
     header: ({ column }) => (

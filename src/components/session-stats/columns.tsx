@@ -1,21 +1,10 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
-
-export type SheetRow = {
-  [key: string]: string | number;
-};
-
-// Define a mapped type where ribbons are strings and Total Sessions is number
-export type MonthlySessionStats = {
-  "Employee Name": string;
-  Sessions: string;
-};
+import { TableDataType } from "@/app/page";
 
 // Map raw CSV object keys to table-friendly keys, including ribbons
-export function mappedMonthlySessionData(
-  rawData: SheetRow[],
-): MonthlySessionStats[] {
+export function mappedMonthlySessionData(rawData: TableDataType[]) {
   return rawData.map((row) => ({
     "Employee Name": String(row["September"] ?? ""),
     Sessions: String(row["_1"]),
@@ -23,7 +12,7 @@ export function mappedMonthlySessionData(
 }
 
 // Columns for your table
-export const monthlySessionStatsColumns: ColumnDef<MonthlySessionStats>[] = [
+export const monthlySessionStatsColumns: ColumnDef<TableDataType>[] = [
   {
     accessorKey: "Employee Name",
     header: "Employee Name",

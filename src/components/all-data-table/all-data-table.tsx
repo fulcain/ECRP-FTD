@@ -33,17 +33,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { generateColumns, AllDataType } from "./columns";
-import { fetchAllData } from "./fetchAllData";
-import { Pagination } from "../pagination";
+import { generateColumns } from "@/components/all-data-table/columns";
+import { TableDataType } from "@/app/page";
+
+import { fetchAllData } from "@/components/all-data-table/fetchAllData";
+import { Pagination } from "@/components/pagination";
 
 export function AllDataTable() {
-  const [data, setData] = useState<AllDataType[]>([]);
+  const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const columns: ColumnDef<AllDataType>[] = generateColumns();
+  const columns: ColumnDef<TableDataType>[] = generateColumns();
   const [pageSizeInput, setPageSizeInput] = useState(10);
 
   const [startDate, setStartDate] = useState<Date>();

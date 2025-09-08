@@ -1,9 +1,6 @@
 import Papa from "papaparse";
 
-// TODO: change it later
-export type AllDataType = {
-  [key: string]: string | number;
-};
+import { TableDataType } from "@/app/page";
 
 export async function fetchSessionStats() {
   const res = await fetch("/api/session-stats");
@@ -20,7 +17,7 @@ export async function fetchSessionStats() {
 
   let totalMonthSessions = 0;
   if (totalMonthIndex !== -1) {
-    const totalMonthsObject = parsed.data[totalMonthIndex] as AllDataType;
+    const totalMonthsObject = parsed.data[totalMonthIndex] as TableDataType;
     totalMonthSessions = Number(totalMonthsObject["_1"] ?? 0);
   }
 
@@ -35,6 +32,6 @@ export async function fetchSessionStats() {
 
   return {
     totalMonthSessions,
-    monthlyData: filteredData as AllDataType[],
+    monthlyData: filteredData as TableDataType[],
   };
 }

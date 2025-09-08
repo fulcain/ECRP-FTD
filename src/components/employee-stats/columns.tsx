@@ -1,23 +1,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
+import { TableDataType } from "@/app/page";
 
-export type SheetRow = {
-  [key: string]: string | number;
-};
-
-// Define a mapped type where ribbons are strings and Total Sessions is number
-export type MappedEmployeeRow = {
-  "Employee Name": string;
-  "Total Sessions": number;
-  "15 Session Ribbons": string;
-  "40 Session Ribbon": string;
-  "100 Session Ribbons": string;
-  "165 Session Ribbons": string;
-};
 
 // Map raw CSV object keys to table-friendly keys, including ribbons
-export function mapEmployeeData(rawData: SheetRow[]): MappedEmployeeRow[] {
+export function mapEmployeeData(rawData: TableDataType[]): TableDataType[] {
   return rawData.map((row) => ({
     "Employee Name": String(row["Names"] ?? ""),
     "Total Sessions": Number(row["_1"] ?? 0),
@@ -40,7 +28,7 @@ const RibbonBox = ({ value }: { value: string }) => {
 };
 
 // Columns for your table
-export const employeeColumns: ColumnDef<MappedEmployeeRow>[] = [
+export const employeeColumns: ColumnDef<TableDataType>[] = [
   {
     accessorKey: "Employee Name",
     header: "Employee Name",

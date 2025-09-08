@@ -27,9 +27,9 @@ import { useState, useEffect,useMemo } from "react";
 import {
   mappedMonthlySessionData,
   monthlySessionStatsColumns,
-  SheetRow,
-} from "./columns";
+} from "@/components/session-stats/columns";
 import { fetchSessionStats } from "@/components/session-stats/fetchMonthlySession";
+import { TableDataType } from "@/app/page";
 
 export function MonthlySessionStatsTable() {
   const [sorting, setSorting] = useState<SortingState>([
@@ -37,7 +37,7 @@ export function MonthlySessionStatsTable() {
   ]);
   const [pageSizeInput, setPageSizeInput] = useState(10);
   const [nameFilter, setNameFilter] = useState("");
-  const [data, setData] = useState<SheetRow[]>([]);
+  const [data, setData] = useState<TableDataType[]>([]);
   const [totalMonthSessions, setTotalMonthSessions] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -46,7 +46,7 @@ export function MonthlySessionStatsTable() {
       try {
         const { totalMonthSessions, monthlyData } = await fetchSessionStats();
         setTotalMonthSessions(totalMonthSessions);
-        setData(monthlyData as SheetRow[]);
+        setData(monthlyData as TableDataType[]);
       } catch (err) {
         console.error("Failed to load session stats", err);
       } finally {
