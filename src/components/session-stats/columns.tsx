@@ -31,8 +31,8 @@ export const monthlySessionStatsColumns: ColumnDef<TableDataType>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: (info) => info.getValue(),
+    cell: (info) => { return info.getValue()},
     enableSorting: true,
-    sortingFn: "basic",
+    sortingFn: "alphanumericCaseSensitive",
   },
 ];
