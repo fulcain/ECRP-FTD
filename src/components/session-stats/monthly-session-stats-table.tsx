@@ -44,8 +44,9 @@ export function MonthlySessionStatsTable() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const { totalMonthSessions, monthlyData } = await fetchSessionStats();
-        setTotalMonthSessions(totalMonthSessions);
+		const { totalMonthSessions, monthlyData } = await fetchSessionStats();
+
+		setTotalMonthSessions(totalMonthSessions);
         setData(monthlyData as TableDataType[]);
       } catch (err) {
         console.error("Failed to load session stats", err);
@@ -60,17 +61,17 @@ export function MonthlySessionStatsTable() {
     () => mappedMonthlySessionData(data).map((row) => ({ ...row })),
     [data],
   );
-
-  const tableRows = useMemo(
-    () =>
-      mappedData.filter((row) =>
-        (row["Employee Name"] || "")
-          .toString()
-          .toLowerCase()
-          .includes(nameFilter.toLowerCase()),
-      ),
-    [mappedData, nameFilter],
+const tableRows = useMemo(() => {
+  const filtered = mappedData.filter((row) =>
+    (row['Employee Name'] || '')
+      .toString()
+      .toLowerCase()
+      .includes(nameFilter.toLowerCase())
   );
+
+
+  return filtered;
+}, [mappedData, nameFilter]);
 
   const table = useReactTable({
     data: tableRows,
