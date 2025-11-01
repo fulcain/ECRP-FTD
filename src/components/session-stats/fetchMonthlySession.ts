@@ -1,37 +1,30 @@
-import Papa from 'papaparse';
 import { TableDataType } from '@/app/page';
 
-const currentMonth = new Date().toLocaleString('en-US', { month: 'long' });
-
 export async function fetchSessionStats() {
-  const res = await fetch('/api/session-stats');
-  const csvText = await res.text();
-  const parsed = Papa.parse(csvText, {
-    header: true,
-    skipEmptyLines: true,
-  });
+  try {
+    const res = await fetch('/api/session-stats', { cache: 'no-store' });
+    const json = await res.json();
+    const allRows = json.data as TableDataType[];
 
-  const data = parsed.data as TableDataType[];
+    // optional: remove any nonsense placeholders or summary rows
+    const cleanRows = allRows.filter((row) => {
+      const firstKey = Object.keys(row)[0];
+      const value = (row[firstKey] || '').toString().trim();
+      return (
+        value && 
+        value !== 'Employee' && 
+        value !== 'Total Month Sessions' &&
+        value !== 'Count'
+      );
+    });
 
-  // Filter out unwanted header/footer rows
-  const filteredData = data.filter((row) => {
-    const name = (row[currentMonth] || '').toString().trim();
-    return (
-      name !== 'Employee' &&
-      name !== 'Total Month Sessions' &&
-      name !== 'Count' &&
-      name !== ''
-    );
-  });
-
-  // Compute the total sessions from the remaining valid rows
-  const totalMonthSessions = filteredData.reduce(
-    (sum, row) => sum + (Number(row['_1']) || 0),
-    0
-  );
-
-  return {
-    totalMonthSessions,
-    monthlyData: filteredData,
-  };
+    // frontend can compute totals dynamically later 
+    return {
+      totalMonthSessions: cleanRows.length,
+      monthlyData: cleanRows,
+    };
+  } catch (error) {
+    console.error('Error fetching session stats:', error);
+    return { totalMonthSessions: 0, monthlyData: [] };
+  }
 }

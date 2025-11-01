@@ -1,8 +1,9 @@
 "use client";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/pagination";
+
 import {
   SortingState,
   flexRender,
@@ -22,14 +23,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { useState, useEffect,useMemo } from "react";
-
 import {
   mappedMonthlySessionData,
   monthlySessionStatsColumns,
 } from "@/components/session-stats/columns";
 import { fetchSessionStats } from "@/components/session-stats/fetchMonthlySession";
 import { TableDataType } from "@/app/page";
+
+/** static client-side months list */
+const MONTHS = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
+];
 
 export function MonthlySessionStatsTable() {
   const [sorting, setSorting] = useState<SortingState>([
@@ -38,15 +43,19 @@ export function MonthlySessionStatsTable() {
   const [pageSizeInput, setPageSizeInput] = useState(10);
   const [nameFilter, setNameFilter] = useState("");
   const [data, setData] = useState<TableDataType[]>([]);
-  const [totalMonthSessions, setTotalMonthSessions] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const current = new Date().toLocaleString("en-US", { month: "long" });
+    return MONTHS.includes(current) ? current : "January";
+  });
+
+  /** total sessions just for fun summary display */
+  const [totalMonthSessions, setTotalMonthSessions] = useState(0);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-		const { totalMonthSessions, monthlyData } = await fetchSessionStats();
-
-		setTotalMonthSessions(totalMonthSessions);
+        const { monthlyData } = await fetchSessionStats();
         setData(monthlyData as TableDataType[]);
       } catch (err) {
         console.error("Failed to load session stats", err);
@@ -57,24 +66,32 @@ export function MonthlySessionStatsTable() {
     loadData();
   }, []);
 
+  /** map & filter rows by selectedMonth and search term */
+  const filteredRows = useMemo(() => {
+    const filtered = data.filter((row) => {
+      const name = (row["Employee Name"] || "")
+        .toString()
+        .toLowerCase()
+        .includes(nameFilter.toLowerCase());
+      const monthValue = row[selectedMonth];
+      return name && monthValue !== undefined && monthValue !== "";
+    });
+    const totalSessions = filtered.reduce(
+      (sum, row) => sum + (Number(row[selectedMonth]) || 0),
+      0
+    );
+    setTotalMonthSessions(totalSessions);
+    return filtered;
+  }, [data, nameFilter, selectedMonth]);
+
   const mappedData = useMemo(
-    () => mappedMonthlySessionData(data).map((row) => ({ ...row })),
-    [data],
-  );
-const tableRows = useMemo(() => {
-  const filtered = mappedData.filter((row) =>
-    (row['Employee Name'] || '')
-      .toString()
-      .toLowerCase()
-      .includes(nameFilter.toLowerCase())
+    () => mappedMonthlySessionData(filteredRows).map((r) => ({ ...r })),
+    [filteredRows]
   );
 
-
-  return filtered;
-}, [mappedData, nameFilter]);
-
+  /** table config */
   const table = useReactTable({
-    data: tableRows,
+    data: mappedData,
     columns: monthlySessionStatsColumns,
     state: { sorting },
     onSortingChange: setSorting,
@@ -84,6 +101,7 @@ const tableRows = useMemo(() => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  /** page size */
   useEffect(() => {
     table.setPageSize(Number(pageSizeInput) || 1);
   }, [pageSizeInput, table]);
@@ -95,7 +113,7 @@ const tableRows = useMemo(() => {
       </h2>
 
       {/* Filters */}
-      <div className="flex items-center py-4 space-x-4">
+      <div className="flex flex-wrap items-center gap-4 py-4">
         {loading ? (
           <Skeleton className="h-10 w-full rounded" />
         ) : (
@@ -106,6 +124,19 @@ const tableRows = useMemo(() => {
               onChange={(e) => setNameFilter(e.target.value)}
               className="max-w-sm"
             />
+
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="border border-gray-500 bg-gray-800 text-gray-100 rounded px-3 py-2"
+            >
+              {MONTHS.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+
             <div className="text-xl">
               <span>Total Sessions: </span>
               <span className="font-bold text-red-400">
@@ -119,21 +150,19 @@ const tableRows = useMemo(() => {
       {/* Table */}
       <div className="overflow-x-auto rounded-md border">
         {loading ? (
-          <>
-            <Skeleton className="h-96 w-full rounded-b" />
-          </>
+          <Skeleton className="h-96 w-full rounded-b" />
         ) : (
           <Table>
             <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
+              {table.getHeaderGroups().map((hg) => (
+                <TableRow key={hg.id}>
+                  {hg.headers.map((header) => (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   ))}
@@ -143,13 +172,13 @@ const tableRows = useMemo(() => {
 
             <TableBody>
               {table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                table.getRowModel().rows.map((r) => (
+                  <TableRow key={r.id}>
+                    {r.getVisibleCells().map((c) => (
+                      <TableCell key={c.id}>
                         {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
+                          c.column.columnDef.cell,
+                          c.getContext()
                         )}
                       </TableCell>
                     ))}
