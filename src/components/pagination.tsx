@@ -4,7 +4,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
-  table: any; 
+  table: any;
   pageSize: number;
   setPageSize: (size: number) => void;
 }

@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { TableDataType } from "@/app/page";
 
-
 /**
  * Date, Instructor's Name, EMR's Name, Session Conducted, Time Start, Time Finish, Timestamp
  */

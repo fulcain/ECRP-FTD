@@ -1,3 +1,5 @@
+// This file is not being used anywhere, its just there for future in case its needed
+
 import { NextResponse } from "next/server";
 
 export async function GET() {

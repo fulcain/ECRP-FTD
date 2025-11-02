@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { TableDataType } from "@/app/page";
 
-
 // Map raw CSV object keys to table-friendly keys, including ribbons
 export function mapEmployeeData(rawData: TableDataType[]): TableDataType[] {
   return rawData.map((row) => ({
@@ -51,7 +50,7 @@ export const employeeColumns: ColumnDef<TableDataType>[] = [
     enableSorting: true,
     sortingFn: "basic",
   },
-   {
+  {
     accessorKey: "15 Session Ribbons",
     header: "15 Session Ribbons",
     cell: (info) => <RibbonBox value={info.getValue() as string} />,

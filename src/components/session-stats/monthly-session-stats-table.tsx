@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/pagination";
@@ -14,6 +14,14 @@ import {
 } from "@tanstack/react-table";
 
 import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+
+import {
   Table,
   TableBody,
   TableCell,
@@ -21,15 +29,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-import { useState, useEffect,useMemo } from "react";
-
 import {
-  mappedMonthlySessionData,
   monthlySessionStatsColumns,
 } from "@/components/session-stats/columns";
-import { fetchSessionStats } from "@/components/session-stats/fetchMonthlySession";
+import { fetchAllData } from "@/components/all-data-table/fetchAllData";
 import { TableDataType } from "@/app/page";
+
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 export function MonthlySessionStatsTable() {
   const [sorting, setSorting] = useState<SortingState>([
@@ -38,18 +57,20 @@ export function MonthlySessionStatsTable() {
   const [pageSizeInput, setPageSizeInput] = useState(10);
   const [nameFilter, setNameFilter] = useState("");
   const [data, setData] = useState<TableDataType[]>([]);
-  const [totalMonthSessions, setTotalMonthSessions] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState(
+    new Date().toLocaleString("en-US", { month: "long" }),
+  );
+  const [totalMonthSessions, setTotalMonthSessions] = useState(0);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-		const { totalMonthSessions, monthlyData } = await fetchSessionStats();
-
-		setTotalMonthSessions(totalMonthSessions);
-        setData(monthlyData as TableDataType[]);
+        const allData = await fetchAllData();
+        console.log(allData);
+        setData(allData);
       } catch (err) {
-        console.error("Failed to load session stats", err);
+        console.error("Failed to load master sheet data", err);
       } finally {
         setLoading(false);
       }
@@ -57,25 +78,41 @@ export function MonthlySessionStatsTable() {
     loadData();
   }, []);
 
-  const mappedData = useMemo(
-    () => mappedMonthlySessionData(data).map((row) => ({ ...row })),
-    [data],
-  );
-const tableRows = useMemo(() => {
-  const filtered = mappedData.filter((row) =>
-    (row['Employee Name'] || '')
-      .toString()
-      .toLowerCase()
-      .includes(nameFilter.toLowerCase())
-  );
+  const monthData = useMemo(() => {
+    if (!data?.length) return [];
 
+    const counts: Record<string, number> = {};
+    data.forEach((row) => {
+	const dateStr = row["Timestamp"] || row["Date"] || row["date"];
+      const name = String(row["Your Name"] || "").trim();
+      const d = new Date(dateStr);
+      const month = d.toLocaleString("en-US", { month: "long" });
 
-  return filtered;
-}, [mappedData, nameFilter]);
+      if (month === selectedMonth && name) {
+        counts[name] = (counts[name] || 0) + 1;
+      }
+    });
+
+    const result = Object.entries(counts).map(([name, count]) => ({
+      "Your Name": name,
+      Sessions: count.toString(),
+    }));
+
+    const total = Object.values(counts).reduce((sum, n) => sum + n, 0);
+    setTotalMonthSessions(total);
+
+    return result;
+  }, [data, selectedMonth]);
+
+  const tableRows = useMemo(() => {
+    return monthData.filter((row) =>
+      row["Your Name"].toLowerCase().includes(nameFilter.toLowerCase()),
+    );
+  }, [monthData, nameFilter]);
 
   const table = useReactTable({
     data: tableRows,
-    columns: monthlySessionStatsColumns,
+    columns: monthlySessionStatsColumns(),
     state: { sorting },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -94,18 +131,31 @@ const tableRows = useMemo(() => {
         Monthly Session Stats Table
       </h2>
 
-      {/* Filters */}
-      <div className="flex items-center py-4 space-x-4">
+      <div className="flex flex-wrap items-center gap-4 py-4">
         {loading ? (
           <Skeleton className="h-10 w-full rounded" />
         ) : (
           <>
+<Select value={selectedMonth} onValueChange={setSelectedMonth}>
+  <SelectTrigger className="w-[180px]  text-white border ">
+    <SelectValue placeholder="Select month" />
+  </SelectTrigger>
+  <SelectContent className=" text-gray-100 ">
+    {MONTHS.map((m) => (
+      <SelectItem key={m} value={m}>
+        {m}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
+
             <Input
               placeholder="Filter Your Name..."
               value={nameFilter}
               onChange={(e) => setNameFilter(e.target.value)}
               className="max-w-sm"
             />
+
             <div className="text-xl">
               <span>Total Sessions: </span>
               <span className="font-bold text-red-400">
@@ -116,12 +166,9 @@ const tableRows = useMemo(() => {
         )}
       </div>
 
-      {/* Table */}
       <div className="overflow-x-auto rounded-md border">
         {loading ? (
-          <>
-            <Skeleton className="h-96 w-full rounded-b" />
-          </>
+          <Skeleton className="h-96 w-full rounded-b" />
         ) : (
           <Table>
             <TableHeader>
@@ -140,7 +187,6 @@ const tableRows = useMemo(() => {
                 </TableRow>
               ))}
             </TableHeader>
-
             <TableBody>
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
@@ -170,7 +216,6 @@ const tableRows = useMemo(() => {
         )}
       </div>
 
-      {/* Pagination */}
       {!loading && (
         <Pagination
           table={table}
