@@ -42,6 +42,8 @@ import { Pagination } from "@/components/pagination";
 export function AllDataTable() {
   const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [adding, setAdding] = useState(false);
+  const [error, setError] = useState("");
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -52,6 +54,16 @@ export function AllDataTable() {
   const [endDate, setEndDate] = useState<Date>();
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
+
+  // Form data for adding new row
+  const [newRow, setNewRow] = useState({
+    Date: "",
+    YourName: "",
+    EMRName: "",
+    SessionConducted: "",
+    TimeStart: "",
+    TimeFinish: "",
+  });
 
   // Fetch data
   useEffect(() => {
@@ -92,6 +104,42 @@ export function AllDataTable() {
   useEffect(() => {
     table.setPageSize(Number(pageSizeInput) || 1);
   }, [pageSizeInput, table]);
+
+  // Function to add new row
+  const handleAddRow = async () => {
+    setAdding(true);
+    setError("");
+    try {
+		await fetch("/api/all-data/add-row", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          Date: newRow.Date,
+          YourName: newRow.YourName,
+          EMRName: newRow.EMRName,
+          SessionConducted: newRow.SessionConducted,
+          TimeStart: newRow.TimeStart,
+          TimeFinish: newRow.TimeFinish,
+          Timestamp: new Date().toISOString(),
+        }),
+      });
+
+      const allData = await fetchAllData(); 
+      setData(allData);
+      setNewRow({
+        Date: "",
+        YourName: "",
+        EMRName: "",
+        SessionConducted: "",
+        TimeStart: "",
+        TimeFinish: "",
+      });
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setAdding(false);
+    }
+  };
 
   return (
     <div className="space-y-4 mt-40">
@@ -134,7 +182,7 @@ export function AllDataTable() {
                   selected={startDate}
                   captionLayout="dropdown"
                   onSelect={(date) => {
-                    setStartDate(date);
+                    setStartDate(date!);
                     setStartOpen(false);
                   }}
                 />
@@ -159,7 +207,7 @@ export function AllDataTable() {
                   selected={endDate}
                   captionLayout="dropdown"
                   onSelect={(date) => {
-                    setEndDate(date);
+                    setEndDate(date!);
                     setEndOpen(false);
                   }}
                 />
@@ -176,12 +224,59 @@ export function AllDataTable() {
         )}
       </div>
 
+      {/* Add new row section */}
+      {!loading && (
+        <div className="rounded-md border border-gray-700 p-4 space-y-2">
+          <h3 className="font-bold text-gray-300">Add New Session</h3>
+          <div className="grid grid-cols-3 gap-2">
+            <Input
+              placeholder="Date (YYYY-MM-DD)"
+              value={newRow.Date}
+              onChange={(e) => setNewRow({ ...newRow, Date: e.target.value })}
+            />
+            <Input
+              placeholder="Instructor's Name"
+              value={newRow.YourName}
+              onChange={(e) => setNewRow({ ...newRow, YourName: e.target.value })}
+            />
+            <Input
+              placeholder="EMR's Name"
+              value={newRow.EMRName}
+              onChange={(e) => setNewRow({ ...newRow, EMRName: e.target.value })}
+            />
+            <Input
+              placeholder="Session Conducted"
+              value={newRow.SessionConducted}
+              onChange={(e) =>
+                setNewRow({ ...newRow, SessionConducted: e.target.value })
+              }
+            />
+            <Input
+              placeholder="Time Start"
+              value={newRow.TimeStart}
+              onChange={(e) => setNewRow({ ...newRow, TimeStart: e.target.value })}
+            />
+            <Input
+              placeholder="Time Finish"
+              value={newRow.TimeFinish}
+              onChange={(e) => setNewRow({ ...newRow, TimeFinish: e.target.value })}
+            />
+          </div>
+          <Button
+            onClick={handleAddRow}
+            disabled={adding}
+            className="mt-2 bg-green-600 text-white"
+          >
+            {adding ? "Adding..." : "Add Row"}
+          </Button>
+          {error && <p className="text-red-500">{error}</p>}
+        </div>
+      )}
+
       {/* Table */}
       <div className="overflow-x-auto rounded-md border">
         {loading ? (
-          <>
-            <Skeleton className="h-96 w-full rounded-b" />
-          </>
+          <Skeleton className="h-96 w-full rounded-b" />
         ) : (
           <Table>
             <TableHeader>
@@ -193,7 +288,7 @@ export function AllDataTable() {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   ))}
@@ -209,7 +304,7 @@ export function AllDataTable() {
                       <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext(),
+                          cell.getContext()
                         )}
                       </TableCell>
                     ))}
@@ -230,7 +325,6 @@ export function AllDataTable() {
         )}
       </div>
 
-      {/* Pagination */}
       {!loading && (
         <Pagination
           table={table}
