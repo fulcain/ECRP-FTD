@@ -67,7 +67,6 @@ export function MonthlySessionStatsTable() {
     const loadData = async () => {
       try {
         const allData = await fetchAllData();
-        console.log(allData);
         setData(allData);
       } catch (err) {
         console.error("Failed to load master sheet data", err);
