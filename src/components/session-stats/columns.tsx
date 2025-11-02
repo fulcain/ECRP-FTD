@@ -24,7 +24,7 @@ export const monthlySessionStatsColumns = (): ColumnDef<TableDataType>[] => [
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="flex items-center"
       >
-       {"Instructor's Name"}
+        {"Instructor's Name"}
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),

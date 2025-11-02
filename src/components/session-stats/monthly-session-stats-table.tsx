@@ -29,9 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  monthlySessionStatsColumns,
-} from "@/components/session-stats/columns";
+import { monthlySessionStatsColumns } from "@/components/session-stats/columns";
 import { fetchAllData } from "@/components/all-data-table/fetchAllData";
 import { TableDataType } from "@/app/page";
 
@@ -82,7 +80,7 @@ export function MonthlySessionStatsTable() {
 
     const counts: Record<string, number> = {};
     data.forEach((row) => {
-	const dateStr = row["Timestamp"] || row["Date"] || row["date"];
+      const dateStr = row["Timestamp"] || row["Date"] || row["date"];
       const name = String(row["Your Name"] || "").trim();
       const d = new Date(dateStr);
       const month = d.toLocaleString("en-US", { month: "long" });
@@ -135,18 +133,18 @@ export function MonthlySessionStatsTable() {
           <Skeleton className="h-10 w-full rounded" />
         ) : (
           <>
-<Select value={selectedMonth} onValueChange={setSelectedMonth}>
-  <SelectTrigger className="w-[180px]  text-white border ">
-    <SelectValue placeholder="Select month" />
-  </SelectTrigger>
-  <SelectContent className=" text-gray-100 ">
-    {MONTHS.map((m) => (
-      <SelectItem key={m} value={m}>
-        {m}
-      </SelectItem>
-    ))}
-  </SelectContent>
-</Select>
+            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+              <SelectTrigger className="w-[180px]  text-white border ">
+                <SelectValue placeholder="Select month" />
+              </SelectTrigger>
+              <SelectContent className=" text-gray-100 ">
+                {MONTHS.map((m) => (
+                  <SelectItem key={m} value={m}>
+                    {m}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             <Input
               placeholder="Filter Your Name..."

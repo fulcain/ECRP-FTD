@@ -1,13 +1,13 @@
-import { ThemeProvider } from "@/components/ui/theme-provider"
-import type { Metadata } from "next"
-import "./globals.css"
-import 'react-toastify/dist/ReactToastify.css'
-import ProtectedView from "@/components/ProtectedView"
+import { ThemeProvider } from "@/components/ui/theme-provider";
+import type { Metadata } from "next";
+import "./globals.css";
+import "react-toastify/dist/ReactToastify.css";
+import ProtectedView from "@/components/ProtectedView";
 
 export const metadata: Metadata = {
   title: "LSEMS FTD",
-  description: "Internal Access — Authorized Personnel Only"
-}
+  description: "Internal Access — Authorized Personnel Only",
+};
 
 export default function RootLayout({
   children,
@@ -25,5 +25,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
