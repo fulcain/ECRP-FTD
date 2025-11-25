@@ -74,7 +74,7 @@ export default function LoginModal({
         </DialogContent>
       </Dialog>
 
-      <ToastContainer position="top-center" autoClose={2000} hideProgressBar />
+      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
     </>
   );
 }
