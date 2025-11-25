@@ -202,9 +202,9 @@ const handleSubmit = async (e: React.FormEvent) => {
 
 				{/* EMR Name */}
 				<div className="flex flex-col gap-2">
-					<Label>EMR's Name</Label>
+					<Label>{"EMR's Name"}</Label>
 					<Input
-						placeholder="EMRs Name"
+						placeholder="Enter EMR's Name"
 						type="text"
 						value={form.emrName}
 						onChange={(e) => setForm({ ...form, emrName: e.target.value })}
