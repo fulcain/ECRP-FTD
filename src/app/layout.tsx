@@ -21,8 +21,8 @@ export default function RootLayout({
           defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
-				>
-					<Header/>
+        >
+          <Header />
           <ProtectedView>{children}</ProtectedView>
         </ThemeProvider>
       </body>
