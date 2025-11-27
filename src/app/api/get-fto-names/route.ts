@@ -7,7 +7,6 @@ export async function GET() {
     });
 
     const text = await res.text();
-    console.log("Apps Script response:", text);
 
     let result;
     try {

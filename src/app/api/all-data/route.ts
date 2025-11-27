@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const url = process.env.SHEET_CSV_URL;
+  const url = process.env.ALL_DATA_STATS_CSV_URL;
   if (!url)
     return NextResponse.json({ error: "Sheet URL not set" }, { status: 500 });
 
