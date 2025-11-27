@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async redirects() {
+    return [];
+  },
+  images: {
+    domains: ["i.imgur.com", "i.vgy.me", "i.ibb.co"],
+  },
 };
 
 export default nextConfig;
