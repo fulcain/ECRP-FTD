@@ -46,6 +46,18 @@ export const Pagination: React.FC<PaginationProps> = ({
         value={pageSize}
         onChange={(e) => setPageSize(Number(e.target.value))}
       />
+
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+      >
+        Last Page
+      </Button>
+
+      <Button variant="outline" size="sm" onClick={() => table.setPageIndex(0)}>
+        First Page
+      </Button>
     </div>
   );
 };
