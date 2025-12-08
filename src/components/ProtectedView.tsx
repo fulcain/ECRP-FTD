@@ -18,7 +18,8 @@ export default function ProtectedView({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     const verify = async () => {
-      const token = localStorage.getItem("jwt_token");
+      const tokenKey = pathname === "/" ? "public_jwt_token" : "command_jwt_token";
+      const token = localStorage.getItem(tokenKey);
       if (!token) {
         setChecked(true);
         return;
@@ -27,7 +28,7 @@ export default function ProtectedView({ children }: { children: React.ReactNode 
       const res = await fetch("/api/verify-token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
+        body: JSON.stringify({ token, route: pathname }),
       });
 
       const { valid } = await res.json();
@@ -42,7 +43,7 @@ export default function ProtectedView({ children }: { children: React.ReactNode 
   if (!checked) return null;
 
   if (!loggedIn)
-    return <LoginModal onUnlockAction={() => setLoggedIn(true)} expectedToken={envVarName} />;
+    return <LoginModal onUnlockAction={() => setLoggedIn(true)} expectedToken={envVarName} route={pathname} />;
 
   return <>{children}</>;
 }

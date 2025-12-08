@@ -15,9 +15,11 @@ import { Eye, EyeOff } from "lucide-react";
 export default function LoginModal({
   onUnlockAction,
   expectedToken,
+  route,
 }: {
   onUnlockAction: () => void;
   expectedToken: string; 
+  route: string;        
 }) {
   const [password, setPassword] = useState("");
   const [open, setOpen] = useState(true);
@@ -26,23 +28,30 @@ export default function LoginModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const res = await fetch("/api/check-password", {
+    const checkRes = await fetch("/api/check-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password, expectedToken }),
     });
-
-    const { valid } = await res.json();
+    const { valid } = await checkRes.json();
 
     if (!valid) {
       toast.error("Invalid password", { theme: "dark" });
       return;
     }
 
-    // password is valid → get JWT
-    const tokenRes = await fetch("/api/create-token", { method: "POST" });
+    const tokenRes = await fetch("/api/create-token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ route }),
+    });
     const { token } = await tokenRes.json();
-    localStorage.setItem("jwt_token", token);
+
+    if (route === "/") {
+      localStorage.setItem("public_jwt_token", token);
+    } else if (route === "/fd-command") {
+      localStorage.setItem("command_jwt_token", token);
+    }
 
     toast.success("Access granted!", { theme: "dark" });
 
