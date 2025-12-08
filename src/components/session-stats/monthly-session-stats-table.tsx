@@ -56,9 +56,13 @@ export function MonthlySessionStatsTable() {
   const [nameFilter, setNameFilter] = useState("");
   const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedMonth, setSelectedMonth] = useState(
-    new Date().toLocaleString("en-US", { month: "long" }),
-  );
+
+  const currentDate = new Date();
+  const currentMonth = currentDate.toLocaleString("en-US", { month: "long" });
+  const currentYear = currentDate.getFullYear().toString();
+
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
   const [totalMonthSessions, setTotalMonthSessions] = useState(0);
 
   useEffect(() => {
@@ -75,17 +79,38 @@ export function MonthlySessionStatsTable() {
     loadData();
   }, []);
 
+  const yearList = useMemo(() => {
+    if (!data?.length) return [currentYear];
+
+    const setYears = new Set<string>();
+
+    data.forEach((row) => {
+      const dateStr = row["Timestamp"] || row["Date"] || row["date"];
+      const d = new Date(dateStr);
+      if (!isNaN(d.getTime())) {
+        setYears.add(d.getFullYear().toString());
+      }
+    });
+
+    return Array.from(setYears).sort();
+  }, [data]);
+
   const monthData = useMemo(() => {
     if (!data?.length) return [];
 
     const counts: Record<string, number> = {};
+
     data.forEach((row) => {
       const dateStr = row["Timestamp"] || row["Date"] || row["date"];
       const name = String(row["Your Name"] || "").trim();
       const d = new Date(dateStr);
-      const month = d.toLocaleString("en-US", { month: "long" });
 
-      if (month === selectedMonth && name) {
+      if (isNaN(d.getTime())) return;
+
+      const month = d.toLocaleString("en-US", { month: "long" });
+      const year = d.getFullYear().toString();
+
+      if (month === selectedMonth && year === selectedYear && name) {
         counts[name] = (counts[name] || 0) + 1;
       }
     });
@@ -99,7 +124,7 @@ export function MonthlySessionStatsTable() {
     setTotalMonthSessions(total);
 
     return result;
-  }, [data, selectedMonth]);
+  }, [data, selectedMonth, selectedYear]);
 
   const tableRows = useMemo(() => {
     return monthData.filter((row) =>
@@ -133,11 +158,24 @@ export function MonthlySessionStatsTable() {
           <Skeleton className="h-10 w-full rounded" />
         ) : (
           <>
-            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-              <SelectTrigger className="w-[180px]  text-white border ">
-                <SelectValue placeholder="Select month" />
+            <Select value={selectedYear} onValueChange={setSelectedYear}>
+              <SelectTrigger className="w-[140px] text-white border">
+                <SelectValue placeholder="Year" />
               </SelectTrigger>
-              <SelectContent className=" text-gray-100 ">
+              <SelectContent className="text-gray-100">
+                {yearList.map((y) => (
+                  <SelectItem key={y} value={y}>
+                    {y}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+              <SelectTrigger className="w-[160px] text-white border">
+                <SelectValue placeholder="Month" />
+              </SelectTrigger>
+              <SelectContent className="text-gray-100">
                 {MONTHS.map((m) => (
                   <SelectItem key={m} value={m}>
                     {m}
@@ -155,9 +193,7 @@ export function MonthlySessionStatsTable() {
 
             <div className="text-xl">
               <span>Total Sessions: </span>
-              <span className="font-bold text-red-400">
-                {totalMonthSessions}
-              </span>
+              <span className="font-bold text-red-400">{totalMonthSessions}</span>
             </div>
           </>
         )}
