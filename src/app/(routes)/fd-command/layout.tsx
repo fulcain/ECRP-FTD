@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ProtectedView from "@/components/ProtectedView";
 
 export const metadata: Metadata = {
   title: "FTD App | Command Page",
@@ -10,5 +11,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <>{children}</>;
+  return (
+    <ProtectedView requiredKey="NEXT_PUBLIC_FTD_COMMAND_PASS">
+      {children}
+    </ProtectedView>
+  );
 }

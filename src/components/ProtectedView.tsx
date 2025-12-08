@@ -1,19 +1,28 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import LoginModal from "@/components/LoginModal";
+import { usePathname } from "next/navigation";
 
-export default function ProtectedView({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ProtectedView({ children }: { children: React.ReactNode }) {
   const [loggedIn, setLoggedIn] = useState(false);
   const [checked, setChecked] = useState(false);
+  const pathname = usePathname();
+
+  const routeTokens: Record<string, string> = {
+    "/": "NEXT_PUBLIC_SITE_PASS",
+    "/fd-command": "NEXT_PUBLIC_FTD_COMMAND_PASS",
+  };
+
+  const envVarName = routeTokens[pathname];
 
   useEffect(() => {
     const verify = async () => {
       const token = localStorage.getItem("jwt_token");
-      if (!token) return setChecked(true);
+      if (!token) {
+        setChecked(true);
+        return;
+      }
 
       const res = await fetch("/api/verify-token", {
         method: "POST",
@@ -22,14 +31,18 @@ export default function ProtectedView({
       });
 
       const { valid } = await res.json();
+
       if (valid) setLoggedIn(true);
       setChecked(true);
     };
 
     verify();
-  }, []);
+  }, [pathname]);
 
   if (!checked) return null;
-  if (!loggedIn) return <LoginModal onUnlockAction={() => setLoggedIn(true)} />;
+
+  if (!loggedIn)
+    return <LoginModal onUnlockAction={() => setLoggedIn(true)} expectedToken={envVarName} />;
+
   return <>{children}</>;
 }

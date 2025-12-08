@@ -14,8 +14,10 @@ import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginModal({
   onUnlockAction,
+  expectedToken,
 }: {
   onUnlockAction: () => void;
+  expectedToken: string; 
 }) {
   const [password, setPassword] = useState("");
   const [open, setOpen] = useState(true);
@@ -23,19 +25,31 @@ export default function LoginModal({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const pass = process.env.NEXT_PUBLIC_SITE_PASS;
-    if (password === pass) {
-      const res = await fetch("/api/create-token", { method: "POST" });
-      const { token } = await res.json();
-      localStorage.setItem("jwt_token", token);
-      toast.success("Access granted!", { theme: "dark" });
-      setTimeout(() => {
-        setOpen(false);
-        onUnlockAction();
-      }, 1000);
-    } else {
+
+    const res = await fetch("/api/check-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password, expectedToken }),
+    });
+
+    const { valid } = await res.json();
+
+    if (!valid) {
       toast.error("Invalid password", { theme: "dark" });
+      return;
     }
+
+    // password is valid → get JWT
+    const tokenRes = await fetch("/api/create-token", { method: "POST" });
+    const { token } = await tokenRes.json();
+    localStorage.setItem("jwt_token", token);
+
+    toast.success("Access granted!", { theme: "dark" });
+
+    setTimeout(() => {
+      setOpen(false);
+      onUnlockAction();
+    }, 500);
   }
 
   return (
@@ -55,13 +69,12 @@ export default function LoginModal({
                 onChange={(e) => setPassword(e.target.value)}
                 className="pr-10 py-5"
               />
-
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowPass((prev) => !prev)}
-                className="absolute right-2  top-[3px] text-gray-500"
+                className="absolute right-2 top-[3px] text-gray-500"
               >
                 {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
               </Button>

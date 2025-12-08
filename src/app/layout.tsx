@@ -23,7 +23,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          <ProtectedView>{children}</ProtectedView>
+          <ProtectedView requiredKey="NEXT_PUBLIC_SITE_PASS" >{children}</ProtectedView>
         </ThemeProvider>
       </body>
     </html>
