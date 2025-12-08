@@ -193,7 +193,9 @@ export function MonthlySessionStatsTable() {
 
             <div className="text-xl">
               <span>Total Sessions: </span>
-              <span className="font-bold text-red-400">{totalMonthSessions}</span>
+              <span className="font-bold text-red-400">
+                {totalMonthSessions}
+              </span>
             </div>
           </>
         )}

@@ -11,9 +11,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <ProtectedView requiredKey="NEXT_PUBLIC_FTD_COMMAND_PASS">
-      {children}
-    </ProtectedView>
-  );
+  return <ProtectedView>{children}</ProtectedView>;
 }

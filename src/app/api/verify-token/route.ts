@@ -9,7 +9,10 @@ export async function POST(req: NextRequest) {
   if (!token || !route) return NextResponse.json({ valid: false });
 
   try {
-    const decoded = jwt.verify(token, SECRET) as { route?: string; access?: boolean };
+    const decoded = jwt.verify(token, SECRET) as {
+      route?: string;
+      access?: boolean;
+    };
     const valid = decoded.access === true && decoded.route === route;
     return NextResponse.json({ valid });
   } catch {

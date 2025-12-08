@@ -18,8 +18,8 @@ export default function LoginModal({
   route,
 }: {
   onUnlockAction: () => void;
-  expectedToken: string; 
-  route: string;        
+  expectedToken: string;
+  route: string;
 }) {
   const [password, setPassword] = useState("");
   const [open, setOpen] = useState(true);

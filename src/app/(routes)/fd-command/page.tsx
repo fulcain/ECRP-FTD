@@ -1,5 +1,6 @@
 "use client";
 
+import { CurrentEMRsTable } from "@/components/current-emrs/current-emrs-table";
 import Image from "next/image";
 
 export type TableDataType = {
@@ -13,6 +14,8 @@ export default function Home() {
         <Image alt="FT" src="/FT.png" height={50} width={50} />
         <span>Command Page</span>
       </h1>
+
+      <CurrentEMRsTable />
     </div>
   );
 }

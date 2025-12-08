@@ -4,7 +4,11 @@ import { useState, useEffect } from "react";
 import LoginModal from "@/components/LoginModal";
 import { usePathname } from "next/navigation";
 
-export default function ProtectedView({ children }: { children: React.ReactNode }) {
+export default function ProtectedView({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [loggedIn, setLoggedIn] = useState(false);
   const [checked, setChecked] = useState(false);
   const pathname = usePathname();
@@ -18,7 +22,8 @@ export default function ProtectedView({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     const verify = async () => {
-      const tokenKey = pathname === "/" ? "public_jwt_token" : "command_jwt_token";
+      const tokenKey =
+        pathname === "/" ? "public_jwt_token" : "command_jwt_token";
       const token = localStorage.getItem(tokenKey);
       if (!token) {
         setChecked(true);
@@ -43,7 +48,13 @@ export default function ProtectedView({ children }: { children: React.ReactNode 
   if (!checked) return null;
 
   if (!loggedIn)
-    return <LoginModal onUnlockAction={() => setLoggedIn(true)} expectedToken={envVarName} route={pathname} />;
+    return (
+      <LoginModal
+        onUnlockAction={() => setLoggedIn(true)}
+        expectedToken={envVarName}
+        route={pathname}
+      />
+    );
 
   return <>{children}</>;
 }

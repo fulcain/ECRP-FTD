@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
 
   if (!password || !expectedToken) return NextResponse.json({ valid: false });
 
-  const secret = process.env[expectedToken]; 
+  const secret = process.env[expectedToken];
   const valid = password === secret;
 
   return NextResponse.json({ valid });
