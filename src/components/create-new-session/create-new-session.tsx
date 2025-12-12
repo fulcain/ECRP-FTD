@@ -21,6 +21,7 @@ import {
 import { fetchAllData } from "@/components/all-data-table/fetchAllData";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import { fetchEMRs } from "@/helpers/fetchEMRs";
 
 interface CreateNewSessionProps {
   setData: React.Dispatch<React.SetStateAction<any[]>>;
@@ -38,6 +39,7 @@ export function CreateNewSession({
   const [submitting, setSubmitting] = useState(false);
   const [nameSearch, setNameSearch] = useState("");
   const [dateOpen, setDateOpen] = useState(false);
+  const [EMRs, setEMRs] = useState<string[]>([]);
 
   const [form, setForm] = useState({
     yourName: "",
@@ -48,7 +50,7 @@ export function CreateNewSession({
     sessionConducted: "",
   });
 
-  // Fetch form names
+  // Fetch "Your Name" options
   useEffect(() => {
     const loadFormNames = async () => {
       try {
@@ -62,9 +64,21 @@ export function CreateNewSession({
     loadFormNames();
   }, [setDropdowns]);
 
+  // Fetch EMRs
+  useEffect(() => {
+    const loadEMRs = async () => {
+      try {
+        const emrs = await fetchEMRs();
+        if (emrs) setEMRs(emrs.map(String));
+      } catch (err) {
+        console.error("Error fetching EMRs:", err);
+      }
+    };
+    loadEMRs();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (
       !form.yourName ||
       !form.date ||
@@ -78,15 +92,12 @@ export function CreateNewSession({
     }
 
     setSubmitting(true);
-
     try {
-      // Convert time from "HH:MM" to "h:mm:ss AM/PM"
       const formatTime12h = (time24: string) => {
         const [hourStr, minute] = time24.split(":");
         let hour = parseInt(hourStr, 10);
         const ampm = hour >= 12 ? "PM" : "AM";
-        hour = hour % 12;
-        if (hour === 0) hour = 12;
+        hour = hour % 12 || 12;
         return `${hour}:${minute}:00 ${ampm}`;
       };
 
@@ -104,9 +115,8 @@ export function CreateNewSession({
       });
 
       const result = await res.json();
-
       if (result.success) {
-        toast.success("Session created successfully ", { theme: "dark" });
+        toast.success("Session created successfully", { theme: "dark" });
         setForm({
           yourName: "",
           date: undefined,
@@ -121,11 +131,11 @@ export function CreateNewSession({
       } else {
         toast.error(
           `Something went wrong: ${result.error ?? result.raw ?? "unknown error"}`,
-          { theme: "dark" },
+          { theme: "dark" }
         );
       }
     } catch (err) {
-      toast.error("Network error or Apps Script blocked ", { theme: "dark" });
+      toast.error("Network error or Apps Script blocked", { theme: "dark" });
       console.error(err);
     } finally {
       setSubmitting(false);
@@ -140,10 +150,7 @@ export function CreateNewSession({
         Create new FTD session
       </h2>
 
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 border p-4 rounded-lg"
-      >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 border p-4 rounded-lg">
         {/* Your Name */}
         <div className="flex flex-col gap-2">
           <Label>Your Name</Label>
@@ -161,10 +168,7 @@ export function CreateNewSession({
                 </div>
               ) : (
                 <>
-                  <div
-                    className="p-2 cursor-pointer"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                  <div className="p-2 cursor-pointer" onClick={(e) => e.stopPropagation()}>
                     <Input
                       placeholder="Search..."
                       value={nameSearch}
@@ -174,15 +178,9 @@ export function CreateNewSession({
                     />
                   </div>
                   {dropdowns.names
-                    .filter((name) =>
-                      name.toLowerCase().includes(nameSearch.toLowerCase()),
-                    )
+                    .filter((name) => name.toLowerCase().includes(nameSearch.toLowerCase()))
                     .map((name) => (
-                      <SelectItem
-                        className="cursor-pointer"
-                        key={name}
-                        value={name}
-                      >
+                      <SelectItem key={name} value={name}>
                         {name}
                       </SelectItem>
                     ))}
@@ -237,12 +235,39 @@ export function CreateNewSession({
         {/* EMR Name */}
         <div className="flex flex-col gap-2">
           <Label>{"EMR's Name"}</Label>
-          <Input
-            placeholder="Enter EMR's Name"
-            type="text"
+          <Select
             value={form.emrName}
-            onChange={(e) => setForm({ ...form, emrName: e.target.value })}
-          />
+            onValueChange={(v) => setForm({ ...form, emrName: v })}
+          >
+            <SelectTrigger className="cursor-pointer">
+              <SelectValue placeholder="Select EMR" />
+            </SelectTrigger>
+            <SelectContent>
+              {EMRs.length === 0 ? (
+                <div className="p-2 cursor-pointer">
+                  <Skeleton className="h-10 w-full rounded" />
+                </div>
+              ) : (
+                <>
+                  <div className="p-2 cursor-pointer" onClick={(e) => e.stopPropagation()}>
+                    <Input
+                      placeholder="Search EMR..."
+                      value={nameSearch}
+                      onChange={(e) => setNameSearch(e.target.value)}
+                      className="mb-2"
+                      autoFocus
+                    />
+                  </div>
+                  {EMRs.filter((emr) => emr.toLowerCase().includes(nameSearch.toLowerCase()))
+                    .map((emr) => (
+                      <SelectItem key={emr} value={emr}>
+                        {emr}
+                      </SelectItem>
+                    ))}
+                </>
+              )}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Session Conducted */}
