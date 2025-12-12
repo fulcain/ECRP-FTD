@@ -15,7 +15,6 @@ export async function fetchCurrentEMRs(): Promise<TableDataType[]> {
     });
 
     const rawData = parsed.data as TableDataType[];
-    console.log(rawData);
 
     // Slice from index 2 to skip the first row
     return rawData.slice(2);
