@@ -6,8 +6,8 @@ export async function GET() {
     return NextResponse.json({ error: "Sheet URL not set" }, { status: 500 });
 
   const response = await fetch(url);
-	const text = await response.text();
-	console.log(text)
+  const text = await response.text();
+  console.log(text);
 
   return new NextResponse(text, {
     headers: { "Content-Type": "text/csv" },

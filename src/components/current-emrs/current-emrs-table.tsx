@@ -79,13 +79,11 @@ export function CurrentEMRsTable() {
 
   return (
     <div className="space-y-4">
-			<CreateNewEMR setData={setData}/>
-
+      <CreateNewEMR setData={setData} />
 
       <h2 className="text-2xl md:text-3xl font-bold text-gray-300 mb-6">
         Current EMRs Table
-			</h2>
-
+      </h2>
 
       {/* Filters */}
       <div className="flex items-center py-4 space-x-4">

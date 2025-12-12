@@ -14,8 +14,8 @@ export async function fetchCurrentEMRs(): Promise<TableDataType[]> {
       skipEmptyLines: true,
     });
 
-		const rawData = parsed.data as TableDataType[];
-		console.log(rawData)
+    const rawData = parsed.data as TableDataType[];
+    console.log(rawData);
 
     // Slice from index 2 to skip the first row
     return rawData.slice(2);

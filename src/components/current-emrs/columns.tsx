@@ -13,7 +13,7 @@ const StatusBox = ({ value }: { value: string }) => {
 
 export function mapEmployeeDataRaw(rawData: TableDataType[]): TableDataType[] {
   return rawData.slice(1).map((row) => ({
-    EMR: row[""] ?? "", 
+    EMR: row[""] ?? "",
     "Start Date": row["_1"] ?? "",
     "Training Reminder Date": row["_2"] ?? "",
     "4 Weeks": row["_3"] ?? "",

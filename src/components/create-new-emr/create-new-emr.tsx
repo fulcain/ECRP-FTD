@@ -30,7 +30,7 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.EMR || !form.profileLink || !form.startDate || !form.trainingReminder || !form.fourWeeks) {
+    if (!form.EMR || !form.profileLink || !form.startDate || !form.fourWeeks) {
       toast.error("Fill all required fields", { theme: "dark" });
       return;
     }
@@ -66,7 +66,10 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
         const fresh = await fetchCurrentEMRs();
         setData(fresh);
       } else {
-        toast.error(`Something went wrong: ${result.error ?? result.raw ?? "unknown error"}`, { theme: "dark" });
+        toast.error(
+          `Something went wrong: ${result.error ?? result.raw ?? "unknown error"}`,
+          { theme: "dark" },
+        );
       }
     } catch (err) {
       toast.error("Network error or Apps Script blocked", { theme: "dark" });
@@ -84,7 +87,10 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
         Create New EMR Record
       </h2>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 border p-4 rounded-lg">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4 border p-4 rounded-lg"
+      >
         <div className="flex flex-col gap-2">
           <Label>EMR Name</Label>
           <Input
@@ -112,14 +118,7 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
           />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Label>Training Reminder Date</Label>
-          <Input
-            placeholder="Enter Date"
-            value={form.trainingReminder}
-            onChange={(e) => setForm({ ...form, trainingReminder: e.target.value })}
-          />
-        </div>
+        {/* trainingReminder removed from UI */}
 
         <div className="flex flex-col gap-2">
           <Label>4 Weeks</Label>
@@ -133,7 +132,9 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
         <div className="flex items-center gap-2">
           <Checkbox
             checked={form.reminderSent}
-            onCheckedChange={(checked) => setForm({ ...form, reminderSent: !!checked })}
+            onCheckedChange={(checked) =>
+              setForm({ ...form, reminderSent: !!checked })
+            }
           />
           <Label>Reminder Sent?</Label>
         </div>
@@ -141,7 +142,9 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
         <div className="flex items-center gap-2">
           <Checkbox
             checked={form.reinstatee}
-            onCheckedChange={(checked) => setForm({ ...form, reinstatee: !!checked })}
+            onCheckedChange={(checked) =>
+              setForm({ ...form, reinstatee: !!checked })
+            }
           />
           <Label>Reinstatee?</Label>
         </div>

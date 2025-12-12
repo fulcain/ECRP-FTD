@@ -22,9 +22,16 @@ export const generateColumns = (): ColumnDef<TableDataType>[] => [
       </Button>
     ),
     sortingFn: (rowA, rowB) => {
-      const a = new Date(rowA.getValue("Date") as string).getTime();
-      const b = new Date(rowB.getValue("Date") as string).getTime();
-      return a - b;
+      const dateA = rowA.getValue("Date") as string;
+      const dateB = rowB.getValue("Date") as string;
+
+      const finishA = rowA.getValue("Time Finish") as string;
+      const finishB = rowB.getValue("Time Finish") as string;
+
+      const tsA = new Date(`${dateA} ${finishA}`).getTime();
+      const tsB = new Date(`${dateB} ${finishB}`).getTime();
+
+      return tsA - tsB;
     },
   },
   {
