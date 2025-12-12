@@ -3,8 +3,9 @@ import { TableDataType } from "@/app/page";
 
 /**
  * Fetches and parses employee stats data from /api/current-emrs
+ * Returns an array of all EMR values (key "") after slicing the first two rows
  */
-export async function fetchCurrentEMRs(): Promise<TableDataType[]> {
+export async function fetchEMRs() {
   try {
     const res = await fetch("/api/current-emrs");
     const csvText = await res.text();
@@ -14,10 +15,11 @@ export async function fetchCurrentEMRs(): Promise<TableDataType[]> {
       skipEmptyLines: true,
     });
 
-    const rawData = parsed.data as TableDataType[];
+    const rawData = parsed.data.slice(2) as TableDataType[];
 
-    // Slice from index 2 to skip the first row
-    return rawData.slice(2);
+    const emrs = rawData.map((row) => row[""] || "");
+
+    return emrs;
   } catch (error) {
     console.error("Error fetching employee stats:", error);
     return [];
