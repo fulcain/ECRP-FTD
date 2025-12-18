@@ -30,7 +30,7 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.EMR || !form.profileLink || !form.startDate || !form.fourWeeks) {
+    if (!form.EMR || !form.profileLink || !form.trainingReminder || !form.startDate || !form.fourWeeks) {
       toast.error("Fill all required fields", { theme: "dark" });
       return;
     }
@@ -118,7 +118,15 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
           />
         </div>
 
-        {/* trainingReminder removed from UI */}
+				
+        <div className="flex flex-col gap-2">
+          <Label>Training Reminder Date</Label>
+          <Input
+            placeholder="Enter Date"
+            value={form.trainingReminder}
+            onChange={(e) => setForm({ ...form, trainingReminder: e.target.value })}
+          />
+        </div>
 
         <div className="flex flex-col gap-2">
           <Label>4 Weeks</Label>
@@ -127,16 +135,6 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
             value={form.fourWeeks}
             onChange={(e) => setForm({ ...form, fourWeeks: e.target.value })}
           />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Checkbox
-            checked={form.reminderSent}
-            onCheckedChange={(checked) =>
-              setForm({ ...form, reminderSent: !!checked })
-            }
-          />
-          <Label>Reminder Sent?</Label>
         </div>
 
         <div className="flex items-center gap-2">
