@@ -6,10 +6,12 @@ export async function POST(req: Request) {
   try {
     const res = await fetch(process.env.NEXT_PUBLIC_CREATE_CURRENT_EMR!, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(data),
+      redirect: "follow",
     });
-
     const text = await res.text();
     let result;
 

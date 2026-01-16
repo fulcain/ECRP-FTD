@@ -131,7 +131,7 @@ export function CreateNewSession({
       } else {
         toast.error(
           `Something went wrong: ${result.error ?? result.raw ?? "unknown error"}`,
-          { theme: "dark" }
+          { theme: "dark" },
         );
       }
     } catch (err) {
@@ -150,7 +150,10 @@ export function CreateNewSession({
         Create new FTD session
       </h2>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 border p-4 rounded-lg">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4 border p-4 rounded-lg"
+      >
         {/* Your Name */}
         <div className="flex flex-col gap-2">
           <Label>Your Name</Label>
@@ -168,7 +171,10 @@ export function CreateNewSession({
                 </div>
               ) : (
                 <>
-                  <div className="p-2 cursor-pointer" onClick={(e) => e.stopPropagation()}>
+                  <div
+                    className="p-2 cursor-pointer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Input
                       placeholder="Search..."
                       value={nameSearch}
@@ -178,7 +184,9 @@ export function CreateNewSession({
                     />
                   </div>
                   {dropdowns.names
-                    .filter((name) => name.toLowerCase().includes(nameSearch.toLowerCase()))
+                    .filter((name) =>
+                      name.toLowerCase().includes(nameSearch.toLowerCase()),
+                    )
                     .map((name) => (
                       <SelectItem key={name} value={name}>
                         {name}
@@ -249,7 +257,10 @@ export function CreateNewSession({
                 </div>
               ) : (
                 <>
-                  <div className="p-2 cursor-pointer" onClick={(e) => e.stopPropagation()}>
+                  <div
+                    className="p-2 cursor-pointer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Input
                       placeholder="Search EMR..."
                       value={nameSearch}
@@ -258,12 +269,13 @@ export function CreateNewSession({
                       autoFocus
                     />
                   </div>
-                  {EMRs.filter((emr) => emr.toLowerCase().includes(nameSearch.toLowerCase()))
-                    .map((emr) => (
-                      <SelectItem key={emr} value={emr}>
-                        {emr}
-                      </SelectItem>
-                    ))}
+                  {EMRs.filter((emr) =>
+                    emr.toLowerCase().includes(nameSearch.toLowerCase()),
+                  ).map((emr) => (
+                    <SelectItem key={emr} value={emr}>
+                      {emr}
+                    </SelectItem>
+                  ))}
                 </>
               )}
             </SelectContent>
