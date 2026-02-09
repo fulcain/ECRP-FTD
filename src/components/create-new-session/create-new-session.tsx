@@ -183,8 +183,7 @@ export function CreateNewSession({
                       autoFocus
                     />
                   </div>
-                  {dropdowns.names
-                    .filter((name) =>
+                  {dropdowns?.names?.filter((name) =>
                       name.toLowerCase().includes(nameSearch.toLowerCase()),
                     )
                     .map((name) => (

@@ -4,14 +4,18 @@ export async function POST(req: Request) {
   const data = await req.json();
 
   try {
-    const res = await fetch(process.env.NEXT_PUBLIC_CREATE_CURRENT_EMR!, {
+    const res = await fetch(process.env.NEXT_PUBLIC_FTD_SHEET_APPSCRIPT!, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        action: "create-new-emr", 
+        ...data
+      }),
       redirect: "follow",
     });
+    
     const text = await res.text();
     let result;
 
