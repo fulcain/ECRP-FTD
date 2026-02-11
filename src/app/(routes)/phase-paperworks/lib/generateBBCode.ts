@@ -1,53 +1,58 @@
 export function generateBBCode(
   values: Record<string, any>,
   phase: string,
-	sections:string[],
-	image?: string,
+  sections: string[],
+  image?: string,
 ) {
   const yesNo = (val: boolean) => (val ? "YES" : "NO");
   const cbCodeFts = values.ftsCompleted ? "[cbc]" : "[cb]";
-	const cbCodeIntroEmail = values.introEmailSent ? "[cbc]" : "[cb]";
-	const passedPreCert = values.passedPreCert ?"YES" : "NO";
-	const quizSent = values.wasQuizSent ? "YES" : "NO";
-	const medicalGiven = values.wasMedicalGiven ? "YES" : "NO";
-	const detailedNotesListType = values.detailedNotesListNone ? "none" : "";
-
+  const cbCodeIntroEmail = values.introEmailSent ? "[cbc]" : "[cb]";
+  const passedPreCert = values.passedPreCert ? "YES" : "NO";
+  const quizSent = values.wasQuizSent ? "YES" : "NO";
+  const medicalGiven = values.wasMedicalGiven ? "YES" : "NO";
+  const detailedNotesListType = values.detailedNotesListNone ? "none" : "";
 
   // 10-15 Call section
   const tenFifteenSection = `[list]
-${values.participated && values.tenFifteenCalls?.length
+${
+  values.participated && values.tenFifteenCalls?.length
     ? values.tenFifteenCalls
         .map(
           (call: any, index: number) =>
-            `[*]Call ${index + 1}: ${call.rating || "N/A"} - ${call.performanceNotes || "N/A"}`
+            `[*]Call ${index + 1}: ${call.rating || "N/A"} - ${call.performanceNotes || "N/A"}`,
         )
         .join("\n")
-    : "[*]N/A"}
+    : "[*]N/A"
+}
 [/list]`;
 
   // Optional sections
   const rideAlongSection = `[b]Ride-along Type:[/b] ${values.rideAlongType || ""}`;
-const detailedNotesSection =   `[b]${phase === "certPassed" || phase === "certFailed" ? "Certification Notes" : "Detailed Notes About Time Spent (Optional but strongly encouraged)"}:[/b]
+  const detailedNotesSection = `[b]${phase === "certPassed" || phase === "certFailed" ? "Certification Notes" : "Detailed Notes About Time Spent (Optional but strongly encouraged)"}:[/b]
 [list${detailedNotesListType ? `=${detailedNotesListType}` : ""}]
 ${values.detailedNotes}
 [/list]`;
 
-const issuesSection = sections.includes("issues") && values.issues
-  ? `[b]Issues:[/b]
+  const issuesSection =
+    sections.includes("issues") && values.issues
+      ? `[b]Issues:[/b]
 [list=none]
 ${values.issues}
-[/list]` : "";
+[/list]`
+      : "";
 
-const reasonFailureSection = sections.includes("failedCert") && values.reasonFailure
-  ? `[b]Reason for Failure:[/b]
+  const reasonFailureSection =
+    sections.includes("failedCert") && values.reasonFailure
+      ? `[b]Reason for Failure:[/b]
 [list=none]
 ${values.reasonFailure}
 [/list]`
-  : "";
+      : "";
 
   // Notes for next training (skip for introduction & certPassed)
-  const notesNextTrainingSection = sections.includes("nextTraining") && phase !== "certFailed" ?
-       `[lsemssubtitle]NOTES FOR NEXT TRAINING SESSION[/lsemssubtitle]
+  const notesNextTrainingSection =
+    sections.includes("nextTraining") && phase !== "certFailed"
+      ? `[lsemssubtitle]NOTES FOR NEXT TRAINING SESSION[/lsemssubtitle]
 [divbox=white]
 [b]Additional Mandatories given:[/b] ${values.additionalMandatories || "0"}
 [color=transparent]spacer[/color]
@@ -55,9 +60,11 @@ ${values.reasonFailure}
 [list=none]
 ${values.notesNextTraining || ""}
 [/list]
-[/divbox]` : "";
+[/divbox]`
+      : "";
 
-	const notesForPreCert = sections.includes("preCertNotes") ? `[lsemssubtitle]NOTES FOR CERTIFICATION[/lsemssubtitle]
+  const notesForPreCert = sections.includes("preCertNotes")
+    ? `[lsemssubtitle]NOTES FOR CERTIFICATION[/lsemssubtitle]
 [divbox=white]
 [color=transparent]spacer[/color]
 [b]What should be observed during next session:[/b][list=none]
@@ -70,17 +77,21 @@ ${passedPreCert}
 [b]If the EMR failed the Pre-Certification, was the EMR sent the quiz?[/b] (Ignore if not relevant)
 ${quizSent}
 [/list]
-[/divbox]` : ""
+[/divbox]`
+    : "";
 
-const notesForPassedCert = sections.includes("passedCertNotes") ? `[b][lsemssubtitle]PASSED CERTIFICATION NOTES:[/lsemssubtitle][/b]
+  const notesForPassedCert = sections.includes("passedCertNotes")
+    ? `[b][lsemssubtitle]PASSED CERTIFICATION NOTES:[/lsemssubtitle][/b]
 [divbox=white]
 [b] Call sign given: [/b] ECHO-${values.callsign}
 
 [b] Medical license given? [/b] ${medicalGiven}
 
-[/divbox]` : "";
+[/divbox]`
+    : "";
 
-const notesForFailedCert = sections.includes("failedCert") ? `[b][lsemssubtitle]CERTIFICATION FAILED NOTES:[/lsemssubtitle][/b]
+  const notesForFailedCert = sections.includes("failedCert")
+    ? `[b][lsemssubtitle]CERTIFICATION FAILED NOTES:[/lsemssubtitle][/b]
 [divbox=white]
 ${reasonFailureSection}
 
@@ -90,7 +101,8 @@ ${reasonFailureSection}
 ${values.notesNextTraining}
 
 [/list]
-[/divbox]` : "";
+[/divbox]`
+    : "";
 
   // Signature section
   const signatureSection = `[lsemssubtitle]SIGNATURE[/lsemssubtitle]

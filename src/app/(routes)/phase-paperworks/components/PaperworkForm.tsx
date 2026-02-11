@@ -40,11 +40,11 @@ export default function PaperworkForm() {
     rank: "",
     rideAlongType: "",
     ftsCompleted: false,
-		introEmailSent: false,
-		passedPreCert: false,
-		wasQuizSent: false,
-		wasMedicalGiven: false,
-		callsign:0,
+    introEmailSent: false,
+    passedPreCert: false,
+    wasQuizSent: false,
+    wasMedicalGiven: false,
+    callsign: 0,
     additionalMandatories: "",
     notesNextTraining: "",
   });
@@ -81,7 +81,12 @@ export default function PaperworkForm() {
   const config = paperworkConfig[phase];
 
   const generate = () => {
-    const bbcode = generateBBCode(form, phase, config.sections, config.image || undefined);
+    const bbcode = generateBBCode(
+      form,
+      phase,
+      config.sections,
+      config.image || undefined,
+    );
     setOutput(bbcode);
     setCopied(false);
   };
@@ -350,98 +355,85 @@ export default function PaperworkForm() {
             />
           </div>
           <Separator />
-					{/* introduction email sent Checkbox */}
-					{phase === "introduction" && (
-						<>
-
-							<div className="flex flex-row gap-2 items-center justify-start">
-								<Label className="cursor-pointer">
-									Introduction email sent Completed
-								</Label>
-								<Checkbox
-									checked={form.introEmailSent}
-									onCheckedChange={(val) => update("introEmailSent", val)}
-								/>
-							</div>
-							<Separator />
-						</>
-					)}
-										{/* Pre Cert Passed */}
-					{phase === "preCert" && (
-						<>
-
-							<div className="flex flex-row gap-2 items-center justify-start">
-								<Label className="cursor-pointer">
-									Pre Cert Passed
-								</Label>
-								<Checkbox
-									checked={form.passedPreCert}
-									onCheckedChange={(val) => update("passedPreCert", val)}
-								/>
-							</div>
-							<Separator />
-						</>
-					)}
-					{/* Quiz sent */}
-					{phase === "preCert" && (
-						<>
-
-							<div className="flex flex-row gap-2 items-center justify-start">
-								<Label className="cursor-pointer">
-									Was the quiz sent?
-								</Label>
-								<span className="text-sm text-gray-400">
-									Only check this if they failed their Pre-Certification
+          {/* introduction email sent Checkbox */}
+          {phase === "introduction" && (
+            <>
+              <div className="flex flex-row gap-2 items-center justify-start">
+                <Label className="cursor-pointer">
+                  Introduction email sent Completed
+                </Label>
+                <Checkbox
+                  checked={form.introEmailSent}
+                  onCheckedChange={(val) => update("introEmailSent", val)}
+                />
+              </div>
+              <Separator />
+            </>
+          )}
+          {/* Pre Cert Passed */}
+          {phase === "preCert" && (
+            <>
+              <div className="flex flex-row gap-2 items-center justify-start">
+                <Label className="cursor-pointer">Pre Cert Passed</Label>
+                <Checkbox
+                  checked={form.passedPreCert}
+                  onCheckedChange={(val) => update("passedPreCert", val)}
+                />
+              </div>
+              <Separator />
+            </>
+          )}
+          {/* Quiz sent */}
+          {phase === "preCert" && (
+            <>
+              <div className="flex flex-row gap-2 items-center justify-start">
+                <Label className="cursor-pointer">Was the quiz sent?</Label>
+                <span className="text-sm text-gray-400">
+                  Only check this if they failed their Pre-Certification
                 </span>
 
-								<Checkbox
-									checked={form.wasQuizSent}
-									onCheckedChange={(val) => update("wasQuizSent", val)}
-								/>
-							</div>
-							<Separator />
-						</>
-					)}
+                <Checkbox
+                  checked={form.wasQuizSent}
+                  onCheckedChange={(val) => update("wasQuizSent", val)}
+                />
+              </div>
+              <Separator />
+            </>
+          )}
 
-					{/* Medical License */}
-					{phase === "certPassed" && (
-						<>
+          {/* Medical License */}
+          {phase === "certPassed" && (
+            <>
+              <div className="flex flex-row gap-2 items-center justify-start">
+                <Label className="cursor-pointer">
+                  Was the medical license given? (( /givemedical ))
+                </Label>
 
-							<div className="flex flex-row gap-2 items-center justify-start">
-								<Label className="cursor-pointer">
-									Was the medical license given? (( /givemedical ))
-								</Label>
+                <Checkbox
+                  checked={form.wasMedicalGiven}
+                  onCheckedChange={(val) => update("wasMedicalGiven", val)}
+                />
+              </div>
+              <Separator />
+            </>
+          )}
 
-								<Checkbox
-									checked={form.wasMedicalGiven}
-									onCheckedChange={(val) => update("wasMedicalGiven", val)}
-								/>
-							</div>
-							<Separator />
-						</>
-					)}
+          {/* Medical License */}
+          {phase === "certPassed" && (
+            <>
+              <div className="flex flex-row gap-2 items-center justify-start">
+                <Label className="cursor-pointer">Call sign:</Label>
 
-					{/* Medical License */}
-					{phase === "certPassed" && (
-						<>
-
-							<div className="flex flex-row gap-2 items-center justify-start">
-								<Label className="cursor-pointer">
-									Call sign:
-								</Label>
-
-
-								<Input className="max-w-40"
-									 placeholder="Enter a number"
-              value={form.callsign}
-									onChange={(e) => update("callsign", e.target.value)}/>
-
-							</div>
-							<Separator />
-						</>
-					)}
-
-
+                <Input
+                  className="max-w-40"
+                  placeholder="Enter a number"
+                  value={form.callsign}
+                  onChange={(e) => update("callsign", e.target.value)}
+                />
+              </div>
+              <Separator />
+            </>
+          )}
         </CardContent>
       </Card>
 

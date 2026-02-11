@@ -35,16 +35,16 @@ export const paperworkConfig: Record<
   preCert: {
     label: "Pre-Certification",
     image: "https://i.imgur.com/p33kyzm.png",
-    sections: ["tenFifteen", "detailedNotes","preCertNotes"],
+    sections: ["tenFifteen", "detailedNotes", "preCertNotes"],
   },
   certPassed: {
     label: "Certification Passed",
     image: "https://i.imgur.com/huDCbJP.png",
-    sections: ["tenFifteen", "detailedNotes","passedCertNotes"],
+    sections: ["tenFifteen", "detailedNotes", "passedCertNotes"],
   },
   certFailed: {
     label: "Certification Failed",
-			image: "https://i.imgur.com/huDCbJP.png",
+    image: "https://i.imgur.com/huDCbJP.png",
     sections: ["tenFifteen", "detailedNotes", "failedCert", "nextTraining"],
   },
   rideAlong: {
