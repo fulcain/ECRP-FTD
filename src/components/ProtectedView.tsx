@@ -20,6 +20,10 @@ export default function ProtectedView({
 
   const envVarName = routeTokens[pathname];
 
+  if (!envVarName) {
+    return <>{children}</>;
+  }
+
   useEffect(() => {
     const verify = async () => {
       const tokenKey =

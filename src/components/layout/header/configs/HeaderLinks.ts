@@ -5,6 +5,7 @@ export type HeaderLink = {
 };
 
 export const headerLinks: HeaderLink[] = [
+  { label: "Phase Paperworks", href: "/phase-paperworks" },
   {
     label: "FT Sessions",
     href: "/",

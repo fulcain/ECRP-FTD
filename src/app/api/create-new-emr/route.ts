@@ -10,12 +10,12 @@ export async function POST(req: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        action: "create-new-emr", 
-        ...data
+        action: "create-new-emr",
+        ...data,
       }),
       redirect: "follow",
     });
-    
+
     const text = await res.text();
     let result;
 

@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { Header } from "@/components/layout/header/header";
-import ProtectedView from "@/components/ProtectedView";
 
 export const metadata: Metadata = {
   title: "FTD App | FTD Members",
@@ -23,7 +22,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          <ProtectedView>{children}</ProtectedView>
+          {children}
         </ThemeProvider>
       </body>
     </html>
