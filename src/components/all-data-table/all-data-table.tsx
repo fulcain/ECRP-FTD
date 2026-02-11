@@ -68,17 +68,28 @@ export function AllDataTable() {
     loadData();
   }, []);
 
-  const filteredData = useMemo(() => {
-    if (!startDate && !endDate) return data;
-    return data.filter((row) => {
+const filteredData = useMemo(() => {
+  if (!startDate && !endDate) return [...data].sort((a, b) => {
+    const aDate = a.Date ? new Date(a.Date) : new Date(0);
+    const bDate = b.Date ? new Date(b.Date) : new Date(0);
+    return bDate.getTime() - aDate.getTime(); // newest first
+  });
+
+  return data
+    .filter((row) => {
       const dateStr = row["Date"] as string | undefined;
       if (!dateStr) return true;
       const rowDate = new Date(dateStr);
       if (startDate && isBefore(rowDate, startDate)) return false;
       if (endDate && isAfter(rowDate, endDate)) return false;
       return true;
+    })
+    .sort((a, b) => {
+      const aDate = a.Date ? new Date(a.Date) : new Date(0);
+      const bDate = b.Date ? new Date(b.Date) : new Date(0);
+      return bDate.getTime() - aDate.getTime(); // newest first
     });
-  }, [data, startDate, endDate]);
+}, [data, startDate, endDate]);
 
   const table = useReactTable({
     data: filteredData,
