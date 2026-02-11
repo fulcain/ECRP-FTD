@@ -20,11 +20,9 @@ export default function ProtectedView({
 
   const envVarName = routeTokens[pathname];
 
-  if (!envVarName) {
-    return <>{children}</>;
-  }
-
   useEffect(() => {
+    if (!envVarName) return; // no verification needed
+
     const verify = async () => {
       const tokenKey =
         pathname === "/" ? "public_jwt_token" : "command_jwt_token";
@@ -47,8 +45,10 @@ export default function ProtectedView({
     };
 
     verify();
-  }, [pathname]);
+  }, [pathname, envVarName]);
 
+  // ✅ Conditional rendering after hooks
+  if (!envVarName) return <>{children}</>;
   if (!checked) return null;
 
   if (!loggedIn)
