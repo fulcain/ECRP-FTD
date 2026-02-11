@@ -69,24 +69,28 @@ export function AllDataTable() {
   }, []);
 
 const filteredData = useMemo(() => {
-  if (!startDate && !endDate) return [...data].sort((a, b) => {
-    const aDate = a.Date ? new Date(a.Date) : new Date(0);
-    const bDate = b.Date ? new Date(b.Date) : new Date(0);
-    return bDate.getTime() - aDate.getTime(); // newest first
-  });
+  const getRowStartDate = (row: TableDataType) => {
+    if (!row.Date || !row["Time Start"]) return new Date(0);
+
+    const dateStr = String(row.Date);
+    const timeStr = String(row["Time Start"]);
+
+    const [month, day, year] = dateStr.split("/").map(Number);
+    const [hour, minute] = timeStr.split(":").map(Number);
+
+    return new Date(year, month - 1, day, hour, minute);
+  };
 
   return data
     .filter((row) => {
-      const dateStr = row["Date"] as string | undefined;
-      if (!dateStr) return true;
-      const rowDate = new Date(dateStr);
-      if (startDate && isBefore(rowDate, startDate)) return false;
-      if (endDate && isAfter(rowDate, endDate)) return false;
+      const rowStartDate = getRowStartDate(row);
+      if (startDate && isBefore(rowStartDate, startDate)) return false;
+      if (endDate && isAfter(rowStartDate, endDate)) return false;
       return true;
     })
     .sort((a, b) => {
-      const aDate = a.Date ? new Date(a.Date) : new Date(0);
-      const bDate = b.Date ? new Date(b.Date) : new Date(0);
+      const aDate = getRowStartDate(a);
+      const bDate = getRowStartDate(b);
       return bDate.getTime() - aDate.getTime(); // newest first
     });
 }, [data, startDate, endDate]);
