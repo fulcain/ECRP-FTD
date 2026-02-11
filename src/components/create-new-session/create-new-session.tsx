@@ -46,7 +46,8 @@ export function CreateNewSession({
     date: undefined as Date | undefined,
     timeStart: "",
     timeFinish: "",
-    emrName: "",
+    emrName: "", 
+    emrNameManual: "", 
     sessionConducted: "",
   });
 
@@ -79,12 +80,15 @@ export function CreateNewSession({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const emrNameToUse = form.emrName || form.emrNameManual;
+
     if (
       !form.yourName ||
       !form.date ||
       !form.timeStart ||
       !form.timeFinish ||
-      !form.emrName ||
+      !emrNameToUse ||
       !form.sessionConducted
     ) {
       toast.error("Fill all the fields", { theme: "dark" });
@@ -103,6 +107,7 @@ export function CreateNewSession({
 
       const payload = {
         ...form,
+        emrName: emrNameToUse,
         timeStart: formatTime12h(form.timeStart),
         timeFinish: formatTime12h(form.timeFinish),
         date: format(form.date!, "MM/dd/yyyy"),
@@ -123,6 +128,7 @@ export function CreateNewSession({
           timeStart: "",
           timeFinish: "",
           emrName: "",
+          emrNameManual: "",
           sessionConducted: "",
         });
 
@@ -243,6 +249,8 @@ export function CreateNewSession({
         {/* EMR Name */}
         <div className="flex flex-col gap-2">
           <Label>{"EMR's Name"}</Label>
+
+          {/* Select dropdown */}
           <Select
             value={form.emrName}
             onValueChange={(v) => setForm({ ...form, emrName: v })}
@@ -280,6 +288,15 @@ export function CreateNewSession({
               )}
             </SelectContent>
           </Select>
+
+          {/* Manual text input fallback */}
+          <Input
+            placeholder="Or type EMR name manually"
+            value={form.emrNameManual}
+            onChange={(e) =>
+              setForm({ ...form, emrNameManual: e.target.value })
+            }
+          />
         </div>
 
         {/* Session Conducted */}
