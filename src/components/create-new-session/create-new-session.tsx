@@ -81,6 +81,7 @@ export function CreateNewSession({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // prioritize select over manual input
     const emrNameToUse = form.emrName || form.emrNameManual;
 
     if (
@@ -110,7 +111,7 @@ export function CreateNewSession({
         emrName: emrNameToUse,
         timeStart: formatTime12h(form.timeStart),
         timeFinish: formatTime12h(form.timeFinish),
-        date: format(form.date!, "MM/dd/yyyy"),
+		date: format(form.date!, "M/d/yyyy"),
       };
 
       const res = await fetch("/api/create-session", {
@@ -291,7 +292,7 @@ export function CreateNewSession({
 
           {/* Manual text input fallback */}
           <Input
-            placeholder="Or type EMR name manually"
+            placeholder="Type EMR name manually"
             value={form.emrNameManual}
             onChange={(e) =>
               setForm({ ...form, emrNameManual: e.target.value })
