@@ -280,8 +280,7 @@ export default function PaperworkForm() {
                 </div>
 
                 <span className="text-sm text-gray-400">
-                  If you want your notes to be in bullet style, check the above
-                  and write each note with a [*] at the start of it
+                  If you DONT want your notes to be in bullet style check the box above.
                 </span>
               </div>
             </>
