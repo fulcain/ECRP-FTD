@@ -42,7 +42,7 @@ ${values.issues}
       : "";
 
   const reasonFailureSection =
-    sections.includes("failedCert") && values.reasonFailure
+    sections.includes("failedCert") 
       ? `[b]Reason for Failure:[/b]
 [list=none]
 ${values.reasonFailure}
@@ -127,33 +127,38 @@ ${values.issues || "X"}
 [/divbox]
 ${signatureSection}
 [lsemsfooter][/lsemsfooter]`;
-  }
+	}
 
-  // All other phases
-  return `${image ? `[img]${image}[/img]` : ""}
-[lsemssubtitle]SESSION DETAILS:[/lsemssubtitle]
+// dynamic content safely
+const sessionDetailsParts = [
+  values.rideAlongType ? rideAlongSection : "",
+  `[b]Time Started:[/b] ${values.timeStarted || ""}`,
+  `[b]Time Ended:[/b] ${values.timeStarted || ""}`,
+  `[b]Did the EMR participate in a 10-15 call?[/b] ${yesNo(values.participated)}
+[i]If Yes, rate their performance (1-5). Explain any issues if performance was poor:[/i]`,
+  tenFifteenSection,
+  `[color=transparent]spacer[/color]`,
+  detailedNotesSection,
+  issuesSection,
+].filter(Boolean);
+
+	const postSessionSections = [
+  notesForPreCert,
+  notesForPassedCert,
+  notesForFailedCert,
+  notesNextTrainingSection,
+].filter(Boolean);
+
+
+return `${image ? `[img]${image}[/img]\n` : ""}[lsemssubtitle]SESSION DETAILS:[/lsemssubtitle]
 [divbox=white]
 
-${values.rideAlongType ? rideAlongSection : ""}
-
-[b]Time Started:[/b] ${values.timeStarted || ""}
-
-[b]Time Ended:[/b] ${values.timeEnded || ""}
-
-[b]Did the EMR participate in a 10-15 call?[/b] ${yesNo(values.participated)}
-[i]If Yes, rate their performance (1-5). Explain any issues if performance was poor:[/i]
-${tenFifteenSection}
-[color=transparent]spacer[/color]
-${detailedNotesSection}
-${issuesSection}
+${sessionDetailsParts.join("\n\n")}
 [/divbox]
-${notesForPreCert}
-${notesForPassedCert}
-${notesForFailedCert}
-${notesNextTrainingSection}
+${postSessionSections.join("\n")}
 [lsemssubtitle]Field Training Session Report[/lsemssubtitle]
 [divbox=white]
-[b]Click [url=https://forms.gle/BJ6iLg5Fkf9Ug6fE6]here[/url] to submit your Field Training Session Report.[/b] ${cbCodeFts} [i](Please add a 'cbc' in the box if completed.)[/i]
+[b]Click [url=https://docs.google.com/forms/d/e/1FAIpQLSdRDNSsxhEgMgegEoDdd1NURAB84RgPKwaK34nD2emK2k24sg/viewform]here[/url] to submit your Field Training Session Report.[/b] ${cbCodeFts} [i](Please add a 'cbc' in the box if completed.)[/i]
 [/divbox]
 ${signatureSection}
 [lsemsfooter][/lsemsfooter]`;
