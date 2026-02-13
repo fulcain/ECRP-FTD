@@ -1,3 +1,4 @@
+
 export function generateBBCode(
   values: Record<string, any>,
   phase: string,
@@ -107,7 +108,7 @@ ${values.notesNextTraining}
   // Signature section
   const signatureSection = `[lsemssubtitle]SIGNATURE[/lsemssubtitle]
 [divbox=white]
-${values.signature || ""}
+[img]${values.signature || ""}[/img]
 ${values.rank || ""}
 [/divbox]`;
 
@@ -121,7 +122,7 @@ ${values.rank || ""}
 [*][b]Time Ended:[/b] ${values.timeEnded || ""}
 [*][b]If there were any issues, describe them below:[/b]
 ${values.issues || "X"}
-[*][b]Click [url=https://forms.gle/BJ6iLg5Fkf9Ug6fE6]here[/url] to submit your Field Training Session Report.[/b] ${cbCodeFts} [i](Please add a 'cbc' in the box if completed.)[/i]
+[*][b]Click [url=https://forms.gle/BJ7iLg5Fkf9Ug6fE6]here[/url] to submit your Field Training Session Report.[/b] ${cbCodeFts} [i](Please add a 'cbc' in the box if completed.)[/i]
 [*][b]Checked if the EMR was sent the Introduction Email?[/b] ${cbCodeIntroEmail} [i](Please add a 'cbc' in the box if completed.)[/i]
 [/list]
 [/divbox]

@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   paperworkConfig,
   PhaseKey,
 } from "@/app/(routes)/phase-paperworks/lib/paperworkConfig";
 import { generateBBCode } from "@/app/(routes)/phase-paperworks/lib/generateBBCode";
+import { useLocalStorage } from "@/app/hooks/useLocalStorage";
+import { toast, ToastContainer } from "react-toastify";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +27,12 @@ import {
 export default function PaperworkForm() {
   const [phase, setPhase] = useState<PhaseKey>("introduction");
   const [output, setOutput] = useState("");
-  const [copied, setCopied] = useState(false);
+	const [copied, setCopied] = useState(false);
+
+	  const [ftdDetails, setFtdDetails] = useLocalStorage("ftd-details", {
+    signature: "",
+    rank: "",
+  });
 
   const [form, setForm] = useState<any>({
     timeStarted: "",
@@ -48,6 +55,27 @@ export default function PaperworkForm() {
     additionalMandatories: "",
     notesNextTraining: "",
   });
+
+  // Load saved signature + rank into form on mount
+  useEffect(() => {
+    if (ftdDetails?.signature || ftdDetails?.rank) {
+      setForm((prev: any) => ({
+        ...prev,
+        signature: ftdDetails.signature,
+        rank: ftdDetails.rank,
+      }));
+    }
+	}, []);
+
+	
+  const saveFtdDetails = () => {
+    setFtdDetails({
+      signature: form.signature,
+      rank: form.rank,
+		});
+		        toast.success("Saved to browser", { theme: "dark" });
+  };
+
 
   const update = (key: string, value: any) => {
     setForm((prev: any) => ({ ...prev, [key]: value }));
@@ -94,11 +122,51 @@ export default function PaperworkForm() {
   const copyToClipboard = async () => {
     if (!output) return;
     await navigator.clipboard.writeText(output);
-    setCopied(true);
+		setCopied(true);
+
+        toast.success("Copied!", { theme: "dark" });
   };
 
-  return (
-    <div className="max-w-5xl mx-auto py-10 px-6 space-y-8">
+	return (
+		<>
+
+      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
+		<div className="max-w-5xl mx-auto py-10 px-6 space-y-8">
+
+			      <Card className="shadow-sm">
+        <CardHeader>
+          <CardTitle>Saved FTO Details</CardTitle>
+        </CardHeader>
+        <CardContent className="grid md:grid-cols-3 gap-4 items-end">
+						<div className="space-y-2">
+							<div className="flex flex-row gap-1" >
+
+								<Label>Signature</Label>
+
+								<span className="text-sm text-gray-400">
+									(Provide a link only)
+								</span>
+							</div>
+            <Input
+              value={form.signature}
+              onChange={(e) => update("signature", e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Rank</Label>
+            <Input
+              value={form.rank}
+              onChange={(e) => update("rank", e.target.value)}
+            />
+          </div>
+
+          <Button onClick={saveFtdDetails}>
+            Save to Browser
+          </Button>
+        </CardContent>
+			</Card>
+
       {/* Phase Selection */}
       <Card className="shadow-sm">
         <CardHeader>
@@ -436,30 +504,6 @@ export default function PaperworkForm() {
         </CardContent>
       </Card>
 
-      {/* Signature */}
-      <Card className="shadow-sm">
-        <CardHeader>
-          <CardTitle>Signature</CardTitle>
-        </CardHeader>
-
-        <CardContent className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label>Signature</Label>
-            <Input
-              value={form.signature}
-              onChange={(e) => update("signature", e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Rank</Label>
-            <Input
-              value={form.rank}
-              onChange={(e) => update("rank", e.target.value)}
-            />
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Actions */}
       <div className="flex flex-wrap gap-4">
@@ -467,7 +511,7 @@ export default function PaperworkForm() {
           Generate BBCode
         </Button>
 
-        <Button size="lg" variant="secondary" onClick={copyToClipboard}>
+        <Button disabled={!output} size="lg" variant="secondary" onClick={copyToClipboard}>
           {copied ? "Copied to Clipboard" : "Copy to Clipboard"}
         </Button>
       </div>
@@ -487,6 +531,7 @@ export default function PaperworkForm() {
           </CardContent>
         </Card>
       )}
-    </div>
+	</div>
+			</>
   );
 }
