@@ -34,7 +34,7 @@ export default function PaperworkForm() {
     rank: "",
   });
 
-  const [form, setForm] = useState<any>({
+  const initialFormState = {
     timeStarted: "",
     timeEnded: "",
     participated: false,
@@ -54,7 +54,9 @@ export default function PaperworkForm() {
     callsign: 0,
     additionalMandatories: "",
     notesNextTraining: "",
-  });
+  };
+
+  const [form, setForm] = useState<any>(initialFormState);
 
   // Load saved signature + rank into form on mount
   useEffect(() => {
@@ -66,6 +68,19 @@ export default function PaperworkForm() {
       }));
     }
   }, []);
+
+  const clearAllFields = () => {
+    setForm((prev: any) => ({
+      ...initialFormState,
+      signature: prev.signature,
+      rank: prev.rank,
+    }));
+
+    setOutput("");
+    setCopied(false);
+
+    toast.info("All fields cleared", { theme: "dark" });
+  };
 
   const saveFtdDetails = () => {
     setFtdDetails({
@@ -513,6 +528,15 @@ export default function PaperworkForm() {
             onClick={copyToClipboard}
           >
             {copied ? "Copied to Clipboard" : "Copy to Clipboard"}
+          </Button>
+
+          <Button
+            size="lg"
+            variant="destructive"
+            type="button"
+            onClick={clearAllFields}
+          >
+            Clear All Fields
           </Button>
         </div>
 
