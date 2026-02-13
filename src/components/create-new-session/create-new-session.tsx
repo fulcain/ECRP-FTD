@@ -46,8 +46,8 @@ export function CreateNewSession({
     date: undefined as Date | undefined,
     timeStart: "",
     timeFinish: "",
-    emrName: "", 
-    emrNameManual: "", 
+    emrName: "",
+    emrNameManual: "",
     sessionConducted: "",
   });
 
@@ -111,7 +111,7 @@ export function CreateNewSession({
         emrName: emrNameToUse,
         timeStart: formatTime12h(form.timeStart),
         timeFinish: formatTime12h(form.timeFinish),
-		date: format(form.date!, "M/dd/yyyy"),
+        date: format(form.date!, "M/dd/yyyy"),
       };
 
       const res = await fetch("/api/create-session", {

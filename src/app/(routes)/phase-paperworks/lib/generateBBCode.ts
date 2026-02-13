@@ -1,4 +1,3 @@
-
 export function generateBBCode(
   values: Record<string, any>,
   phase: string,
@@ -42,13 +41,12 @@ ${values.issues}
 [/list]`
       : "";
 
-  const reasonFailureSection =
-    sections.includes("failedCert") 
-      ? `[b]Reason for Failure:[/b]
+  const reasonFailureSection = sections.includes("failedCert")
+    ? `[b]Reason for Failure:[/b]
 [list=none]
 ${values.reasonFailure}
 [/list]`
-      : "";
+    : "";
 
   // Notes for next training (skip for introduction & certPassed)
   const notesNextTrainingSection =
@@ -128,30 +126,29 @@ ${values.issues || "X"}
 [/divbox]
 ${signatureSection}
 [lsemsfooter][/lsemsfooter]`;
-	}
+  }
 
-// dynamic content safely
-const sessionDetailsParts = [
-  values.rideAlongType ? rideAlongSection : "",
-  `[b]Time Started:[/b] ${values.timeStarted || ""}`,
-  `[b]Time Ended:[/b] ${values.timeStarted || ""}`,
-  `[b]Did the EMR participate in a 10-15 call?[/b] ${yesNo(values.participated)}
+  // dynamic content safely
+  const sessionDetailsParts = [
+    values.rideAlongType ? rideAlongSection : "",
+    `[b]Time Started:[/b] ${values.timeStarted || ""}`,
+    `[b]Time Ended:[/b] ${values.timeStarted || ""}`,
+    `[b]Did the EMR participate in a 10-15 call?[/b] ${yesNo(values.participated)}
 [i]If Yes, rate their performance (1-5). Explain any issues if performance was poor:[/i]`,
-  tenFifteenSection,
-  `[color=transparent]spacer[/color]`,
-  detailedNotesSection,
-  issuesSection,
-].filter(Boolean);
+    tenFifteenSection,
+    `[color=transparent]spacer[/color]`,
+    detailedNotesSection,
+    issuesSection,
+  ].filter(Boolean);
 
-	const postSessionSections = [
-  notesForPreCert,
-  notesForPassedCert,
-  notesForFailedCert,
-  notesNextTrainingSection,
-].filter(Boolean);
+  const postSessionSections = [
+    notesForPreCert,
+    notesForPassedCert,
+    notesForFailedCert,
+    notesNextTrainingSection,
+  ].filter(Boolean);
 
-
-return `${image ? `[img]${image}[/img]\n` : ""}[lsemssubtitle]SESSION DETAILS:[/lsemssubtitle]
+  return `${image ? `[img]${image}[/img]\n` : ""}[lsemssubtitle]SESSION DETAILS:[/lsemssubtitle]
 [divbox=white]
 
 ${sessionDetailsParts.join("\n\n")}

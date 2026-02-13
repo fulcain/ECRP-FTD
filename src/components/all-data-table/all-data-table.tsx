@@ -68,32 +68,32 @@ export function AllDataTable() {
     loadData();
   }, []);
 
-const filteredData = useMemo(() => {
-  const getRowStartDate = (row: TableDataType) => {
-    if (!row.Date || !row["Time Start"]) return new Date(0);
+  const filteredData = useMemo(() => {
+    const getRowStartDate = (row: TableDataType) => {
+      if (!row.Date || !row["Time Start"]) return new Date(0);
 
-    const dateStr = String(row.Date);
-    const timeStr = String(row["Time Start"]);
+      const dateStr = String(row.Date);
+      const timeStr = String(row["Time Start"]);
 
-    const [month, day, year] = dateStr.split("/").map(Number);
-    const [hour, minute] = timeStr.split(":").map(Number);
+      const [month, day, year] = dateStr.split("/").map(Number);
+      const [hour, minute] = timeStr.split(":").map(Number);
 
-    return new Date(year, month - 1, day, hour, minute);
-  };
+      return new Date(year, month - 1, day, hour, minute);
+    };
 
-  return data
-    .filter((row) => {
-      const rowStartDate = getRowStartDate(row);
-      if (startDate && isBefore(rowStartDate, startDate)) return false;
-      if (endDate && isAfter(rowStartDate, endDate)) return false;
-      return true;
-    })
-    .sort((a, b) => {
-      const aDate = getRowStartDate(a);
-      const bDate = getRowStartDate(b);
-      return bDate.getTime() - aDate.getTime(); // newest first
-    });
-}, [data, startDate, endDate]);
+    return data
+      .filter((row) => {
+        const rowStartDate = getRowStartDate(row);
+        if (startDate && isBefore(rowStartDate, startDate)) return false;
+        if (endDate && isAfter(rowStartDate, endDate)) return false;
+        return true;
+      })
+      .sort((a, b) => {
+        const aDate = getRowStartDate(a);
+        const bDate = getRowStartDate(b);
+        return bDate.getTime() - aDate.getTime(); // newest first
+      });
+  }, [data, startDate, endDate]);
 
   const table = useReactTable({
     data: filteredData,
