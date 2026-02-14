@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,15 +10,18 @@ type BbcodeTool =
       label: string;
       tag: string;
       type: "wrap";
+      shortcut?: string;
     }
   | {
       label: string;
       snippet: string;
       type: "insert";
+      shortcut?: string;
     }
   | {
       label: string;
       type: "listItem";
+      shortcut?: string;
     };
 
 type BbcodeTextareaProps = {
@@ -30,14 +33,19 @@ type BbcodeTextareaProps = {
 };
 
 const bbcodeTools: BbcodeTool[] = [
-  { label: "B", tag: "b", type: "wrap" },
-  { label: "I", tag: "i", type: "wrap" },
-  { label: "U", tag: "u", type: "wrap" },
-  { label: "Quote", tag: "quote", type: "wrap" },
-  { label: "Code", tag: "code", type: "wrap" },
-  { label: "List Item", type: "listItem" },
-  { label: "List", snippet: "[list]\n[*]\n[/list]", type: "insert" },
-  { label: "URL", snippet: "[url][/url]", type: "insert" },
+  { label: "B", tag: "b", type: "wrap", shortcut: "Ctrl+B" },
+  { label: "I", tag: "i", type: "wrap", shortcut: "Ctrl+I" },
+  { label: "U", tag: "u", type: "wrap", shortcut: "Ctrl+U" },
+  { label: "Quote", tag: "quote", type: "wrap", shortcut: "Ctrl+Q" },
+  { label: "Code", tag: "code", type: "wrap", shortcut: "Ctrl+C" },
+  { label: "List Item [*]", type: "listItem", shortcut: "Ctrl+8" },
+  {
+    label: "List",
+    snippet: "[list]\n[*]\n[/list]",
+    type: "insert",
+    shortcut: "Ctrl+L",
+  },
+  { label: "URL", tag: "url", type: "wrap", shortcut: "Ctrl+Shift+U" },
 ];
 
 export function BbcodeTextarea({
@@ -57,7 +65,11 @@ export function BbcodeTextarea({
     });
   };
 
-  const insertText = (text: string, selectionStart: number, selectionEnd: number) => {
+  const insertText = (
+    text: string,
+    selectionStart: number,
+    selectionEnd: number
+  ) => {
     const nextValue =
       value.slice(0, selectionStart) + text + value.slice(selectionEnd);
 
@@ -67,14 +79,20 @@ export function BbcodeTextarea({
 
   const insertListItem = (selectionStart: number) => {
     const lineStart = value.lastIndexOf("\n", selectionStart - 1) + 1;
-    const nextValue = `${value.slice(0, lineStart)}[*]${value.slice(lineStart)}`;
+    const nextValue = `${value.slice(0, lineStart)}[*] ${value.slice(
+      lineStart
+    )}`;
 
     onChange(nextValue);
     const nextCaret = selectionStart + 3;
     focusCaret(nextCaret, nextCaret);
   };
 
-  const wrapWithTag = (tag: string, selectionStart: number, selectionEnd: number) => {
+  const wrapWithTag = (
+    tag: string,
+    selectionStart: number,
+    selectionEnd: number
+  ) => {
     const selectedText = value.slice(selectionStart, selectionEnd);
     const openTag = `[${tag}]`;
     const closeTag = `[/${tag}]`;
@@ -84,7 +102,9 @@ export function BbcodeTextarea({
       : `${openTag}${closeTag}`;
 
     const nextValue =
-      value.slice(0, selectionStart) + textToInsert + value.slice(selectionEnd);
+      value.slice(0, selectionStart) +
+      textToInsert +
+      value.slice(selectionEnd);
 
     onChange(nextValue);
 
@@ -116,8 +136,58 @@ export function BbcodeTextarea({
     insertText(tool.snippet, selectionStart, selectionEnd);
   };
 
+  /* Keyboard Shortcuts */
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (!textareaRef.current) return;
+      if (document.activeElement !== textareaRef.current) return;
+      if (readOnly) return;
+
+      if (!e.ctrlKey) return;
+
+      const key = e.key.toLowerCase();
+
+      if (key === "b") {
+        e.preventDefault();
+        applyTool(bbcodeTools[0]);
+      }
+      if (key === "i") {
+        e.preventDefault();
+        applyTool(bbcodeTools[1]);
+      }
+      if (key === "u" && !e.shiftKey) {
+        e.preventDefault();
+        applyTool(bbcodeTools[2]);
+      }
+      if (key === "q") {
+        e.preventDefault();
+        applyTool(bbcodeTools[3]);
+      }
+      if (key === "c") {
+        e.preventDefault();
+        applyTool(bbcodeTools[4]);
+      }
+      if (key === "8") {
+        e.preventDefault();
+        applyTool(bbcodeTools[5]);
+      }
+      if (key === "l") {
+        e.preventDefault();
+        applyTool(bbcodeTools[6]);
+      }
+      if (key === "u" && e.shiftKey) {
+        e.preventDefault();
+        applyTool(bbcodeTools[7]);
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [value, readOnly]);
+
   return (
     <div className="space-y-2">
+      {/* Toolbar */}
       <div className="flex flex-wrap gap-2">
         {bbcodeTools.map((tool) => (
           <Button
@@ -131,6 +201,16 @@ export function BbcodeTextarea({
           >
             {tool.label}
           </Button>
+        ))}
+      </div>
+
+      {/* Shortcut Hint */}
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground bg-muted/40 rounded-md px-3 py-2">
+        {bbcodeTools.map((tool) => (
+          <span key={tool.label} className="whitespace-nowrap">
+            <span className="font-medium">{tool.label}</span>{" "}
+            <span className="opacity-70">({tool.shortcut})</span>
+          </span>
         ))}
       </div>
 
