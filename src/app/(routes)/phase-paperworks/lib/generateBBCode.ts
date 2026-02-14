@@ -10,8 +10,8 @@ export function generateBBCode(
   const passedPreCert = values.passedPreCert ? "YES" : "NO";
   const quizSent = values.wasQuizSent ? "YES" : "NO";
   const medicalGiven = values.wasMedicalGiven ? "YES" : "NO";
-	const detailedNotesListType = values.detailedNotesListNone ? "none" : "";
-	const fTSessionLink = "https://forms.gle/BJ6iLg5Fkf9Ug6fE6"
+  const detailedNotesListType = values.detailedNotesListNone ? "none" : "";
+  const fTSessionLink = "https://forms.gle/BJ6iLg5Fkf9Ug6fE6";
 
   // 10-15 Call section
   const tenFifteenSection = `[list]

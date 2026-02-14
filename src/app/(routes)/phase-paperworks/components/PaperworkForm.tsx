@@ -23,19 +23,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { BbcodeTextarea } from "@/app/(routes)/phase-paperworks/components/BbcodeTextarea";
-import { Save, Copy, Trash2, FileText, Clock, User, Phone, FileCheck, AlertCircle } from "lucide-react";
+import {
+  Copy,
+  Trash2,
+  FileText,
+  Clock,
+  User,
+  Phone,
+  FileCheck,
+  AlertCircle,
+} from "lucide-react";
 
 export default function PaperworkForm() {
   const [phase, setPhase] = useState<PhaseKey>("introduction");
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const [ftdDetails, setFtdDetails] = useLocalStorage("ftd-details", {
-    signature: "",
-    rank: "",
-  });
-
-  const initialFormState = {
+  // Single localStorage hook for all form data
+  const [savedForm, setSavedForm] = useLocalStorage("ftd-paperwork-form-data", {
     timeStarted: "",
     timeEnded: "",
     participated: false,
@@ -55,40 +60,43 @@ export default function PaperworkForm() {
     callsign: 0,
     additionalMandatories: "",
     notesNextTraining: "",
-  };
+  });
 
-  const [form, setForm] = useState<any>(initialFormState);
+  const [form, setForm] = useState<any>(savedForm);
 
-  // Load saved signature + rank into form on mount
+  // Update localStorage whenever form changes
   useEffect(() => {
-    if (ftdDetails?.signature || ftdDetails?.rank) {
-      setForm((prev: any) => ({
-        ...prev,
-        signature: ftdDetails.signature,
-        rank: ftdDetails.rank,
-      }));
-    }
-  }, []);
+    setSavedForm(form);
+  }, [form, setSavedForm]);
 
   const clearAllFields = () => {
-    setForm((prev: any) => ({
-      ...initialFormState,
-      signature: prev.signature,
-      rank: prev.rank,
-    }));
-
+    const emptyForm = {
+      timeStarted: "",
+      timeEnded: "",
+      participated: false,
+      tenFifteenCalls: [],
+      detailedNotes: "",
+      detailedNotesListNone: false,
+      issues: "",
+      reasonFailure: "",
+      signature: form.signature, // Keep signature
+      rank: form.rank, // Keep rank
+      rideAlongType: "",
+      ftsCompleted: false,
+      introEmailSent: false,
+      passedPreCert: false,
+      wasQuizSent: false,
+      wasMedicalGiven: false,
+      callsign: 0,
+      additionalMandatories: "",
+      notesNextTraining: "",
+    };
+    
+    setForm(emptyForm);
     setOutput("");
     setCopied(false);
 
     toast.info("All fields cleared", { theme: "dark" });
-  };
-
-  const saveFtdDetails = () => {
-    setFtdDetails({
-      signature: form.signature,
-      rank: form.rank,
-    });
-    toast.success("Saved to browser", { theme: "dark" });
   };
 
   const update = (key: string, value: any) => {
@@ -149,6 +157,19 @@ export default function PaperworkForm() {
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
       <div className="max-w-4xl mx-auto py-8 px-4 space-y-6">
         
+        {/* Header with auto-save indicator */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-light tracking-tight">Field Training Paperwork</h1>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              </span>
+              All the data is saved into your browser automatically.
+            </span>
+          </div>
+        </div>
 
         {/* FTO Details - Minimal Card */}
         <Card className="border-0 shadow-none bg-muted/30">
@@ -162,7 +183,7 @@ export default function PaperworkForm() {
                 <Input
                   value={form.signature}
                   onChange={(e) => update("signature", e.target.value)}
-                  placeholder="https://i.imgur.com/..."
+                  placeholder="insert link here"
                   className="bg-background"
                 />
               </div>
@@ -171,19 +192,10 @@ export default function PaperworkForm() {
                 <Input
                   value={form.rank}
                   onChange={(e) => update("rank", e.target.value)}
-                  placeholder="e.g., Officer"
+                  placeholder="insert rank here"
                   className="bg-background"
                 />
               </div>
-              <Button 
-                onClick={saveFtdDetails} 
-                variant="outline" 
-                size="sm"
-                className="self-end"
-              >
-                <Save className="h-4 w-4 mr-2" />
-                Save
-              </Button>
             </div>
           </CardContent>
         </Card>
@@ -239,7 +251,9 @@ export default function PaperworkForm() {
           {showSection("rideAlong") && (
             <Card className="border shadow-sm">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium">Ride Along</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Ride Along
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <Select
@@ -284,7 +298,10 @@ export default function PaperworkForm() {
                       }
                     }}
                   />
-                  <Label htmlFor="participated" className="text-sm cursor-pointer">
+                  <Label
+                    htmlFor="participated"
+                    className="text-sm cursor-pointer"
+                  >
                     Participated in 10-15 call
                   </Label>
                 </div>
@@ -292,7 +309,10 @@ export default function PaperworkForm() {
                 {form.participated && (
                   <div className="space-y-4 mt-4">
                     {form.tenFifteenCalls.map((call: any, index: number) => (
-                      <div key={index} className="bg-muted/20 p-4 rounded-lg space-y-4">
+                      <div
+                        key={index}
+                        className="bg-muted/20 p-4 rounded-lg space-y-4"
+                      >
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-medium text-muted-foreground">
                             Call #{index + 1}
@@ -310,23 +330,35 @@ export default function PaperworkForm() {
                         </div>
                         <div className="grid gap-4 sm:grid-cols-2">
                           <div className="space-y-1.5">
-                            <Label className="text-xs text-muted-foreground">Rating (1-5)</Label>
+                            <Label className="text-xs text-muted-foreground">
+                              Rating (1-5)
+                            </Label>
                             <Input
                               value={call.rating}
                               onChange={(e) =>
-                                updateTenFifteenCall(index, "rating", e.target.value)
+                                updateTenFifteenCall(
+                                  index,
+                                  "rating",
+                                  e.target.value,
+                                )
                               }
                               placeholder="3"
                               className="bg-background"
                             />
                           </div>
                           <div className="space-y-1.5 sm:col-span-2">
-                            <Label className="text-xs text-muted-foreground">Performance Notes</Label>
+                            <Label className="text-xs text-muted-foreground">
+                              Performance Notes
+                            </Label>
                             <BbcodeTextarea
                               className="min-h-[80px] bg-background"
                               value={call.performanceNotes}
                               onChange={(value) =>
-                                updateTenFifteenCall(index, "performanceNotes", value)
+                                updateTenFifteenCall(
+                                  index,
+                                  "performanceNotes",
+                                  value,
+                                )
                               }
                             />
                           </div>
@@ -367,10 +399,15 @@ export default function PaperworkForm() {
                   <Checkbox
                     id="listNone"
                     checked={form.detailedNotesListNone}
-                    onCheckedChange={(val) => update("detailedNotesListNone", val)}
+                    onCheckedChange={(val) =>
+                      update("detailedNotesListNone", val)
+                    }
                   />
-                  <Label htmlFor="listNone" className="text-xs text-muted-foreground cursor-pointer">
-                    Use plain list style (no bullets for the wrapper list)
+                  <Label
+                    htmlFor="listNone"
+                    className="text-xs text-muted-foreground cursor-pointer"
+                  >
+                    Use plain list style (no bullets)
                   </Label>
                 </div>
               </CardContent>
@@ -420,19 +457,28 @@ export default function PaperworkForm() {
           {phase !== "introduction" && phase !== "certPassed" && (
             <Card className="border shadow-sm">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium">Next Session Focus</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Next Session Focus
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Additional Mandatories</Label>
+                  <Label className="text-xs text-muted-foreground">
+                    Additional Mandatories
+                  </Label>
                   <Input
                     value={form.additionalMandatories}
-                    onChange={(e) => update("additionalMandatories", e.target.value)}
+                    onChange={(e) =>
+                      update("additionalMandatories", e.target.value)
+                    }
                     placeholder="0"
                     className="bg-background w-32"
                   />
                 </div>
                 <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">
+                    Focus Areas
+                  </Label>
                   <BbcodeTextarea
                     className="min-h-[80px] bg-background"
                     value={form.notesNextTraining}
@@ -453,7 +499,10 @@ export default function PaperworkForm() {
                   checked={form.ftsCompleted}
                   onCheckedChange={(val) => update("ftsCompleted", val)}
                 />
-                <Label htmlFor="ftsCompleted" className="text-sm cursor-pointer">
+                <Label
+                  htmlFor="ftsCompleted"
+                  className="text-sm cursor-pointer"
+                >
                   Field Training Session Completed
                 </Label>
               </div>
@@ -465,7 +514,10 @@ export default function PaperworkForm() {
                     checked={form.introEmailSent}
                     onCheckedChange={(val) => update("introEmailSent", val)}
                   />
-                  <Label htmlFor="introEmailSent" className="text-sm cursor-pointer">
+                  <Label
+                    htmlFor="introEmailSent"
+                    className="text-sm cursor-pointer"
+                  >
                     Introduction Email Sent
                   </Label>
                 </div>
@@ -479,7 +531,10 @@ export default function PaperworkForm() {
                       checked={form.passedPreCert}
                       onCheckedChange={(val) => update("passedPreCert", val)}
                     />
-                    <Label htmlFor="passedPreCert" className="text-sm cursor-pointer">
+                    <Label
+                      htmlFor="passedPreCert"
+                      className="text-sm cursor-pointer"
+                    >
                       Pre-Certification Passed
                     </Label>
                   </div>
@@ -489,7 +544,10 @@ export default function PaperworkForm() {
                       checked={form.wasQuizSent}
                       onCheckedChange={(val) => update("wasQuizSent", val)}
                     />
-                    <Label htmlFor="wasQuizSent" className="text-sm cursor-pointer">
+                    <Label
+                      htmlFor="wasQuizSent"
+                      className="text-sm cursor-pointer"
+                    >
                       Quiz Sent (if failed)
                     </Label>
                   </div>
@@ -504,24 +562,30 @@ export default function PaperworkForm() {
                       checked={form.wasMedicalGiven}
                       onCheckedChange={(val) => update("wasMedicalGiven", val)}
                     />
-                    <Label htmlFor="wasMedicalGiven" className="text-sm cursor-pointer">
+                    <Label
+                      htmlFor="wasMedicalGiven"
+                      className="text-sm cursor-pointer"
+                    >
                       Medical License Given
                     </Label>
                   </div>
                   <div className="flex items-start flex-col gap-1">
-										<div className="flex items-center flex-row gap-1">
-											<Label htmlFor="callsign" className="text-sm">Call Sign:</Label>
-											<Input
-												id="callsign"
-												className="w-24 h-8"
-												placeholder="Number"
-												value={form.callsign}
-												onChange={(e) => update("callsign", e.target.value)}
-											/>
+                    <div className="flex items-center flex-row gap-1">
+                      <Label htmlFor="callsign" className="text-sm">
+                        Call Sign:
+                      </Label>
+                      <Input
+                        id="callsign"
+                        className="w-24 h-8"
+                        placeholder="Number"
+                        value={form.callsign}
+                        onChange={(e) => update("callsign", e.target.value)}
+                      />
+                    </div>
 
-										</div>
-
-																				                <span className="text-xs text-muted-foreground">(Only put the number. ex: 12 - it will out put ECHO-12)</span>
+                    <span className="text-xs text-muted-foreground">
+                      (Only put the number. ex: 12 - it will output ECHO-12)
+                    </span>
                   </div>
                 </>
               )}
@@ -529,7 +593,7 @@ export default function PaperworkForm() {
           </Card>
         </div>
 
-        {/* Action Bar - Floating at bottom on mobile, inline on desktop */}
+        {/* Action Bar - Floating at bottom */}
         <div className="sticky bottom-4 bg-background/95 backdrop-blur-sm border rounded-lg p-3 flex gap-2 justify-center md:justify-start shadow-lg">
           <Button onClick={generate} size="sm" className="px-6">
             <FileCheck className="h-4 w-4 mr-2" />
@@ -559,7 +623,9 @@ export default function PaperworkForm() {
         {output && (
           <Card className="border shadow-sm">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Generated BBCode</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Generated BBCode
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <Textarea

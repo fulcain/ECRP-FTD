@@ -68,7 +68,7 @@ export function BbcodeTextarea({
   const insertText = (
     text: string,
     selectionStart: number,
-    selectionEnd: number
+    selectionEnd: number,
   ) => {
     const nextValue =
       value.slice(0, selectionStart) + text + value.slice(selectionEnd);
@@ -80,7 +80,7 @@ export function BbcodeTextarea({
   const insertListItem = (selectionStart: number) => {
     const lineStart = value.lastIndexOf("\n", selectionStart - 1) + 1;
     const nextValue = `${value.slice(0, lineStart)}[*] ${value.slice(
-      lineStart
+      lineStart,
     )}`;
 
     onChange(nextValue);
@@ -91,7 +91,7 @@ export function BbcodeTextarea({
   const wrapWithTag = (
     tag: string,
     selectionStart: number,
-    selectionEnd: number
+    selectionEnd: number,
   ) => {
     const selectedText = value.slice(selectionStart, selectionEnd);
     const openTag = `[${tag}]`;
@@ -102,9 +102,7 @@ export function BbcodeTextarea({
       : `${openTag}${closeTag}`;
 
     const nextValue =
-      value.slice(0, selectionStart) +
-      textToInsert +
-      value.slice(selectionEnd);
+      value.slice(0, selectionStart) + textToInsert + value.slice(selectionEnd);
 
     onChange(nextValue);
 
