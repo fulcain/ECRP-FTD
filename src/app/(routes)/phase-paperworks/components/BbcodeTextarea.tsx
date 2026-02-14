@@ -5,11 +5,21 @@ import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-type BbcodeTool = {
-  label: string;
-  tag?: string;
-  snippet?: string;
-};
+type BbcodeTool =
+  | {
+      label: string;
+      tag: string;
+      type: "wrap";
+    }
+  | {
+      label: string;
+      snippet: string;
+      type: "insert";
+    }
+  | {
+      label: string;
+      type: "listItem";
+    };
 
 type BbcodeTextareaProps = {
   value: string;
@@ -20,14 +30,14 @@ type BbcodeTextareaProps = {
 };
 
 const bbcodeTools: BbcodeTool[] = [
-  { label: "B", tag: "b" },
-  { label: "I", tag: "i" },
-  { label: "U", tag: "u" },
-  { label: "Quote", tag: "quote" },
-  { label: "Code", tag: "code" },
-  { label: "List Item", snippet: "[*]" },
-  { label: "List", snippet: "[list]\n[*]\n[/list]" },
-  { label: "URL", snippet: "[url][/url]" },
+  { label: "B", tag: "b", type: "wrap" },
+  { label: "I", tag: "i", type: "wrap" },
+  { label: "U", tag: "u", type: "wrap" },
+  { label: "Quote", tag: "quote", type: "wrap" },
+  { label: "Code", tag: "code", type: "wrap" },
+  { label: "List Item", type: "listItem" },
+  { label: "List", snippet: "[list]\n[*]\n[/list]", type: "insert" },
+  { label: "URL", snippet: "[url][/url]", type: "insert" },
 ];
 
 export function BbcodeTextarea({
@@ -39,18 +49,52 @@ export function BbcodeTextarea({
 }: BbcodeTextareaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const focusCaret = (position: number, selectionEnd = position) => {
+    requestAnimationFrame(() => {
+      if (!textareaRef.current) return;
+      textareaRef.current.focus();
+      textareaRef.current.setSelectionRange(position, selectionEnd);
+    });
+  };
+
   const insertText = (text: string, selectionStart: number, selectionEnd: number) => {
     const nextValue =
       value.slice(0, selectionStart) + text + value.slice(selectionEnd);
 
     onChange(nextValue);
+    focusCaret(selectionStart + text.length);
+  };
 
-    requestAnimationFrame(() => {
-      if (!textareaRef.current) return;
-      const caretPosition = selectionStart + text.length;
-      textareaRef.current.focus();
-      textareaRef.current.setSelectionRange(caretPosition, caretPosition);
-    });
+  const insertListItem = (selectionStart: number) => {
+    const lineStart = value.lastIndexOf("\n", selectionStart - 1) + 1;
+    const nextValue = `${value.slice(0, lineStart)}[*]${value.slice(lineStart)}`;
+
+    onChange(nextValue);
+    const nextCaret = selectionStart + 3;
+    focusCaret(nextCaret, nextCaret);
+  };
+
+  const wrapWithTag = (tag: string, selectionStart: number, selectionEnd: number) => {
+    const selectedText = value.slice(selectionStart, selectionEnd);
+    const openTag = `[${tag}]`;
+    const closeTag = `[/${tag}]`;
+
+    const textToInsert = selectedText
+      ? `${openTag}${selectedText}${closeTag}`
+      : `${openTag}${closeTag}`;
+
+    const nextValue =
+      value.slice(0, selectionStart) + textToInsert + value.slice(selectionEnd);
+
+    onChange(nextValue);
+
+    if (selectedText) {
+      const wrappedStart = selectionStart + openTag.length;
+      focusCaret(wrappedStart, wrappedStart + selectedText.length);
+      return;
+    }
+
+    focusCaret(selectionStart + openTag.length);
   };
 
   const applyTool = (tool: BbcodeTool) => {
@@ -58,43 +102,18 @@ export function BbcodeTextarea({
 
     const selectionStart = textareaRef.current.selectionStart;
     const selectionEnd = textareaRef.current.selectionEnd;
-    const selectedText = value.slice(selectionStart, selectionEnd);
 
-    if (tool.tag) {
-      const openTag = `[${tool.tag}]`;
-      const closeTag = `[/${tool.tag}]`;
-
-      const textToInsert = selectedText
-        ? `${openTag}${selectedText}${closeTag}`
-        : `${openTag}${closeTag}`;
-
-      const nextValue =
-        value.slice(0, selectionStart) + textToInsert + value.slice(selectionEnd);
-
-      onChange(nextValue);
-
-      requestAnimationFrame(() => {
-        if (!textareaRef.current) return;
-
-        textareaRef.current.focus();
-
-        if (selectedText) {
-          const selectedStart = selectionStart + openTag.length;
-          const selectedEnd = selectedStart + selectedText.length;
-          textareaRef.current.setSelectionRange(selectedStart, selectedEnd);
-          return;
-        }
-
-        const caretPosition = selectionStart + openTag.length;
-        textareaRef.current.setSelectionRange(caretPosition, caretPosition);
-      });
-
+    if (tool.type === "wrap") {
+      wrapWithTag(tool.tag, selectionStart, selectionEnd);
       return;
     }
 
-    if (tool.snippet) {
-      insertText(tool.snippet, selectionStart, selectionEnd);
+    if (tool.type === "listItem") {
+      insertListItem(selectionStart);
+      return;
     }
+
+    insertText(tool.snippet, selectionStart, selectionEnd);
   };
 
   return (
@@ -106,6 +125,7 @@ export function BbcodeTextarea({
             type="button"
             size="sm"
             variant="outline"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => applyTool(tool)}
             disabled={readOnly}
           >
