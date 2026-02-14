@@ -22,6 +22,7 @@ import { fetchAllData } from "@/components/all-data-table/fetchAllData";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { fetchEMRs } from "@/helpers/fetchEMRs";
+import { XCircle, RotateCcw } from "lucide-react";
 
 interface CreateNewSessionProps {
   setData: React.Dispatch<React.SetStateAction<any[]>>;
@@ -38,6 +39,7 @@ export function CreateNewSession({
 }: CreateNewSessionProps) {
   const [submitting, setSubmitting] = useState(false);
   const [nameSearch, setNameSearch] = useState("");
+  const [emrSearch, setEmrSearch] = useState("");
   const [dateOpen, setDateOpen] = useState(false);
   const [EMRs, setEMRs] = useState<string[]>([]);
 
@@ -78,10 +80,26 @@ export function CreateNewSession({
     loadEMRs();
   }, []);
 
+  // Reset EMR selection (clears both select and manual input)
+  const resetEMRSelection = () => {
+    setForm({
+      ...form,
+      emrName: "",
+      emrNameManual: "",
+    });
+    setEmrSearch(""); 
+    toast.info("EMR field cleared", { theme: "dark" });
+  };
+
+  const handleEmrSelectOpenChange = (open: boolean) => {
+    if (!open) {
+      setEmrSearch(""); 
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // prioritize select over manual input
     const emrNameToUse = form.emrName || form.emrNameManual;
 
     if (
@@ -132,6 +150,7 @@ export function CreateNewSession({
           emrNameManual: "",
           sessionConducted: "",
         });
+        setEmrSearch(""); 
 
         const fresh = await fetchAllData();
         setData(fresh);
@@ -148,6 +167,9 @@ export function CreateNewSession({
       setSubmitting(false);
     }
   };
+
+  // Determine if EMR is selected (either from dropdown or manual)
+  const isEmrSelected = form.emrName || form.emrNameManual;
 
   return (
     <>
@@ -247,14 +269,32 @@ export function CreateNewSession({
           />
         </div>
 
-        {/* EMR Name */}
+        {/* EMR Name - Enhanced with clear functionality */}
         <div className="flex flex-col gap-2">
-          <Label>{"EMR's Name"}</Label>
+          <div className="flex items-center justify-between">
+            <Label>{"EMR's Name"}</Label>
+            {isEmrSelected && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={resetEMRSelection}
+                className="h-7 px-2 text-muted-foreground hover:text-destructive gap-1"
+              >
+                <XCircle className="h-4 w-4" />
+                <span className="text-xs">Clear</span>
+              </Button>
+            )}
+          </div>
 
           {/* Select dropdown */}
           <Select
             value={form.emrName}
-            onValueChange={(v) => setForm({ ...form, emrName: v })}
+            onValueChange={(v) => {
+              setForm({ ...form, emrName: v, emrNameManual: "" });
+              setEmrSearch(""); 
+            }}
+            onOpenChange={handleEmrSelectOpenChange}
           >
             <SelectTrigger className="cursor-pointer">
               <SelectValue placeholder="Select EMR" />
@@ -272,14 +312,14 @@ export function CreateNewSession({
                   >
                     <Input
                       placeholder="Search EMR..."
-                      value={nameSearch}
-                      onChange={(e) => setNameSearch(e.target.value)}
+                      value={emrSearch}
+                      onChange={(e) => setEmrSearch(e.target.value)}
                       className="mb-2"
                       autoFocus
                     />
                   </div>
                   {EMRs.filter((emr) =>
-                    emr.toLowerCase().includes(nameSearch.toLowerCase()),
+                    emr.toLowerCase().includes(emrSearch.toLowerCase()),
                   ).map((emr) => (
                     <SelectItem key={emr} value={emr}>
                       {emr}
@@ -290,14 +330,35 @@ export function CreateNewSession({
             </SelectContent>
           </Select>
 
-          {/* Manual text input fallback */}
-          <Input
-            placeholder="Type EMR name manually"
-            value={form.emrNameManual}
-            onChange={(e) =>
-              setForm({ ...form, emrNameManual: e.target.value })
-            }
-          />
+          {/* Manual text input fallback with clear indicator */}
+          <div className="relative">
+            <Input
+              placeholder="Type EMR name manually"
+              value={form.emrNameManual}
+              onChange={(e) =>
+                setForm({ ...form, emrNameManual: e.target.value, emrName: "" }) // Clear select when typing manually
+              }
+              className={form.emrNameManual ? "pr-8" : ""}
+            />
+            {form.emrNameManual && (
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, emrNameManual: "" })}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <XCircle className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+
+          {/* Helper text showing current selection method */}
+          {isEmrSelected && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Selected: {form.emrName || form.emrNameManual}
+              {form.emrName && " (from list)"}
+              {form.emrNameManual && " (manual entry)"}
+            </p>
+          )}
         </div>
 
         {/* Session Conducted */}
@@ -320,9 +381,35 @@ export function CreateNewSession({
           </Select>
         </div>
 
-        <Button type="submit" disabled={submitting} className="mt-2 w-full">
-          {submitting ? "Saving..." : "Create Session"}
-        </Button>
+        {/* Form Actions */}
+        <div className="flex gap-2 mt-2">
+          <Button type="submit" disabled={submitting} className="flex-1">
+            {submitting ? "Saving..." : "Create Session"}
+          </Button>
+          
+          {/* Reset entire form button */}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              setForm({
+                yourName: "",
+                date: undefined,
+                timeStart: "",
+                timeFinish: "",
+                emrName: "",
+                emrNameManual: "",
+                sessionConducted: "",
+              });
+              setEmrSearch("");
+              setNameSearch("");
+              toast.info("Form reset", { theme: "dark" });
+            }}
+            className="px-3"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </Button>
+        </div>
       </form>
     </>
   );
