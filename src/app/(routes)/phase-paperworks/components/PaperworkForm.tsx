@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { BbcodeTextarea } from "@/app/(routes)/phase-paperworks/components/BbcodeTextarea";
 
 export default function PaperworkForm() {
   const [phase, setPhase] = useState<PhaseKey>("introduction");
@@ -303,14 +304,14 @@ export default function PaperworkForm() {
 
                           <div className="space-y-2">
                             <Label>Performance Notes</Label>
-                            <Textarea
+                            <BbcodeTextarea
                               className="min-h-[100px]"
                               value={call.performanceNotes}
-                              onChange={(e) =>
+                              onChange={(value) =>
                                 updateTenFifteenCall(
                                   index,
                                   "performanceNotes",
-                                  e.target.value,
+                                  value,
                                 )
                               }
                             />
@@ -337,10 +338,10 @@ export default function PaperworkForm() {
                 <Separator />
                 <div className="space-y-2">
                   <Label>Detailed Notes</Label>
-                  <Textarea
+                  <BbcodeTextarea
                     className="min-h-[120px]"
                     value={form.detailedNotes}
-                    onChange={(e) => update("detailedNotes", e.target.value)}
+                    onChange={(value) => update("detailedNotes", value)}
                   />
 
                   <div className="flex items-center space-x-2">
@@ -369,10 +370,10 @@ export default function PaperworkForm() {
                 <Separator />
                 <div className="space-y-2">
                   <Label>Issues</Label>
-                  <Textarea
+                  <BbcodeTextarea
                     className="min-h-[120px]"
                     value={form.issues}
-                    onChange={(e) => update("issues", e.target.value)}
+                    onChange={(value) => update("issues", value)}
                   />
                 </div>
               </>
@@ -384,10 +385,10 @@ export default function PaperworkForm() {
                 <Separator />
                 <div className="space-y-2">
                   <Label>Reason for Failure</Label>
-                  <Textarea
+                  <BbcodeTextarea
                     className="min-h-[120px]"
                     value={form.reasonFailure}
-                    onChange={(e) => update("reasonFailure", e.target.value)}
+                    onChange={(value) => update("reasonFailure", value)}
                   />
                 </div>
               </>
@@ -410,12 +411,10 @@ export default function PaperworkForm() {
                   />
 
                   <Label>Subjects to Focus During Next Training Session</Label>
-                  <Textarea
+                  <BbcodeTextarea
                     className="min-h-[100px]"
                     value={form.notesNextTraining}
-                    onChange={(e) =>
-                      update("notesNextTraining", e.target.value)
-                    }
+                    onChange={(value) => update("notesNextTraining", value)}
                   />
                 </div>
               </>
