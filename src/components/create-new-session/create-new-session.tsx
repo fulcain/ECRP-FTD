@@ -53,7 +53,6 @@ export function CreateNewSession({
     sessionConducted: "",
   });
 
-  // Fetch "Your Name" options
   useEffect(() => {
     const loadFormNames = async () => {
       try {
@@ -67,7 +66,6 @@ export function CreateNewSession({
     loadFormNames();
   }, [setDropdowns]);
 
-  // Fetch EMRs
   useEffect(() => {
     const loadEMRs = async () => {
       try {
@@ -80,7 +78,6 @@ export function CreateNewSession({
     loadEMRs();
   }, []);
 
-  // Reset EMR selection (clears both select and manual input)
   const resetEMRSelection = () => {
     setForm({
       ...form,
@@ -91,9 +88,24 @@ export function CreateNewSession({
     toast.info("EMR field cleared", { theme: "dark" });
   };
 
+  const resetNameSelection = () => {
+    setForm({
+      ...form,
+      yourName: "",
+    });
+    setNameSearch(""); 
+    toast.info("Name field cleared", { theme: "dark" });
+  };
+
   const handleEmrSelectOpenChange = (open: boolean) => {
     if (!open) {
       setEmrSearch(""); 
+    }
+  };
+
+  const handleNameSelectOpenChange = (open: boolean) => {
+    if (!open) {
+      setNameSearch(""); 
     }
   };
 
@@ -168,8 +180,8 @@ export function CreateNewSession({
     }
   };
 
-  // Determine if EMR is selected (either from dropdown or manual)
   const isEmrSelected = form.emrName || form.emrNameManual;
+  const isNameSelected = form.yourName;
 
   return (
     <>
@@ -183,12 +195,26 @@ export function CreateNewSession({
         onSubmit={handleSubmit}
         className="flex flex-col gap-4 border p-4 rounded-lg"
       >
-        {/* Your Name */}
         <div className="flex flex-col gap-2">
-          <Label>Your Name</Label>
+          <div className="flex items-center justify-between">
+            <Label>Your Name</Label>
+            {isNameSelected && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={resetNameSelection}
+                className="h-7 px-2 text-muted-foreground hover:text-destructive gap-1"
+              >
+                <XCircle className="h-4 w-4" />
+                <span className="text-xs">Clear</span>
+              </Button>
+            )}
+          </div>
           <Select
             value={form.yourName}
             onValueChange={(v) => setForm({ ...form, yourName: v })}
+            onOpenChange={handleNameSelectOpenChange}
           >
             <SelectTrigger className="cursor-pointer">
               <SelectValue placeholder="Select your name" />
@@ -227,7 +253,6 @@ export function CreateNewSession({
           </Select>
         </div>
 
-        {/* Date */}
         <div className="flex flex-col gap-2">
           <Label>Date</Label>
           <Popover open={dateOpen} onOpenChange={setDateOpen}>
@@ -249,7 +274,6 @@ export function CreateNewSession({
           </Popover>
         </div>
 
-        {/* Time Start */}
         <div className="flex flex-col gap-2">
           <Label>Time Start</Label>
           <Input
@@ -259,7 +283,6 @@ export function CreateNewSession({
           />
         </div>
 
-        {/* Time Finish */}
         <div className="flex flex-col gap-2">
           <Label>Time Finish</Label>
           <Input
@@ -269,7 +292,6 @@ export function CreateNewSession({
           />
         </div>
 
-        {/* EMR Name - Enhanced with clear functionality */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <Label>{"EMR's Name"}</Label>
@@ -287,7 +309,6 @@ export function CreateNewSession({
             )}
           </div>
 
-          {/* Select dropdown */}
           <Select
             value={form.emrName}
             onValueChange={(v) => {
@@ -330,13 +351,12 @@ export function CreateNewSession({
             </SelectContent>
           </Select>
 
-          {/* Manual text input fallback with clear indicator */}
           <div className="relative">
             <Input
               placeholder="Type EMR name manually"
               value={form.emrNameManual}
               onChange={(e) =>
-                setForm({ ...form, emrNameManual: e.target.value, emrName: "" }) // Clear select when typing manually
+                setForm({ ...form, emrNameManual: e.target.value, emrName: "" })
               }
               className={form.emrNameManual ? "pr-8" : ""}
             />
@@ -351,7 +371,6 @@ export function CreateNewSession({
             )}
           </div>
 
-          {/* Helper text showing current selection method */}
           {isEmrSelected && (
             <p className="text-xs text-muted-foreground mt-1">
               Selected: {form.emrName || form.emrNameManual}
@@ -361,7 +380,6 @@ export function CreateNewSession({
           )}
         </div>
 
-        {/* Session Conducted */}
         <div className="flex flex-col gap-2">
           <Label>Session Conducted</Label>
           <Select
@@ -381,13 +399,11 @@ export function CreateNewSession({
           </Select>
         </div>
 
-        {/* Form Actions */}
-        <div className="flex gap-2 mt-2">
-          <Button type="submit" disabled={submitting} className="flex-1">
+        <div className="flex gap-2 mt-2 items-center justify-center">
+          <Button type="submit" disabled={submitting} className="">
             {submitting ? "Saving..." : "Create Session"}
           </Button>
           
-          {/* Reset entire form button */}
           <Button
             type="button"
             variant="outline"
