@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   SortingState,
@@ -24,13 +24,15 @@ import {
 } from "@/components/ui/table";
 
 import {
-  currentEMRColumns,
+  createCurrentEMRColumns,
   mapEmployeeDataRaw,
 } from "@/components/current-emrs/columns";
 import { Pagination } from "@/components/pagination";
 import { TableDataType } from "@/app/page";
 import { fetchCurrentEMRs } from "./fetchCurrentEMRs";
 import { CreateNewEMR } from "@/components/create-new-emr/create-new-emr";
+import { EditEMRDialog } from "@/components/current-emrs/edit-emr-dialog";
+import { DeleteEMRDialog } from "@/components/current-emrs/delete-emr-dialog";
 
 export function CurrentEMRsTable() {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -38,6 +40,12 @@ export function CurrentEMRsTable() {
   const [nameFilter, setNameFilter] = useState("");
   const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Row currently targeted by the edit / delete dialogs.
+  const [editRow, setEditRow] = useState<TableDataType | null>(null);
+  const [deleteRow, setDeleteRow] = useState<TableDataType | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -62,9 +70,24 @@ export function CurrentEMRsTable() {
     [tableData, nameFilter],
   );
 
+  const handleEdit = useCallback((row: TableDataType) => {
+    setEditRow(row);
+    setEditOpen(true);
+  }, []);
+
+  const handleDelete = useCallback((row: TableDataType) => {
+    setDeleteRow(row);
+    setDeleteOpen(true);
+  }, []);
+
+  const columns = useMemo(
+    () => createCurrentEMRColumns({ onEdit: handleEdit, onDelete: handleDelete }),
+    [handleEdit, handleDelete],
+  );
+
   const table = useReactTable({
     data: tableRows,
-    columns: currentEMRColumns,
+    columns,
     state: { sorting },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -139,7 +162,7 @@ export function CurrentEMRsTable() {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={currentEMRColumns.length}
+                    colSpan={columns.length}
                     className="h-24 text-center"
                   >
                     No results.
@@ -159,6 +182,19 @@ export function CurrentEMRsTable() {
           setPageSize={setPageSizeInput}
         />
       )}
+
+      <EditEMRDialog
+        row={editRow}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        setData={setData}
+      />
+      <DeleteEMRDialog
+        row={deleteRow}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        setData={setData}
+      />
     </div>
   );
 }

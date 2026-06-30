@@ -168,7 +168,7 @@ export function CreateNewSession({
         setData(fresh);
       } else {
         toast.error(
-          `Something went wrong: ${result.error ?? result.raw ?? "unknown error"}`,
+          `Something went wrong`,
           { theme: "dark" },
         );
       }

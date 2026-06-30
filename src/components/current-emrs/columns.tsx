@@ -1,4 +1,16 @@
+"use client";
+
 import { ColumnDef } from "@tanstack/react-table";
+import { Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { TableDataType } from "@/app/page";
 
 const StatusBox = ({ value }: { value: string }) => {
@@ -12,58 +24,113 @@ const StatusBox = ({ value }: { value: string }) => {
 };
 
 export function mapEmployeeDataRaw(rawData: TableDataType[]): TableDataType[] {
-  return rawData.slice(1).map((row) => ({
-    EMR: row[""] ?? "",
-    "Start Date": row["_1"] ?? "",
-    "Training Reminder Date": row["_2"] ?? "",
-    "4 Weeks": row["_3"] ?? "",
-    "Reminder Sent?": row["_4"] ?? "",
-    "Reinstatee?": row["_5"] ?? "",
-    "LOA?": row["_6"] ?? "",
-    Notes: row["_7"] ?? "",
-  }));
+  return rawData;
 }
 
-// Columns for the table
-export const currentEMRColumns: ColumnDef<TableDataType>[] = [
-  {
-    accessorKey: "EMR",
-    header: "EMR",
-    cell: (info) => info.getValue(),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "Start Date",
-    header: "Start Date",
-    cell: (info) => info.getValue(),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "Training Reminder Date",
-    header: "Training Reminder Date",
-    cell: (info) => info.getValue(),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "4 Weeks",
-    header: "4 Weeks",
-    cell: (info) => info.getValue(),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "Reminder Sent?",
-    header: "Reminder Sent?",
-    cell: (info) => <StatusBox value={info.getValue() as string} />,
-  },
-  {
-    accessorKey: "Reinstatee?",
-    header: "Reinstatee?",
-    cell: (info) => <StatusBox value={info.getValue() as string} />,
-  },
-  {
-    accessorKey: "LOA?",
-    header: "LOA?",
-    cell: (info) => <StatusBox value={info.getValue() as string} />,
-  },
-  { accessorKey: "Notes", header: "Notes", cell: (info) => info.getValue() },
-];
+export interface CurrentEMRColumnOptions {
+  onEdit: (row: TableDataType) => void;
+  onDelete: (row: TableDataType) => void;
+}
+
+// Columns for the table. Returned by a factory so the trailing Actions column
+// can reach back into the table component via the onEdit / onDelete callbacks.
+export function createCurrentEMRColumns(
+  options: CurrentEMRColumnOptions,
+): ColumnDef<TableDataType>[] {
+  return [
+    {
+      accessorKey: "EMR",
+      header: "EMR",
+      cell: (info) => info.getValue(),
+      enableSorting: true,
+    },
+    {
+      accessorKey: "Start Date",
+      header: "Start Date",
+      cell: (info) => info.getValue(),
+      enableSorting: true,
+    },
+    {
+      accessorKey: "Training Reminder Date",
+      header: "Training Reminder Date",
+      cell: (info) => info.getValue(),
+      enableSorting: true,
+    },
+    {
+      accessorKey: "4 Weeks",
+      header: "4 Weeks",
+      cell: (info) => info.getValue(),
+      enableSorting: true,
+    },
+    {
+      accessorKey: "Reminder Sent?",
+      header: "Reminder Sent?",
+      cell: (info) => <StatusBox value={info.getValue() as string} />,
+    },
+    {
+      accessorKey: "Reinstatee?",
+      header: "Reinstatee?",
+      cell: (info) => <StatusBox value={info.getValue() as string} />,
+    },
+    {
+      accessorKey: "LOA?",
+      header: "LOA?",
+      cell: (info) => <StatusBox value={info.getValue() as string} />,
+    },
+    { accessorKey: "Notes", header: "Notes", cell: (info) => info.getValue() },
+    {
+      accessorKey: "Profile Link",
+      header: "Profile Link",
+      cell: (info) => {
+        const url = info.getValue() as string;
+
+        return (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline"
+          >
+            Open Profile
+          </a>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      enableSorting: false,
+      cell: ({ row }) => {
+        const rowData = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-8"
+                title="Edit row"
+              >
+                <Pencil />
+                <span className="sr-only">Edit row</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Row actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => options.onEdit(rowData)}>
+                <Pencil /> Edit row
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => options.onDelete(rowData)}
+              >
+                <Trash2 /> Delete row
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+}

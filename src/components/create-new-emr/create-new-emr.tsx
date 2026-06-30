@@ -6,10 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { fetchCurrentEMRs } from "@/components/current-emrs/fetchCurrentEMRs";
+import { TableDataType } from "@/app/page";
 
 interface CreateNewEMRProps {
-  setData: React.Dispatch<React.SetStateAction<any[]>>;
+  setData: React.Dispatch<React.SetStateAction<TableDataType[]>>;
 }
 
 export function CreateNewEMR({ setData }: CreateNewEMRProps) {
@@ -57,23 +57,35 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
       if (result.success) {
         toast.success("EMR record created successfully", { theme: "dark" });
 
-        // setForm({
-        //   EMR: "",
-        //   profileLink: "",
-        //   startDate: "",
-        //   trainingReminder: "",
-        //   fourWeeks: "",
-        //   reminderSent: false,
-        //   reinstatee: false,
-        //   loa: false,
-        //   notes: "",
-        // });
+        // Append to local state immediately so the table updates right away
+        // (the published CSV can be cached for several minutes).
+        const newRow: TableDataType = {
+          "EMR": form.EMR,
+          "Start Date": form.startDate,
+          "Training Reminder Date": form.trainingReminder,
+          "4 Weeks": form.fourWeeks,
+          "Reminder Sent?": form.reminderSent ? "TRUE" : "FALSE",
+          "Reinstatee?": form.reinstatee ? "TRUE" : "FALSE",
+          "LOA?": form.loa ? "TRUE" : "FALSE",
+          "Notes": form.notes,
+          "Profile Link": form.profileLink
+        };
+        setData((prev) => [...prev, newRow]);
 
-        const fresh = await fetchCurrentEMRs();
-        setData(fresh);
+        setForm({
+          EMR: "",
+          startDate: "",
+          trainingReminder: "",
+          fourWeeks: "",
+          reminderSent: false,
+          reinstatee: false,
+          loa: false,
+          notes: "",
+          profileLink: "",
+        });
       } else {
         toast.error(
-          `Something went wrong: ${result.error ?? result.raw ?? "unknown error"}`,
+          `Something went wrong: ${result.error ?? result.raw ?? JSON.stringify(result)}`,
           { theme: "dark" },
         );
       }

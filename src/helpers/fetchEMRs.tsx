@@ -1,10 +1,6 @@
 import Papa from "papaparse";
 import { TableDataType } from "@/app/page";
 
-/**
- * Fetches and parses employee stats data from /api/current-emrs
- * Returns an array of all EMR values (key "") after slicing the first two rows
- */
 export async function fetchEMRs() {
   try {
     const res = await fetch("/api/current-emrs");
