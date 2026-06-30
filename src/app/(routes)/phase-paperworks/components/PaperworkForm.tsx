@@ -32,12 +32,18 @@ import {
   Phone,
   FileCheck,
   AlertCircle,
+  ExternalLink,
 } from "lucide-react";
+import { fetchEMRProfileLinks,EMRProfileLink } from "@/components/current-emrs/fetchCurrentEMRs";
 
 export default function PaperworkForm() {
   const [phase, setPhase] = useState<PhaseKey>("introduction");
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
+
+  // EMR profile link select state
+  const [emrList, setEmrList] = useState<EMRProfileLink[]>([]);
+  const [selectedEMR, setSelectedEMR] = useState<string>("");
 
   // Single localStorage hook for all form data
   const [savedForm, setSavedForm] = useLocalStorage("ftd-paperwork-form-data", {
@@ -69,6 +75,11 @@ export default function PaperworkForm() {
     setSavedForm(form);
   }, [form, setSavedForm]);
 
+  // Fetch EMR -> profile link list on mount
+  useEffect(() => {
+    fetchEMRProfileLinks().then(setEmrList);
+  }, []);
+
   const clearAllFields = () => {
     const emptyForm = {
       timeStarted: "",
@@ -91,7 +102,7 @@ export default function PaperworkForm() {
       additionalMandatories: "",
       notesNextTraining: "",
     };
-    
+
     setForm(emptyForm);
     setOutput("");
     setCopied(false);
@@ -149,6 +160,16 @@ export default function PaperworkForm() {
     toast.success("Copied!", { theme: "dark" });
   };
 
+  // EMR profile link helpers
+  const selectedProfileLink = emrList.find(
+    (e) => e.EMR === selectedEMR,
+  )?.profileLink;
+
+  const openProfileLink = () => {
+    if (!selectedProfileLink) return;
+    window.open(selectedProfileLink, "_blank", "noopener,noreferrer");
+  };
+
   // Helper to check if section should be shown
   const showSection = (section: string) => config.sections.includes(section);
 
@@ -156,7 +177,7 @@ export default function PaperworkForm() {
     <>
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
       <div className="max-w-4xl mx-auto py-8 px-4 space-y-6">
-        
+
         {/* Header with auto-save indicator */}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-light tracking-tight">Field Training Paperwork</h1>
@@ -589,6 +610,41 @@ export default function PaperworkForm() {
                   </div>
                 </>
               )}
+            </CardContent>
+          </Card>
+
+          {/* EMR Profile Link */}
+          <Card className="border shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <User className="h-4 w-4 text-muted-foreground" />
+                EMR Profile
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2 flex-wrap">
+                <Select value={selectedEMR} onValueChange={setSelectedEMR}>
+                  <SelectTrigger className="w-full md:w-64">
+                    <SelectValue placeholder="Select EMR" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {emrList.map((entry, idx) => (
+                      <SelectItem key={`${entry.EMR}-${idx}`} value={entry.EMR}>
+                        {entry.EMR}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={!selectedProfileLink}
+                  onClick={openProfileLink}
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Open Link
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
