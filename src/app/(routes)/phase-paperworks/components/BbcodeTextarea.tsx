@@ -37,8 +37,8 @@ const bbcodeTools: BbcodeTool[] = [
   { label: "I", tag: "i", type: "wrap", shortcut: "Ctrl+I" },
   { label: "U", tag: "u", type: "wrap", shortcut: "Ctrl+U" },
   { label: "Quote", tag: "quote", type: "wrap", shortcut: "Ctrl+Q" },
-  { label: "Code", tag: "code", type: "wrap", shortcut: "Ctrl+C" },
-  { label: "List Item [*]", type: "listItem", shortcut: "Ctrl+8" },
+  { label: "Code", tag: "code", type: "wrap", shortcut: "Ctrl+8" },
+  { label: "List Item [*]", type: "listItem", shortcut: "Ctrl+9" },
   {
     label: "List",
     snippet: "[list]\n[*]\n[/list]",
@@ -161,11 +161,11 @@ export function BbcodeTextarea({
         e.preventDefault();
         applyTool(bbcodeTools[3]);
       }
-      if (key === "c") {
+      if (key === "8") {
         e.preventDefault();
         applyTool(bbcodeTools[4]);
       }
-      if (key === "8") {
+      if (key === "9") {
         e.preventDefault();
         applyTool(bbcodeTools[5]);
       }
