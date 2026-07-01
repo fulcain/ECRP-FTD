@@ -8,7 +8,6 @@ export function generateReinstatementBBCode(
   const cbCodeFts = values.ftsCompleted ? "[cbc]" : "[cb]";
   const medicalGiven = values.wasMedicalGiven ? "YES" : "NO";
   const reintroEmailSent = values.reintroEmailSent ? "YES" : "NO";
-  const detailedNotesListType = values.detailedNotesListNone ? "none" : "";
   const fTSessionLink = "https://forms.gle/BJ6iLg5Fkf9Ug6fE6";
 
   // 10-15 Call section — uses "reinstatee" language
@@ -28,7 +27,6 @@ ${
   // Ride-along section
   const rideAlongSection = `[b]Ride-along Type:[/b] ${values.rideAlongType || ""}`;
 
-  // Detailed notes — renamed to "Certification Notes" for cert passed/failed
 const detailedNotesTitles = {
   reinstatementCertPassed: "Reinstatement Certification Notes (50 Word Minimum)",
   reinstatementCertFailed: "Reinstatement Certification Notes (50 Word Minimum)",
