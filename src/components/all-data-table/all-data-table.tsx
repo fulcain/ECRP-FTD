@@ -23,8 +23,6 @@ import { Pagination } from "@/components/pagination";
 import { Calendar } from "@/components/ui/calendar";
 import { generateColumns } from "@/components/all-data-table/columns";
 import { fetchAllData } from "@/components/all-data-table/fetchAllData";
-import { sessions } from "@/constants/sessions";
-import { CreateNewSession } from "@/components/create-new-session/create-new-session";
 
 import {
   ColumnDef,
@@ -43,10 +41,6 @@ import { TableDataType } from "@/app/page";
 export function AllDataTable() {
   const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [dropdowns, setDropdowns] = useState({
-    names: [] as string[],
-    sessions: [...sessions],
-  });
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -113,13 +107,6 @@ export function AllDataTable() {
 
   return (
     <div className="space-y-10 mt-40">
-      {/* ---- New Session Form ---- */}
-      <CreateNewSession
-        setData={setData}
-        dropdowns={dropdowns}
-        setDropdowns={setDropdowns}
-      />
-
       <h2 className="text-2xl md:text-3xl font-bold text-gray-300 mb-6">
         Field Training Session Reports
       </h2>

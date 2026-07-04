@@ -1,10 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { format } from "date-fns";
+import { XCircle, RotateCcw } from "lucide-react";
+
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -12,115 +17,82 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { fetchAllData } from "@/components/all-data-table/fetchAllData";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { fetchEMRs } from "@/helpers/fetchEMRs";
-import { XCircle, RotateCcw } from "lucide-react";
 
-interface CreateNewSessionProps {
-  setData: React.Dispatch<React.SetStateAction<any[]>>;
-  setDropdowns: React.Dispatch<
-    React.SetStateAction<{ names: string[]; sessions: string[] }>
-  >;
-  dropdowns: { names: string[]; sessions: string[] };
-}
+import { useSession } from "@/app/(routes)/phase-paperworks/components/SessionContext";
+import { formatTime12h } from "@/app/(routes)/phase-paperworks/lib/formatTime";
+import { sessions } from "@/constants/sessions";
 
-export function CreateNewSession({
-  setData,
-  dropdowns,
-  setDropdowns,
-}: CreateNewSessionProps) {
+export function SessionDetailsCard() {
+  const {
+    details,
+    setDetails,
+    resolvedEMR,
+    ftoNames,
+    emrList,
+    selectedEMRProfileLink,
+  } = useSession();
+
   const [submitting, setSubmitting] = useState(false);
   const [nameSearch, setNameSearch] = useState("");
   const [emrSearch, setEmrSearch] = useState("");
   const [dateOpen, setDateOpen] = useState(false);
-  const [EMRs, setEMRs] = useState<string[]>([]);
 
-  const [form, setForm] = useState({
-    yourName: "",
-    date: undefined as Date | undefined,
-    timeStart: "",
-    timeFinish: "",
-    emrName: "",
-    emrNameManual: "",
-    sessionConducted: "",
-  });
+  // Helpers
+  const update = (patch: Partial<typeof details>) =>
+    setDetails((prev) => ({ ...prev, ...patch }));
 
-  useEffect(() => {
-    const loadFormNames = async () => {
-      try {
-        const res = await fetch("/api/get-fto-names");
-        const data = await res.json();
-        setDropdowns((prev) => ({ ...prev, names: data.options }));
-      } catch (err) {
-        console.error("Error fetching form names:", err);
-      }
-    };
-    loadFormNames();
-  }, [setDropdowns]);
-
-  useEffect(() => {
-    const loadEMRs = async () => {
-      try {
-        const emrs = await fetchEMRs();
-        if (emrs) setEMRs(emrs.map(String));
-      } catch (err) {
-        console.error("Error fetching EMRs:", err);
-      }
-    };
-    loadEMRs();
-  }, []);
+  const isEmrSelected = details.emrName || details.emrNameManual;
+  const isNameSelected = details.ftoName;
 
   const resetEMRSelection = () => {
-    setForm({
-      ...form,
-      emrName: "",
-      emrNameManual: "",
-    });
-    setEmrSearch(""); 
+    update({ emrName: "", emrNameManual: "" });
+    setEmrSearch("");
     toast.info("EMR field cleared", { theme: "dark" });
   };
 
   const resetNameSelection = () => {
-    setForm({
-      ...form,
-      yourName: "",
-    });
-    setNameSearch(""); 
+    update({ ftoName: "" });
+    setNameSearch("");
     toast.info("Name field cleared", { theme: "dark" });
   };
 
-  const handleEmrSelectOpenChange = (open: boolean) => {
-    if (!open) {
-      setEmrSearch(""); 
-    }
+  const clearAll = () => {
+    setDetails({
+      ftoName: "",
+      date: undefined,
+      timeStart: "",
+      timeFinish: "",
+      emrName: "",
+      emrNameManual: "",
+      sessionConducted: "",
+    });
+    setNameSearch("");
+    setEmrSearch("");
+    toast.info("Session details cleared", { theme: "dark" });
   };
 
-  const handleNameSelectOpenChange = (open: boolean) => {
-    if (!open) {
-      setNameSearch(""); 
-    }
+  const openProfileLink = () => {
+    if (!selectedEMRProfileLink) return;
+    window.open(selectedEMRProfileLink, "_blank", "noopener,noreferrer");
   };
 
+  // Submit to Google Sheets
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const emrNameToUse = form.emrName || form.emrNameManual;
-
     if (
-      !form.yourName ||
-      !form.date ||
-      !form.timeStart ||
-      !form.timeFinish ||
-      !emrNameToUse ||
-      !form.sessionConducted
+      !details.ftoName ||
+      !details.date ||
+      !details.timeStart ||
+      !details.timeFinish ||
+      !resolvedEMR ||
+      !details.sessionConducted
     ) {
       toast.error("Fill all the fields", { theme: "dark" });
       return;
@@ -128,20 +100,13 @@ export function CreateNewSession({
 
     setSubmitting(true);
     try {
-      const formatTime12h = (time24: string) => {
-        const [hourStr, minute] = time24.split(":");
-        let hour = parseInt(hourStr, 10);
-        const ampm = hour >= 12 ? "PM" : "AM";
-        hour = hour % 12 || 12;
-        return `${hour}:${minute}:00 ${ampm}`;
-      };
-
       const payload = {
-        ...form,
-        emrName: emrNameToUse,
-        timeStart: formatTime12h(form.timeStart),
-        timeFinish: formatTime12h(form.timeFinish),
-        date: format(form.date!, "M/dd/yyyy"),
+        yourName: details.ftoName,
+        date: format(details.date, "M/dd/yyyy"),
+        timeStart: formatTime12h(details.timeStart),
+        timeFinish: formatTime12h(details.timeFinish),
+        emrName: resolvedEMR,
+        sessionConducted: details.sessionConducted,
       };
 
       const res = await fetch("/api/create-session", {
@@ -153,24 +118,8 @@ export function CreateNewSession({
       const result = await res.json();
       if (result.success) {
         toast.success("Session created successfully", { theme: "dark" });
-        setForm({
-          yourName: "",
-          date: undefined,
-          timeStart: "",
-          timeFinish: "",
-          emrName: "",
-          emrNameManual: "",
-          sessionConducted: "",
-        });
-        setEmrSearch(""); 
-
-        const fresh = await fetchAllData();
-        setData(fresh);
       } else {
-        toast.error(
-          `Something went wrong`,
-          { theme: "dark" },
-        );
+        toast.error("Something went wrong", { theme: "dark" });
       }
     } catch (err) {
       toast.error("Network error or Apps Script blocked", { theme: "dark" });
@@ -180,21 +129,15 @@ export function CreateNewSession({
     }
   };
 
-  const isEmrSelected = form.emrName || form.emrNameManual;
-  const isNameSelected = form.yourName;
-
   return (
-    <>
-      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
-
-      <h2 className="text-2xl md:text-3xl font-bold text-gray-300 mb-6">
-        Create new FTD session
-      </h2>
-
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 border p-4 rounded-lg"
-      >
+    <Card className="border shadow-sm">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-medium flex items-center gap-2">
+          Session Details
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* ---- FTO Name ---- */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <Label>Your Name</Label>
@@ -212,15 +155,15 @@ export function CreateNewSession({
             )}
           </div>
           <Select
-            value={form.yourName}
-            onValueChange={(v) => setForm({ ...form, yourName: v })}
-            onOpenChange={handleNameSelectOpenChange}
+            value={details.ftoName}
+            onValueChange={(v) => update({ ftoName: v })}
+            onOpenChange={(open) => { if (!open) setNameSearch(""); }}
           >
             <SelectTrigger className="cursor-pointer">
               <SelectValue placeholder="Select your name" />
             </SelectTrigger>
             <SelectContent>
-              {dropdowns?.names?.length === 0 ? (
+              {ftoNames.length === 0 ? (
                 <div className="p-2 cursor-pointer">
                   <Skeleton className="h-10 w-full rounded" />
                 </div>
@@ -238,8 +181,8 @@ export function CreateNewSession({
                       autoFocus
                     />
                   </div>
-                  {dropdowns?.names
-                    ?.filter((name) =>
+                  {ftoNames
+                    .filter((name) =>
                       name.toLowerCase().includes(nameSearch.toLowerCase()),
                     )
                     .map((name) => (
@@ -253,20 +196,21 @@ export function CreateNewSession({
           </Select>
         </div>
 
+        {/* ---- Date ---- */}
         <div className="flex flex-col gap-2">
           <Label>Date</Label>
           <Popover open={dateOpen} onOpenChange={setDateOpen}>
             <PopoverTrigger asChild>
               <Button variant="outline" className="w-full justify-between">
-                {form.date ? format(form.date, "PPP") : "Select date"}
+                {details.date ? format(details.date, "PPP") : "Select date"}
               </Button>
             </PopoverTrigger>
             <PopoverContent side="bottom" align="start" className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={form.date}
+                selected={details.date}
                 onSelect={(date) => {
-                  setForm({ ...form, date });
+                  update({ date: date ?? undefined });
                   setDateOpen(false);
                 }}
               />
@@ -274,27 +218,36 @@ export function CreateNewSession({
           </Popover>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Label>Time Start</Label>
-          <Input
-            type="time"
-            value={form.timeStart}
-            onChange={(e) => setForm({ ...form, timeStart: e.target.value })}
-          />
+        {/* ---- Time Start / Time Finish (24h, free text) ---- */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-2">
+            <Label className="text-xs text-muted-foreground">
+              Time Start <span className="opacity-60">(24h)</span>
+            </Label>
+            <Input
+              placeholder="00:00"
+              maxLength={5}
+              value={details.timeStart}
+              onChange={(e) => update({ timeStart: e.target.value })}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label className="text-xs text-muted-foreground">
+              Time Finish <span className="opacity-60">(24h)</span>
+            </Label>
+            <Input
+              placeholder="00:00"
+              maxLength={5}
+              value={details.timeFinish}
+              onChange={(e) => update({ timeFinish: e.target.value })}
+            />
+          </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Label>Time Finish</Label>
-          <Input
-            type="time"
-            value={form.timeFinish}
-            onChange={(e) => setForm({ ...form, timeFinish: e.target.value })}
-          />
-        </div>
-
+        {/* ---- EMR Name ---- */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <Label>{"EMR's Name"}</Label>
+            <Label>EMR&apos;s Name</Label>
             {isEmrSelected && (
               <Button
                 type="button"
@@ -310,18 +263,18 @@ export function CreateNewSession({
           </div>
 
           <Select
-            value={form.emrName}
+            value={details.emrName}
             onValueChange={(v) => {
-              setForm({ ...form, emrName: v, emrNameManual: "" });
-              setEmrSearch(""); 
+              update({ emrName: v, emrNameManual: "" });
+              setEmrSearch("");
             }}
-            onOpenChange={handleEmrSelectOpenChange}
+            onOpenChange={(open) => { if (!open) setEmrSearch(""); }}
           >
             <SelectTrigger className="cursor-pointer">
               <SelectValue placeholder="Select EMR" />
             </SelectTrigger>
             <SelectContent>
-              {EMRs.length === 0 ? (
+              {emrList.length === 0 ? (
                 <div className="p-2 cursor-pointer">
                   <Skeleton className="h-10 w-full rounded" />
                 </div>
@@ -339,31 +292,34 @@ export function CreateNewSession({
                       autoFocus
                     />
                   </div>
-                  {EMRs.filter((emr) =>
-                    emr.toLowerCase().includes(emrSearch.toLowerCase()),
-                  ).map((emr) => (
-                    <SelectItem key={emr} value={emr}>
-                      {emr}
-                    </SelectItem>
-                  ))}
+                  {emrList
+                    .filter((emr) =>
+                      emr.EMR.toLowerCase().includes(emrSearch.toLowerCase()),
+                    )
+                    .map((emr, idx) => (
+                      <SelectItem key={`${emr.EMR}-${idx}`} value={emr.EMR}>
+                        {emr.EMR}
+                      </SelectItem>
+                    ))}
                 </>
               )}
             </SelectContent>
           </Select>
 
+          {/* Manual fallback */}
           <div className="relative">
             <Input
               placeholder="Type EMR name manually"
-              value={form.emrNameManual}
+              value={details.emrNameManual}
               onChange={(e) =>
-                setForm({ ...form, emrNameManual: e.target.value, emrName: "" })
+                update({ emrNameManual: e.target.value, emrName: "" })
               }
-              className={form.emrNameManual ? "pr-8" : ""}
+              className={details.emrNameManual ? "pr-8" : ""}
             />
-            {form.emrNameManual && (
+            {details.emrNameManual && (
               <button
                 type="button"
-                onClick={() => setForm({ ...form, emrNameManual: "" })}
+                onClick={() => update({ emrNameManual: "" })}
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
                 <XCircle className="h-4 w-4" />
@@ -373,24 +329,25 @@ export function CreateNewSession({
 
           {isEmrSelected && (
             <p className="text-xs text-muted-foreground mt-1">
-              Selected: {form.emrName || form.emrNameManual}
-              {form.emrName && " (from list)"}
-              {form.emrNameManual && " (manual entry)"}
+              Selected: {resolvedEMR}
+              {details.emrName && " (from list)"}
+              {details.emrNameManual && " (manual entry)"}
             </p>
           )}
         </div>
 
+        {/* ---- Session Conducted ---- */}
         <div className="flex flex-col gap-2">
           <Label>Session Conducted</Label>
           <Select
-            value={form.sessionConducted}
-            onValueChange={(v) => setForm({ ...form, sessionConducted: v })}
+            value={details.sessionConducted}
+            onValueChange={(v) => update({ sessionConducted: v })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select session" />
             </SelectTrigger>
             <SelectContent>
-              {dropdowns.sessions.map((s) => (
+              {sessions.map((s) => (
                 <SelectItem key={s} value={s}>
                   {s}
                 </SelectItem>
@@ -399,34 +356,16 @@ export function CreateNewSession({
           </Select>
         </div>
 
-        <div className="flex gap-2 mt-2 items-center justify-center">
-          <Button type="submit" disabled={submitting} className="">
+        {/* ---- Action buttons ---- */}
+        <div className="flex gap-2 pt-2 items-center">
+          <Button type="submit" disabled={submitting} onClick={handleSubmit}>
             {submitting ? "Saving..." : "Create Session"}
           </Button>
-          
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              setForm({
-                yourName: "",
-                date: undefined,
-                timeStart: "",
-                timeFinish: "",
-                emrName: "",
-                emrNameManual: "",
-                sessionConducted: "",
-              });
-              setEmrSearch("");
-              setNameSearch("");
-              toast.info("Form reset", { theme: "dark" });
-            }}
-            className="px-3"
-          >
+          <Button type="button" variant="outline" onClick={clearAll} className="px-3">
             <RotateCcw className="h-4 w-4" />
           </Button>
         </div>
-      </form>
-    </>
+      </CardContent>
+    </Card>
   );
 }

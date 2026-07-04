@@ -27,21 +27,16 @@ import {
   Copy,
   Trash2,
   FileText,
-  Clock,
   User,
   Phone,
   FileCheck,
   AlertCircle,
   ExternalLink,
 } from "lucide-react";
-import {
-  fetchEMRProfileLinks,
-  EMRProfileLink,
-} from "@/components/current-emrs/fetchCurrentEMRs";
+import { useSession } from "@/app/(routes)/phase-paperworks/components/SessionContext";
+import { formatTime24h } from "@/app/(routes)/phase-paperworks/lib/formatTime";
 
 const defaultFormState = {
-  timeStarted: "",
-  timeEnded: "",
   participated: false,
   tenFifteenCalls: [] as { rating: string; performanceNotes: string }[],
   detailedNotes: "",
@@ -67,9 +62,13 @@ export default function ReinstatementForm() {
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
 
-  // EMR profile link select state
-  const [emrList, setEmrList] = useState<EMRProfileLink[]>([]);
-  const [selectedEMR, setSelectedEMR] = useState<string>("");
+  // Shared session context (time, EMR, etc.)
+  const { details, resolvedEMR, selectedEMRProfileLink } = useSession();
+
+  const openProfileLink = () => {
+    if (!selectedEMRProfileLink) return;
+    window.open(selectedEMRProfileLink, "_blank", "noopener,noreferrer");
+  };
 
   // Separate localStorage key so it doesn't clash with normal paperwork
   const [savedForm, setSavedForm] = useLocalStorage(
@@ -83,11 +82,6 @@ export default function ReinstatementForm() {
   useEffect(() => {
     setSavedForm(form);
   }, [form, setSavedForm]);
-
-  // Fetch EMR -> profile link list on mount
-  useEffect(() => {
-    fetchEMRProfileLinks().then(setEmrList);
-  }, []);
 
   const clearAllFields = () => {
     setForm({
@@ -133,8 +127,14 @@ export default function ReinstatementForm() {
   const config = reinstatementConfig[phase];
 
   const generate = () => {
+    const valuesWithSession = {
+      ...form,
+      timeStarted: formatTime24h(details.timeStart),
+      timeEnded: formatTime24h(details.timeFinish),
+      emrName: resolvedEMR,
+    };
     const bbcode = generateReinstatementBBCode(
-      form,
+      valuesWithSession,
       phase,
       config.sections,
       config.image || undefined,
@@ -149,16 +149,6 @@ export default function ReinstatementForm() {
     setCopied(true);
 
     toast.success("Copied!", { theme: "dark" });
-  };
-
-  // EMR profile link helpers
-  const selectedProfileLink = emrList.find(
-    (e) => e.EMR === selectedEMR,
-  )?.profileLink;
-
-  const openProfileLink = () => {
-    if (!selectedProfileLink) return;
-    window.open(selectedProfileLink, "_blank", "noopener,noreferrer");
   };
 
   // Helper to check if section should be shown
@@ -229,36 +219,6 @@ export default function ReinstatementForm() {
 
         {/* Main Form */}
         <div className="space-y-4">
-          {/* Time Section */}
-          <Card className="border shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                Session Timeline
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Started</Label>
-                <Input
-                  value={form.timeStarted}
-                  onChange={(e) => update("timeStarted", e.target.value)}
-                  placeholder="00:00"
-                  className="bg-background"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Ended</Label>
-                <Input
-                  value={form.timeEnded}
-                  onChange={(e) => update("timeEnded", e.target.value)}
-                  placeholder="00:00"
-                  className="bg-background"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Department Calls */}
           {showSection("tenFifteen") && (
             <Card className="border shadow-sm">
@@ -659,40 +619,6 @@ export default function ReinstatementForm() {
             </CardContent>
           </Card>
 
-          {/* Reinstatee Profile Link */}
-          <Card className="border shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <User className="h-4 w-4 text-muted-foreground" />
-                Reinstatee Profile
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2 flex-wrap">
-                <Select value={selectedEMR} onValueChange={setSelectedEMR}>
-                  <SelectTrigger className="w-full md:w-64">
-                    <SelectValue placeholder="Select Reinstatee" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {emrList.map((entry, idx) => (
-                      <SelectItem key={`${entry.EMR}-${idx}`} value={entry.EMR}>
-                        {entry.EMR}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  disabled={!selectedProfileLink}
-                  onClick={openProfileLink}
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Open Link
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Action Bar */}
@@ -710,6 +636,16 @@ export default function ReinstatementForm() {
           >
             <Copy className="h-4 w-4 mr-2" />
             {copied ? "Copied!" : "Copy"}
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={!selectedEMRProfileLink}
+            onClick={openProfileLink}
+            className="px-6"
+          >
+            <ExternalLink className="h-4 w-4 mr-2" />
+            Open EMR Profile
           </Button>
           <Button
             variant="ghost"

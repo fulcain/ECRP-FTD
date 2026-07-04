@@ -133,7 +133,7 @@ ${signatureSection}
   const sessionDetailsParts = [
     values.rideAlongType ? rideAlongSection : "",
     `[b]Time Started:[/b] ${values.timeStarted || ""}`,
-    `[b]Time Ended:[/b] ${values.timeStarted || ""}`,
+    `[b]Time Ended:[/b] ${values.timeEnded || ""}`,
     `[b]Did the EMR participate in a 10-15 call?[/b] ${yesNo(values.participated)}
 [i]If Yes, rate their performance (1-5). Explain any issues if performance was poor:[/i]`,
     tenFifteenSection,
