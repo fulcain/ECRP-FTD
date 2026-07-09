@@ -130,6 +130,8 @@ export function SessionDetailsCard() {
   };
 
   return (
+      <div className="max-w-4xl mx-auto py-8 px-4 space-y-6">
+
     <Card className="border shadow-sm">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -367,5 +369,6 @@ export function SessionDetailsCard() {
         </div>
       </CardContent>
     </Card>
+          </div>
   );
 }
