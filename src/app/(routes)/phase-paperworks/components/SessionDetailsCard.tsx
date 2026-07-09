@@ -224,7 +224,7 @@ export function SessionDetailsCard() {
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-2">
             <Label className="text-xs text-muted-foreground">
-              Time Start <span className="opacity-60">(24h)</span>
+              Time Start ((UTC))<span className="opacity-60">(24h)</span>
             </Label>
             <Input
               placeholder="00:00"

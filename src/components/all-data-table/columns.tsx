@@ -48,11 +48,11 @@ export const generateColumns = (): ColumnDef<TableDataType>[] => [
   },
   {
     accessorKey: "Time Start",
-    header: "Time Start",
+    header: "Time Start ((UTC))",
   },
   {
     accessorKey: "Time Finish",
-    header: "Time Finish",
+    header: "Time Finish ((UTC))",
   },
   {
     accessorKey: "Timestamp",
