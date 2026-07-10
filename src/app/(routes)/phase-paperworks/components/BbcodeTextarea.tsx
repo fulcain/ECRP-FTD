@@ -194,8 +194,11 @@ export function BbcodeTextarea({
       }
     };
 
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    // `applyTool` is derived from `value`, `readOnly`, and `textareaRef`,
+    // which are already tracked here. Including it directly would force a
+    // window-level listener tear-down + re-bind on every render (since
+    // `applyTool` is not memoized) which loses keypresses mid-flight.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, readOnly]);
 
   return (

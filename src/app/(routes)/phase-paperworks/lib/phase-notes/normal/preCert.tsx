@@ -6,7 +6,6 @@ import {
   BulletList,
   Category,
   EyebrowLabel,
-  Em,
   ImportantNote,
   Item,
   Spoiler,

@@ -221,6 +221,12 @@ export function Figure({
   }
   return (
     <figure className="my-2 space-y-1.5">
+      {/* The Figure component renders reference diagrams sourced from the
+          BBCode reference material authored by the EMS documentation team.
+          These are not build-time assets we own, so we intentionally use a
+          plain <img> rather than next/image (which would require us to
+          host the assets locally and own their performance characteristics). */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={src}
         alt={alt ?? caption ?? "reference diagram"}

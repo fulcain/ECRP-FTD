@@ -57,9 +57,14 @@ export function MonthlySessionStatsTable() {
   const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const currentDate = new Date();
-  const currentMonth = currentDate.toLocaleString("en-US", { month: "long" });
-  const currentYear = currentDate.getFullYear().toString();
+  // `currentYear` is memoized so it has a stable identity across renders;
+  // otherwise the `yearList` useMemo below (which falls back to this value
+  // when no data is loaded yet) would be invalidated on every paint.
+  const currentYear = useMemo(
+    () => new Date().getFullYear().toString(),
+    [],
+  );
+  const currentMonth = new Date().toLocaleString("en-US", { month: "long" });
 
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [selectedYear, setSelectedYear] = useState(currentYear);
@@ -93,7 +98,7 @@ export function MonthlySessionStatsTable() {
     });
 
     return Array.from(setYears).sort();
-  }, [data]);
+  }, [data, currentYear]);
 
   const monthData = useMemo(() => {
     if (!data?.length) return [];

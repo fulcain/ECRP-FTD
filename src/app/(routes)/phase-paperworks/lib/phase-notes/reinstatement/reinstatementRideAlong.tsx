@@ -33,7 +33,11 @@ export function ReinstatementRideAlongNotes() {
               additional mandatories when needed.
             </li>
              <li>
-           It depends on the phase they're in and whether it's mandatory or optional. Treat optional sessions the same as mandatory ones. If they're struggling with something, be honest about it and assign additional mandatory sessions as needed.
+           It depends on the phase they&apos;re in and whether it&apos;s
+           mandatory or optional. Treat optional sessions the same as
+           mandatory ones. If they&apos;re struggling with something, be
+           honest about it and assign additional mandatory sessions as
+           needed.
             </li>
           </ul>
         }

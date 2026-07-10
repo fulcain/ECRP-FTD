@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Aside,
   Bold,
   BbLink,
   BulletList,
@@ -14,10 +13,7 @@ import {
   ImportantNote,
   Item,
   OOC,
-  SourceAnnotation,
   SourceCodeBlock,
-  SubHeading,
-  Tinted,
   WarningCallout,
 } from "@/app/(routes)/phase-paperworks/lib/phase-notes/primitives";
 import { Clock } from "lucide-react";

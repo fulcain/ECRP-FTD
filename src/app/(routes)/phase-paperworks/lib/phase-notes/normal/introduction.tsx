@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { INTRO_EMAIL_CONTENT } from "@/app/(routes)/phase-paperworks/lib/phase-notes/normal/intro-email-content";
 
 import {
-  Aside,
-  BbLink,
   Bold,
   BulletList,
   Category,

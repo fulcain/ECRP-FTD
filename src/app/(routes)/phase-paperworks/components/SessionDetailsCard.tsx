@@ -43,7 +43,6 @@ export function SessionDetailsCard() {
     resolvedEMR,
     ftoNames,
     emrList,
-    selectedEMRProfileLink,
   } = useSession();
 
   const [submitting, setSubmitting] = useState(false);
@@ -82,11 +81,6 @@ export function SessionDetailsCard() {
     setNameSearch("");
     setEmrSearch("");
     toast.info("Session details cleared", { theme: "dark" });
-  };
-
-  const openProfileLink = () => {
-    if (!selectedEMRProfileLink) return;
-    window.open(selectedEMRProfileLink, "_blank", "noopener,noreferrer");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

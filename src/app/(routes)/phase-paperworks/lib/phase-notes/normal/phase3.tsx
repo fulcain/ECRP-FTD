@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Aside,
   Bold,
   Category,
   Command,
