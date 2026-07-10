@@ -31,6 +31,15 @@ import { fetchEmployeeStats } from "@/components/employee-stats/fetchEmployeeSta
 import { Pagination } from "@/components/pagination";
 import { TableDataType } from "@/app/page";
 
+/**
+ * Per-FTO aggregate view. Loads the published "Employee Stats" sheet and
+ * renders session counts plus ribbon-eligibility markers for every active
+ * FTO. Sorted by total sessions descending by default so the most-active
+ * FTOs surface first.
+ *
+ * Rows past the "Ex FTOs" sentinel are dropped upstream — see
+ * `fetchEmployeeStats`.
+ */
 export function EmployeeStatsTable() {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "Total Sessions", desc: true },
@@ -89,7 +98,7 @@ export function EmployeeStatsTable() {
         Employee Stats Table
       </h2>
 
-      {/* Filters */}
+      {/* === Filters === */}
       <div className="flex items-center py-4 space-x-4">
         {loading ? (
           <Skeleton className="h-10 w-full rounded" />
@@ -103,7 +112,7 @@ export function EmployeeStatsTable() {
         )}
       </div>
 
-      {/* Table */}
+      {/* === Table === */}
       <div className="overflow-x-auto rounded-md border">
         {loading ? (
           <>
@@ -157,7 +166,7 @@ export function EmployeeStatsTable() {
         )}
       </div>
 
-      {/* Pagination */}
+      {/* === Pagination === */}
       {!loading && (
         <Pagination
           table={table}

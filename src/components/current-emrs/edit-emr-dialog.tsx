@@ -51,7 +51,6 @@ export function EditEMRDialog({
     notes: "",
   });
 
-  // Seed the form from the selected row whenever it changes.
   useEffect(() => {
     if (!row) return;
     setForm({

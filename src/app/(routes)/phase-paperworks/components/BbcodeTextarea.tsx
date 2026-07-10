@@ -48,6 +48,19 @@ const bbcodeTools: BbcodeTool[] = [
   { label: "URL", tag: "url", type: "wrap", shortcut: "Ctrl+Shift+U" },
 ];
 
+/**
+ * Rich-text BBCode editor stub for the paperwork forms.
+ *
+ * Exposes a toolbar that wraps the selection in [b]/[i]/[u]/[quote]/[code]
+ * tags, inserts list scaffolding, and binds Ctrl-key shortcuts
+ * (Ctrl+B/I/U/Q/8/9/L and Ctrl+Shift+U for URL). Wrapping/insertion is
+ * performed imperatively on the underlying `<textarea>` so the caret is
+ * repositioned after each tool application.
+ *
+ * Designed to be a drop-in replacement for a plain `<Textarea>`; it
+ * forwards every prop to the underlying textarea via the className / value
+ * / placeholder / readOnly props and an `onChange(string)` callback.
+ */
 export function BbcodeTextarea({
   value,
   onChange,
@@ -57,6 +70,9 @@ export function BbcodeTextarea({
 }: BbcodeTextareaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // requestAnimationFrame defers caret positioning until after the textarea
+  // commits any pending `value` change triggered by the same call — without
+  // it the browser would clobber our selection with the freshly-clamped value.
   const focusCaret = (position: number, selectionEnd = position) => {
     requestAnimationFrame(() => {
       if (!textareaRef.current) return;
@@ -134,7 +150,6 @@ export function BbcodeTextarea({
     insertText(tool.snippet, selectionStart, selectionEnd);
   };
 
-  /* Keyboard Shortcuts */
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (!textareaRef.current) return;
@@ -185,7 +200,6 @@ export function BbcodeTextarea({
 
   return (
     <div className="space-y-2">
-      {/* Toolbar */}
       <div className="flex flex-wrap gap-2">
         {bbcodeTools.map((tool) => (
           <Button
@@ -202,7 +216,6 @@ export function BbcodeTextarea({
         ))}
       </div>
 
-      {/* Shortcut Hint */}
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground bg-muted/40 rounded-md px-3 py-2">
         {bbcodeTools.map((tool) => (
           <span key={tool.label} className="whitespace-nowrap">

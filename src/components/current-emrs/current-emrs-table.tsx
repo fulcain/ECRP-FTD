@@ -34,6 +34,15 @@ import { CreateNewEMR } from "@/components/create-new-emr/create-new-emr";
 import { EditEMRDialog } from "@/components/current-emrs/edit-emr-dialog";
 import { DeleteEMRDialog } from "@/components/current-emrs/delete-emr-dialog";
 
+/**
+ * Active-EMR roster with inline edit/delete actions.
+ *
+ * Fetches the published sheet on mount, exposes a name filter, and
+ * surfaces per-row edit/delete dialogs via the `EditEMRDialog`
+ * and `DeleteEMRDialog` components. Both dialogs push changes back
+ * to `setData` directly so the table reflects them before the
+ * remote CSV re-caches.
+ */
 export function CurrentEMRsTable() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pageSizeInput, setPageSizeInput] = useState(10);
@@ -41,7 +50,6 @@ export function CurrentEMRsTable() {
   const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Row currently targeted by the edit / delete dialogs.
   const [editRow, setEditRow] = useState<TableDataType | null>(null);
   const [deleteRow, setDeleteRow] = useState<TableDataType | null>(null);
   const [editOpen, setEditOpen] = useState(false);
@@ -57,7 +65,6 @@ export function CurrentEMRsTable() {
     loadData();
   }, []);
 
-  // Use raw data without transforming
   const tableData = useMemo(() => mapEmployeeDataRaw(data), [data]);
 
   const tableRows = useMemo(
@@ -108,7 +115,7 @@ export function CurrentEMRsTable() {
         Current EMRs Table
       </h2>
 
-      {/* Filters */}
+      {/* === Filters === */}
       <div className="flex items-center py-4 space-x-4">
         {loading ? (
           <Skeleton className="h-10 w-full rounded" />
@@ -122,7 +129,7 @@ export function CurrentEMRsTable() {
         )}
       </div>
 
-      {/* Table */}
+      {/* === Table === */}
       <div className="overflow-x-auto rounded-md border">
         {loading ? (
           <Skeleton className="h-96 w-full rounded-b" />
@@ -174,7 +181,7 @@ export function CurrentEMRsTable() {
         )}
       </div>
 
-      {/* Pagination */}
+      {/* === Pagination === */}
       {!loading && (
         <Pagination
           table={table}

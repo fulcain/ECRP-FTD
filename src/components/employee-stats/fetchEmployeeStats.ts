@@ -16,14 +16,15 @@ export async function fetchEmployeeStats(): Promise<TableDataType[]> {
 
     const rawData: TableDataType[] = parsed.data as TableDataType[];
 
-    // Find the row where Names === "Ex FTOs"
+    // The published sheet has a header banner row first, then active
+    // employees, then an "Ex FTOs" sentinel that marks the end of the
+    // active list. Slice everything before the sentinel; also drop the
+    // banner row by starting at index 1.
     const stopIndex = rawData.findIndex((obj) => obj["Names"] === "Ex FTOs");
 
-    // Slice from index 1 up to (but not including) that row
     let sliced =
       stopIndex > -1 ? rawData.slice(1, stopIndex) : rawData.slice(1);
 
-    // Remove last object if it's empty
     if (
       sliced.length &&
       Object.values(sliced[sliced.length - 1]).every((v) => !v)

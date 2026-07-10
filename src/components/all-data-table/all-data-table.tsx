@@ -38,6 +38,13 @@ import {
 
 import { TableDataType } from "@/app/page";
 
+/**
+ * Read-only, filterable history table for all filed FT sessions.
+ *
+ * Loads the published Google Sheet CSV on mount, exposes a name filter
+ * plus a date-range filter, and sorts results newest-first. Pagination
+ * is delegated to the shared `<Pagination>` component.
+ */
 export function AllDataTable() {
   const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -111,7 +118,7 @@ export function AllDataTable() {
         Field Training Session Reports
       </h2>
 
-      {/* ---- Filters, Table, Pagination ---- */}
+      {/* === Filters === */}
       <div className="flex items-center py-4 space-x-4">
         {loading ? (
           <Skeleton className="h-10 w-full rounded" />
@@ -184,6 +191,7 @@ export function AllDataTable() {
         )}
       </div>
 
+      {/* === Table === */}
       <div className="overflow-x-auto rounded-md border">
         {loading ? (
           <Skeleton className="h-96 w-full rounded-b" />
@@ -234,6 +242,7 @@ export function AllDataTable() {
         )}
       </div>
 
+      {/* === Pagination === */}
       {!loading && (
         <Pagination
           table={table}

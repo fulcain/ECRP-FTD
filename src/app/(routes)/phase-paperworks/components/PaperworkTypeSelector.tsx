@@ -35,12 +35,21 @@ function PaperworkTypeSelect() {
   );
 }
 
+/**
+ * Top-level route entry that owns the paperwork-mode state and mounts the
+ * matching form below it.
+ *
+ * Wraps the rendered form tree in a `SessionProvider` so the normal and
+ * reinstatement forms share one session context (FTO name, date, EMR,
+ * current phase, additional mandatories). The active form type itself
+ * lives inside that provider as well, so the SessionDetailsCard and the
+ * NextPhaseTitleCard can react to the form switch.
+ */
 export function PaperworkTypeSelector() {
   return (
     <SessionProvider>
       <div className="space-y-6">
 
-        {/* Paperwork type selector */}
         <div className="max-w-4xl mx-auto py-8 px-4 space-y-6">
           <div className="flex items-center gap-3">
             <PaperworkTypeSelect />
@@ -49,7 +58,6 @@ export function PaperworkTypeSelector() {
 
         <PaperworkTypeRouter />
 
-        {/* Shared session details + Next Phase Title feature */}
         <SessionDetailsCard />
       </div>
     </SessionProvider>

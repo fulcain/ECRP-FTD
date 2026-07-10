@@ -28,6 +28,14 @@ import { useSession } from "@/app/(routes)/phase-paperworks/components/SessionCo
 import { formatTime12h } from "@/app/(routes)/phase-paperworks/lib/formatTime";
 import { sessions } from "@/constants/sessions";
 
+/**
+ * Shared session-details card.
+ *
+ * Renders the trainer's name/date/times, the EMR's name (dropdown + manual
+ * fallback), and the session-conducted dropdown. Owning this in shared
+ * context lets both the normal and reinstatement paperwork forms reuse the
+ * same inputs and submit a single session to the sheet.
+ */
 export function SessionDetailsCard() {
   const {
     details,
@@ -43,7 +51,6 @@ export function SessionDetailsCard() {
   const [emrSearch, setEmrSearch] = useState("");
   const [dateOpen, setDateOpen] = useState(false);
 
-  // Helpers
   const update = (patch: Partial<typeof details>) =>
     setDetails((prev) => ({ ...prev, ...patch }));
 
@@ -82,7 +89,6 @@ export function SessionDetailsCard() {
     window.open(selectedEMRProfileLink, "_blank", "noopener,noreferrer");
   };
 
-  // Submit to Google Sheets
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -131,6 +137,7 @@ export function SessionDetailsCard() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4 space-y-6">
+      {/* === Session Details Card === */}
       <Card className="border shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -138,7 +145,7 @@ export function SessionDetailsCard() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* ---- FTO Name ---- */}
+          {/* === Presenter (FTO) === */}
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <Label>Your Name</Label>
@@ -197,7 +204,7 @@ export function SessionDetailsCard() {
             </Select>
           </div>
 
-          {/* ---- Date ---- */}
+          {/* === Date & Time === */}
           <div className="flex flex-col gap-2">
             <Label>Date</Label>
             <Popover open={dateOpen} onOpenChange={setDateOpen}>
@@ -219,7 +226,6 @@ export function SessionDetailsCard() {
             </Popover>
           </div>
 
-          {/* ---- Time Start / Time Finish (24h, free text) ---- */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <Label className="text-xs text-muted-foreground">
@@ -234,7 +240,7 @@ export function SessionDetailsCard() {
             </div>
             <div className="flex flex-col gap-2">
               <Label className="text-xs text-muted-foreground">
-                Time Finish <span className="opacity-60">(24h)</span>
+                Time Finish ((UTC))<span className="opacity-60">(24h)</span>
               </Label>
               <Input
                 placeholder="00:00"
@@ -245,7 +251,7 @@ export function SessionDetailsCard() {
             </div>
           </div>
 
-          {/* ---- EMR Name ---- */}
+          {/* === Trainee (EMR) === */}
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <Label>EMR&apos;s Name</Label>
@@ -307,7 +313,6 @@ export function SessionDetailsCard() {
               </SelectContent>
             </Select>
 
-            {/* Manual fallback */}
             <div className="relative">
               <Input
                 placeholder="Type EMR name manually"
@@ -337,7 +342,7 @@ export function SessionDetailsCard() {
             )}
           </div>
 
-          {/* ---- Session Conducted ---- */}
+          {/* === Session Conducted === */}
           <div className="flex flex-col gap-2">
             <Label>Session Conducted</Label>
             <Select
@@ -357,7 +362,7 @@ export function SessionDetailsCard() {
             </Select>
           </div>
 
-          {/* ---- Action buttons ---- */}
+          {/* === Actions === */}
           <div className="flex gap-2 pt-2 items-center">
             <Button type="submit" disabled={submitting} onClick={handleSubmit}>
               {submitting ? "Saving..." : "Create Session"}

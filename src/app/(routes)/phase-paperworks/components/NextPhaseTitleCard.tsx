@@ -21,10 +21,6 @@ import {
   useSession,
 } from "@/app/(routes)/phase-paperworks/components/SessionContext";
 
-/* ------------------------------------------------------------------ */
-/*  Config + helpers                                                  */
-/* ------------------------------------------------------------------ */
-
 interface NextPhaseOption {
   /** Stable value used by the Select control. */
   value: string;
@@ -101,30 +97,45 @@ function getNextPhaseConfig(formType: FormType): NextPhaseConfig {
     : NORMAL_NEXT_PHASE;
 }
 
+/**
+ * Dropdown + clipboard helper used by both paperwork forms to fill in
+ * the pending phase title on the next session's EMR Profile / FTS post.
+ *
+ * Resolution rules:
+ *   - Selection persists per form type (its own localStorage key) so
+ *     switching forms keeps each form's last-picked value intact.
+ *   - When the active form reports a NEW `currentPhase` (the user just
+ *     clicked a phase button) the dropdown auto-advances to that phase's
+ *     configured next phase, as long as a persisted selection already
+ *     existed. Initial mount never auto-advances — the persisted choice
+ *     wins.
+ *   - The "Pending Nx Mandatory" option is rewired to display the live
+ *     additional-mandatories count from `SessionContext`.
+ */
 export function NextPhaseTitleCard() {
   const { formType, currentPhase, additionalMandatories } = useSession();
   const [phaseCopied, setPhaseCopied] = useState(false);
 
   const config = getNextPhaseConfig(formType);
 
-  // Persisted selection (per form type — switching forms keeps each form's
-  // own selection independent).
   const [nextPhaseDropdown, setNextPhaseDropdown] = useLocalStorage<string>(
     config.dropdownKey,
     config.options[0].value,
   );
-  // Guard against a stale value carried over from a different form type.
+  // Per-form localStorage key means a value from the other form type may
+  // outlive its options array; fall back to the first valid option so the
+  // Select control never receives an unknown value.
   const safeNextPhaseDropdown = config.options.some(
     (o) => o.value === nextPhaseDropdown,
   )
     ? nextPhaseDropdown
     : config.options[0].value;
 
-  // Re-syncs the dropdown selection when the active form reports a *new*
-  // current phase (user clicked a phase button). The first non-null phase
-  // assignment is treated as initial state so we don't clobber the user's
-  // persisted selection on page load. This mirrors the `phaseRef` pattern
-  // the original per-form implementation used.
+  // Tracks the last phase we synced into the dropdown. Used to:
+  //   1. Distinguish "first mount" (preserve the persisted selection)
+  //      from "user clicked a new phase button" (auto-advance to the
+  //      logical next phase).
+  //   2. Avoid re-running the sync on every render.
   const lastSyncedPhaseRef = useRef<string | null>(null);
   useEffect(() => {
     if (!currentPhase) {
@@ -132,7 +143,6 @@ export function NextPhaseTitleCard() {
       return;
     }
     if (lastSyncedPhaseRef.current === currentPhase) return;
-    // Initial mount of the active form → preserve persisted selection.
     if (lastSyncedPhaseRef.current === null) {
       lastSyncedPhaseRef.current = currentPhase;
       return;
@@ -145,8 +155,6 @@ export function NextPhaseTitleCard() {
     setNextPhaseDropdown(safeValue);
   }, [currentPhase, config, setNextPhaseDropdown]);
 
-  // Live Additional Mandatories count — drives the dynamic "Nx Mandatory"
-  // dropdown option's label.
   const mandatoryCount = useMemo(() => {
     const n = parseInt(additionalMandatories, 10);
     return Number.isFinite(n) && n > 0 ? n : 0;
@@ -160,7 +168,6 @@ export function NextPhaseTitleCard() {
     [mandatoryCount],
   );
 
-  // Resolve the title straight from the dropdown (no manual override).
   const selectedOption = config.options.find(
     (o) => o.value === safeNextPhaseDropdown,
   );
@@ -194,14 +201,11 @@ export function NextPhaseTitleCard() {
                 onValueChange={(v) => setNextPhaseDropdown(v)}
               >
                 <SelectTrigger className="flex-1">
-                  {/* Radix picks up the matched SelectItem's text automatically. */}
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {config.options.map((option) => (
                     <SelectItem
-                      // Re-mount the dynamic "Nx Mandatory" item when N changes
-                      // so Radix re-reads its text and SelectValue refreshes.
                       key={
                         option.dynamic === "mandatory"
                           ? `${option.value}-${mandatoryCount}`

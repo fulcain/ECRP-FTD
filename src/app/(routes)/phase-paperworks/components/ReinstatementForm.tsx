@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { BbcodeTextarea } from "@/app/(routes)/phase-paperworks/components/BbcodeTextarea";
 import { NextPhaseTitleCard } from "@/app/(routes)/phase-paperworks/components/NextPhaseTitleCard";
+import { ReinstatementNotesCard } from "@/app/(routes)/phase-paperworks/components/ReinstatementNotesCard";
 import {
   Copy,
   Trash2,
@@ -57,12 +58,19 @@ const defaultFormState = {
   reintroEmailSent: false,
 };
 
+/**
+ * Reinstatement paperwork form.
+ *
+ * Mirrors `PaperworkForm` but for a returning EMT rejoining the program:
+ * differs in the available phases (Reinstatement Phases I/II, Cert) and
+ * the default-form-text tone (e.g., "Reinstatee" vs "EMR"). Reuses the
+ * shared session context for FTO/date/times/EMR.
+ */
 export default function ReinstatementForm() {
   const [phase, setPhase] = useState<ReinstatementPhaseKey>("reinstatementPhase1");
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
 
-  // Shared session context (time, EMR, current phase, additional mandatories, etc.)
   const {
     details,
     resolvedEMR,
@@ -72,14 +80,10 @@ export default function ReinstatementForm() {
     setAdditionalMandatories,
   } = useSession();
 
-  // Keep the active form's current phase synced to shared context so the
-  // SessionDetailsCard's Next Phase Title feature can derive its default.
   useEffect(() => {
     setCurrentPhase(phase);
   }, [phase, setCurrentPhase]);
 
-  // Clear the shared phase on unmount so we don't leak state across
-  // paperwork types when the user switches between forms.
   useEffect(() => {
     return () => {
       setCurrentPhase(null);
@@ -91,13 +95,11 @@ export default function ReinstatementForm() {
     window.open(selectedEMRProfileLink, "_blank", "noopener,noreferrer");
   };
 
-  // Separate localStorage key so it doesn't clash with normal paperwork.
-  // additionalMandatories is intentionally NOT here — it lives in the shared
-  // SessionContext so the SessionDetailsCard can use it for the
-  // "Pending Nx Mandatory" badge / dropdown option. A legacy saved payload
-  // may still contain the old `additionalMandatories` field but generate()
-  // always overrides it with the value from context so the BBCode stays
-  // consistent. The next save call will overwrite the legacy shape cleanly.
+  // additionalMandatories lives in shared SessionContext so the
+  // SessionDetailsCard can drive the "Pending Nx Mandatory" dropdown.
+  // A legacy saved payload may still include the old `additionalMandatories`
+  // field, but generate() always overrides it from context so the BBCode
+  // stays consistent; the next save clears the legacy shape.
   const [savedForm, setSavedForm] = useLocalStorage(
     "ftd-reinstatement-paperwork-form-data",
     { ...defaultFormState },
@@ -105,7 +107,6 @@ export default function ReinstatementForm() {
 
   const [form, setForm] = useState<any>(savedForm);
 
-  // Update localStorage whenever form changes
   useEffect(() => {
     setSavedForm(form);
   }, [form, setSavedForm]);
@@ -118,7 +119,7 @@ export default function ReinstatementForm() {
     });
     setOutput("");
     setCopied(false);
-    setAdditionalMandatories(""); // also clear the shared mandatories count
+    setAdditionalMandatories("");
 
     toast.info("All fields cleared", { theme: "dark" });
   };
@@ -127,7 +128,6 @@ export default function ReinstatementForm() {
     setForm((prev: any) => ({ ...prev, [key]: value }));
   };
 
-  // 10-15 helpers
   const addTenFifteenCall = () => {
     update("tenFifteenCalls", [
       ...form.tenFifteenCalls,
@@ -157,8 +157,8 @@ export default function ReinstatementForm() {
   const generate = () => {
     const valuesWithSession = {
       ...form,
-      // Pull the additional mandatories count from shared context since it's
-      // no longer stored on the form's local state.
+      // additionalMandatories lives in shared context now, not on the form,
+      // so source it from there for the BBCode.
       additionalMandatories,
       timeStarted: formatTime24h(details.timeStart),
       timeEnded: formatTime24h(details.timeFinish),
@@ -182,7 +182,6 @@ export default function ReinstatementForm() {
     toast.success("Copied!", { theme: "dark" });
   };
 
-  // Helper to check if section should be shown
   const showSection = (section: string) => config.sections.includes(section);
 
   return (
@@ -190,7 +189,7 @@ export default function ReinstatementForm() {
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
       <div className="max-w-4xl mx-auto py-8 px-4 space-y-6">
 
-        {/* Header with auto-save indicator */}
+        {/* === Header === */}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-light tracking-tight">Reinstatement Paperwork</h1>
           <div className="flex items-center gap-2">
@@ -204,7 +203,7 @@ export default function ReinstatementForm() {
           </div>
         </div>
 
-        {/* FTO Details - Minimal Card */}
+        {/* === FTO Signature & Rank === */}
         <Card className="border-0 shadow-none bg-muted/30">
           <CardContent className="p-4">
             <div className="flex items-start gap-4 flex-wrap">
@@ -233,7 +232,7 @@ export default function ReinstatementForm() {
           </CardContent>
         </Card>
 
-        {/* Phase Selector */}
+        {/* === Phase Selector === */}
         <div className="flex gap-1.5 flex-wrap">
           {Object.entries(reinstatementConfig).map(([key, value]) => (
             <Button
@@ -248,9 +247,12 @@ export default function ReinstatementForm() {
           ))}
         </div>
 
-        {/* Main Form */}
+        {/* === Phase Reference Notes === */}
+        <ReinstatementNotesCard />
+
+        {/* === Phase-Specific Form Sections === */}
         <div className="space-y-4">
-          {/* Department Calls */}
+          {/* === Department Calls === */}
           {showSection("tenFifteen") && (
             <Card className="border shadow-sm">
               <CardHeader className="pb-3">
@@ -276,7 +278,7 @@ export default function ReinstatementForm() {
             </Card>
           )}
 
-          {/* Ride Along Type */}
+          {/* === Ride Along === */}
           {showSection("rideAlong") && (
             <Card className="border shadow-sm">
               <CardHeader className="pb-3">
@@ -301,7 +303,7 @@ export default function ReinstatementForm() {
             </Card>
           )}
 
-          {/* 10-15 Calls */}
+          {/* === 10-15 Transports === */}
           {showSection("tenFifteen") && (
             <Card className="border shadow-sm">
               <CardHeader className="pb-3">
@@ -408,7 +410,7 @@ export default function ReinstatementForm() {
             </Card>
           )}
 
-          {/* Roleplay Notes */}
+          {/* === Roleplay Notes === */}
           {showSection("tenFifteen") && (
             <Card className="border shadow-sm">
               <CardHeader className="pb-3">
@@ -427,7 +429,7 @@ export default function ReinstatementForm() {
             </Card>
           )}
 
-          {/* Detailed Notes / Certification Notes */}
+          {/* === Session / Certification Notes === */}
           {showSection("detailedNotes") && (
             <Card className="border shadow-sm">
               <CardHeader className="pb-3">
@@ -468,7 +470,7 @@ export default function ReinstatementForm() {
             </Card>
           )}
 
-          {/* Issues */}
+          {/* === Issues Encountered === */}
           {showSection("issues") && (
             <Card className="border shadow-sm">
               <CardHeader className="pb-3">
@@ -488,7 +490,7 @@ export default function ReinstatementForm() {
             </Card>
           )}
 
-          {/* Failure Reason */}
+          {/* === Failed-Cert Details === */}
           {showSection("failedCert") && (
             <Card className="border shadow-sm border-destructive/20">
               <CardHeader className="pb-3">
@@ -507,11 +509,7 @@ export default function ReinstatementForm() {
             </Card>
           )}
 
-          {/* Next Training Notes — the form keeps the Additional Mandatories
-              input + Focus Areas (their values are baked into the generated
-              BBCode). The Next Phase Title subsection was moved into the
-              shared NextPhaseTitleCard component, rendered next to the
-              action bar below. */}
+          {/* === Next Session Focus === */}
           {phase !== "reinstatementCertPassed" && (
             <Card className="border shadow-sm">
               <CardHeader className="pb-3">
@@ -554,7 +552,7 @@ export default function ReinstatementForm() {
             </Card>
           )}
 
-          {/* Checkboxes Section */}
+          {/* === Phase-Specific Checkboxes === */}
           <Card className="border shadow-sm">
             <CardContent className="p-4 space-y-3">
               <div className="flex items-center gap-2">
@@ -658,12 +656,10 @@ export default function ReinstatementForm() {
 
         </div>
 
-        {/* Next Phase Title lives next to the action bar so users see it
-            immediately above Generate / Open EMR Profile. */}
+        {/* === Next Phase Title + Action Bar === */}
         <NextPhaseTitleCard />
 
-        {/* Action Bar */}
-        <div className="sticky bottom-4 bg-background/95 backdrop-blur-sm border rounded-lg p-3 flex gap-2 justify-center md:justify-start shadow-lg">
+        <div className="bg-background/95 backdrop-blur-sm border rounded-lg p-3 flex gap-2 justify-center md:justify-start shadow-lg">
           <Button onClick={generate} size="sm" className="px-6">
             <FileCheck className="h-4 w-4 mr-2" />
             Generate
@@ -698,7 +694,7 @@ export default function ReinstatementForm() {
           </Button>
         </div>
 
-        {/* Output */}
+        {/* === Generated BBCode Output === */}
         {output && (
           <Card className="border shadow-sm">
             <CardHeader className="pb-3">

@@ -1,3 +1,12 @@
+/**
+ * Pure BBCode assembler for reinstatement paperwork.
+ *
+ * Shape mirrors `generateBBCode` but the available sections and the
+ * rendered language are tuned for a returning EMT ("Reinstatee",
+ * "Re-Introduction Email", "Failed Cert Follow-up", etc.). Title
+ * strings dictated by `detailedNotesTitles` enforce a per-phase word
+ * minimum.
+ */
 export function generateReinstatementBBCode(
   values: Record<string, any>,
   phase: string,
@@ -10,7 +19,6 @@ export function generateReinstatementBBCode(
   const reintroEmailSent = values.reintroEmailSent ? "YES" : "NO";
   const fTSessionLink = "https://forms.gle/BJ6iLg5Fkf9Ug6fE6";
 
-  // 10-15 Call section — uses "reinstatee" language
   const tenFifteenSection = `[list]
 ${
   values.participated && values.tenFifteenCalls?.length
@@ -24,7 +32,6 @@ ${
 }
 [/list]`;
 
-  // Ride-along section
   const rideAlongSection = `[b]Ride-along Type:[/b] ${values.rideAlongType || ""}`;
 
 const detailedNotesTitles = {
@@ -40,7 +47,6 @@ const detailedNotesSection = `[b]${
   "Reinstatement Phase Two Notes (25 Word Minimum)"
 }:[/b]`;
 
-  // Issues section (not used in reinstatement but kept for extensibility)
   const issuesSection =
     sections.includes("issues") && values.issues
       ? `[b]Issues:[/b]
@@ -49,7 +55,6 @@ ${values.issues}
 [/list]`
       : "";
 
-  // Reason for failure
   const reasonFailureSection = sections.includes("failedCert")
     ? `[b]Reason(s):[/b]
 [list=none]
@@ -57,13 +62,11 @@ ${values.reasonFailure}
 [/list]`
     : "";
 
-      // Reintroduction email checkbox (Phase I only)
   const reintroEmailLine =
     phase === "reinstatementPhase1"
       ? `[b]Was the Reinstatee sent the Re-Introduction Email?[/b] ${reintroEmailSent}\n`
       : "";
 
-        // Pass/fail line for Phase I
   const phasePassLine =
     phase === "reinstatementPhase1"
       ? `[b]Did the Reinstatee pass Phase I:[/b] ${yesNo(values.phasePassed)}\n`
@@ -71,7 +74,6 @@ ${values.reasonFailure}
       ? `[b]Did the reinstatee pass Reinstatement Phase II? [/b] ${yesNo(values.phasePassed)}\n`
       : "";
 
-  // Notes for next training session
   const notesNextTrainingSection =
     sections.includes("nextTraining") && phase !== "reinstatementCertFailed"
       ? `[lsemssubtitle]CONCLUDING NOTES:[/lsemssubtitle]
@@ -87,10 +89,8 @@ ${phasePassLine}
 [/divbox]`
       : "";
 
-  // Pre-cert notes (not used in reinstatement)
   const notesForPreCert = "";
 
-  // Passed cert notes — reinstatement version
   const notesForPassedCert = sections.includes("passedCertNotes")
     ? `[lsemssubtitle]CERTIFICATION PASSED NOTES:[/lsemssubtitle]
 [divbox=white]
@@ -101,7 +101,6 @@ ${phasePassLine}
 [/divbox]`
     : "";
 
-  // Failed cert notes — reinstatement version
   const notesForFailedCert = sections.includes("failedCert")
     ? `[lsemssubtitle]CERTIFICATION FAILED NOTES:[/lsemssubtitle]
 [divbox=white]
@@ -116,7 +115,6 @@ ${values.notesNextTraining}
 [/divbox]`
     : "";
 
-  // Signature section
   const signatureSection = `[lsemssubtitle]SIGNATURE[/lsemssubtitle]
 [divbox=white]
 [img]${values.signature || ""}[/img]
@@ -124,7 +122,7 @@ ${values.rank || ""}
 [/divbox]`;
 
 
-  // Assemble all phases dynamically
+  // filter(Boolean) keeps skipped sections from leaving double blank lines.
   const sessionDetailsParts = [
     values.rideAlongType ? rideAlongSection : "",
     `[b]Time Started:[/b] ${values.timeStarted || ""}`,

@@ -3,7 +3,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { TableDataType } from "@/app/page";
 
-// Map raw CSV object keys to table-friendly keys, including ribbons
+/**
+ * Re-keys the raw sheet row objects to the column-friendly names the
+ * table expects. The published sheet puts the data under numeric keys
+ * (_1, _3, ...) once PapaParse splits off the header.
+ */
 export function mapEmployeeData(rawData: TableDataType[]): TableDataType[] {
   return rawData.map((row) => ({
     "Employee Name": String(row["Names"] ?? ""),
@@ -15,7 +19,7 @@ export function mapEmployeeData(rawData: TableDataType[]): TableDataType[] {
   }));
 }
 
-// Helper to render a colored box for TRUE/FALSE
+/** Tiny status pill — green if the sheet's TRUE/FALSE column says YES. */
 const RibbonBox = ({ value }: { value: string }) => {
   const isTrue = value === "TRUE";
   return (
@@ -26,7 +30,6 @@ const RibbonBox = ({ value }: { value: string }) => {
   );
 };
 
-// Columns for your table
 export const employeeColumns: ColumnDef<TableDataType>[] = [
   {
     accessorKey: "Employee Name",

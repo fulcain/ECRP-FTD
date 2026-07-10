@@ -75,6 +75,9 @@ export async function fetchEMRProfileLinks(): Promise<EMRProfileLink[]> {
     // Drop the header row (first row after cleaning leading blanks).
     const rows = parsed.data.slice(1);
 
+    // Parse by raw column position rather than header name — `papaparse`
+    // kept the header row that we just bounced past, so column I (profile
+    // link) is still reliably column index 8 in the data rows below it.
     return rows
       .map((row) => ({
         EMR: (row[0] ?? "").trim(),

@@ -1,3 +1,16 @@
+/**
+ * Pure BBCode assembler for normal (non-reinstatement) field training
+ * paperwork.
+ *
+ * `values` carries the form state plus the live session details
+ * (timeStarted/timeEnded/emrName/additionalMandatories) from `SessionContext`.
+ * `phase` selects which optional sections are appended (e.g., certification
+ * notes only show up for cert-type phases); `sections` is the per-phase
+ * whitelist from `paperworkConfig`.
+ *
+ * Returns a single BBCode string ready to render in the Output card or
+ * paste into the forum post.
+ */
 export function generateBBCode(
   values: Record<string, any>,
   phase: string,
@@ -13,7 +26,6 @@ export function generateBBCode(
   const detailedNotesListType = values.detailedNotesListNone ? "none" : "";
   const fTSessionLink = "https://forms.gle/BJ6iLg5Fkf9Ug6fE6";
 
-  // 10-15 Call section
   const tenFifteenSection = `[list]
 ${
   values.participated && values.tenFifteenCalls?.length
@@ -27,7 +39,6 @@ ${
 }
 [/list]`;
 
-  // Optional sections
   const rideAlongSection = `[b]Ride-along Type:[/b] ${values.rideAlongType || ""}`;
   const detailedNotesSection = `[b]${phase === "certPassed" || phase === "certFailed" ? "Certification Notes" : "Detailed Notes About Time Spent (Optional but strongly encouraged)"}:[/b]
 [list${detailedNotesListType ? `=${detailedNotesListType}` : ""}]
@@ -49,7 +60,6 @@ ${values.reasonFailure}
 [/list]`
     : "";
 
-  // Notes for next training (skip for introduction & certPassed)
   const notesNextTrainingSection =
     sections.includes("nextTraining") && phase !== "certFailed"
       ? `[lsemssubtitle]NOTES FOR NEXT TRAINING SESSION[/lsemssubtitle]
@@ -104,14 +114,12 @@ ${values.notesNextTraining}
 [/divbox]`
     : "";
 
-  // Signature section
   const signatureSection = `[lsemssubtitle]SIGNATURE[/lsemssubtitle]
 [divbox=white]
 [img]${values.signature || ""}[/img]
 ${values.rank || ""}
 [/divbox]`;
 
-  // INTRODUCTION phase special BBCode
   if (phase === "introduction") {
     return `[img]https://i.imgur.com/9fbJGt0.png[/img]
 [lsemssubtitle]SESSION DETAILS:[/lsemssubtitle]
@@ -129,7 +137,7 @@ ${signatureSection}
 [lsemsfooter][/lsemsfooter]`;
   }
 
-  // dynamic content safely
+  // filter(Boolean) keeps skipped sections from leaving double blank lines.
   const sessionDetailsParts = [
     values.rideAlongType ? rideAlongSection : "",
     `[b]Time Started:[/b] ${values.timeStarted || ""}`,

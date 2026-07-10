@@ -32,8 +32,13 @@ export interface CurrentEMRColumnOptions {
   onDelete: (row: TableDataType) => void;
 }
 
-// Columns for the table. Returned by a factory so the trailing Actions column
-// can reach back into the table component via the onEdit / onDelete callbacks.
+/**
+ * Column defs factory for the Current EMRs table.
+ *
+ * Returned by a factory (not a module-level constant) so the trailing
+ * Actions column reaches back into `<CurrentEMRsTable>` via the
+ * `onEdit` / `onDelete` callbacks passed in.
+ */
 export function createCurrentEMRColumns(
   options: CurrentEMRColumnOptions,
 ): ColumnDef<TableDataType>[] {

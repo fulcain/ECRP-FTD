@@ -4,10 +4,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useLocalStorage } from "@/app/hooks/useLocalStorage";
 import { fetchEMRProfileLinks, EMRProfileLink } from "@/components/current-emrs/fetchCurrentEMRs";
 
-/* ------------------------------------------------------------------ */
-/*  Shape of the shared session details                               */
-/* ------------------------------------------------------------------ */
-
 export interface SessionDetails {
   ftoName: string;
   date: Date | undefined;
@@ -28,20 +24,12 @@ const defaultDetails: SessionDetails = {
   sessionConducted: "",
 };
 
-/* ------------------------------------------------------------------ */
-/*  Shared paperwork-mode state                                       */
-/* ------------------------------------------------------------------ */
-
 export type FormType = "normal" | "reinstatement";
 
 interface AdditionalMandatoriesState {
   normal: string;
   reinstatement: string;
 }
-
-/* ------------------------------------------------------------------ */
-/*  Context                                                            */
-/* ------------------------------------------------------------------ */
 
 interface SessionContextValue {
   /** The current shared session fields. */
@@ -81,15 +69,16 @@ interface SessionContextValue {
 
 const SessionContext = createContext<SessionContextValue | null>(null);
 
-/* ------------------------------------------------------------------ */
-/*  Provider                                                           */
-/* ------------------------------------------------------------------ */
-
+/**
+ * Top-level provider that owns the cross-form session state
+ * (FTO name, date, times, EMR, current phase, additional mandatories).
+ * Persists the long-lived fields to `localStorage` so a refresh — or
+ * switching to the other form type — doesn't lose the trainer's inputs.
+ */
 export function SessionProvider({ children }: { children: React.ReactNode }) {
-  // Persist the core fields (date stored as ISO string, parsed back on load)
   const [persisted, setPersisted] = useLocalStorage<{
     ftoName: string;
-    date: string | null;   // ISO string or null
+    date: string | null; // ISO string or null
     timeStart: string;
     timeFinish: string;
     emrName: string;
@@ -105,7 +94,6 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     sessionConducted: "",
   });
 
-  // Convert persisted serialisable shape → SessionDetails shape
   const [details, setDetails] = useState<SessionDetails>(() => ({
     ...defaultDetails,
     ftoName: persisted.ftoName,
@@ -117,7 +105,6 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     sessionConducted: persisted.sessionConducted,
   }));
 
-  // Sync details back into localStorage whenever they change
   useEffect(() => {
     setPersisted({
       ftoName: details.ftoName,
@@ -130,7 +117,6 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     });
   }, [details, setPersisted]);
 
-  // Fetch FTO names on mount
   const [ftoNames, setFtoNames] = useState<string[]>([]);
   useEffect(() => {
     const load = async () => {
@@ -145,24 +131,19 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     load();
   }, []);
 
-  // Fetch EMR list (with profile links) on mount
   const [emrList, setEmrList] = useState<EMRProfileLink[]>([]);
   useEffect(() => {
     fetchEMRProfileLinks().then(setEmrList);
   }, []);
 
-  // Active paperwork form type — persists across reloads
   const [formType, setFormTypeRaw] = useLocalStorage<FormType>(
     "ftd-form-type",
     "normal",
   );
   const setFormType = (type: FormType) => setFormTypeRaw(type);
 
-  // Currently selected phase within the active form (transient)
   const [currentPhase, setCurrentPhase] = useState<string | null>(null);
 
-  // Additional Mandatories — kept separately per form type so switching tabs
-  // doesn't lose data.
   const [additionalMandatoriesByType, setAdditionalMandatoriesByType] =
     useLocalStorage<AdditionalMandatoriesState>(
       "ftd-additional-mandatories",
@@ -204,10 +185,11 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Hook                                                               */
-/* ------------------------------------------------------------------ */
-
+/**
+ * Returns the shared session context. Throws if no `SessionProvider` is
+ * mounted above the call site (intentional — it's a developer error,
+ * not a runtime condition to handle).
+ */
 export function useSession(): SessionContextValue {
   const ctx = useContext(SessionContext);
   if (!ctx) {

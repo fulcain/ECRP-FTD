@@ -1,0 +1,49 @@
+"use client";
+
+// Stylised TSX fallback — the original BBCode slice for `rideAlong` is empty
+// (the `[spoiler=Ride Along Paperwork]` block only contains stripped template
+// markup), so we render a friendly reference card instead of nothing.
+
+import {
+  Bold,
+  EmptyNotesState,
+  Em,
+  ImportantNote,
+} from "@/app/(routes)/phase-paperworks/lib/phase-notes/primitives";
+
+export function RideAlongNotes() {
+  return (
+    <div className="space-y-3">
+      <EmptyNotesState
+        title="Quick checklist for ride-alongs"
+        message="Use this checklist while you ride along to make sure the EMR covers the core responsibilities before you sign off:"
+        tip={
+          <ul className="list-disc pl-5 space-y-1 marker:text-[#800000] text-foreground/85 text-[13.5px]">
+            <li>
+              <Bold>Request Call Priority</Bold> on the MD frequency (or
+              have the trainee do it).
+            </li>
+            <li>
+              Have the EMR try <Bold>radio codes</Bold>,{" "}
+              <Bold>unit management</Bold>, and <Bold>call handling</Bold>{" "}
+              before stepping in - this is their play time.
+            </li>
+            <li>
+              Note any mistakes as you go and either give feedback live
+              or after the ride-along so they can correct it next
+              session.
+            </li>
+            <li>
+              <Bold>Honesty wins.</Bold> Generic praise only hurts the
+              trainee - call out what didn&rsquo;t work and assign
+              additional mandatories when needed.
+            </li>
+             <li>
+           It depends on the phase they're in and whether it's mandatory or optional. Treat optional sessions the same as mandatory ones. If they're struggling with something, be honest about it and assign additional mandatory sessions as needed.
+            </li>
+          </ul>
+        }
+      />
+    </div>
+  );
+}
