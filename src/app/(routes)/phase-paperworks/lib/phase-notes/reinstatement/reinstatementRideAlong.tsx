@@ -2,24 +2,42 @@
 
 import {
   Bold,
-  Em,
   EmptyNotesState,
 } from "@/app/(routes)/phase-paperworks/lib/phase-notes/primitives";
 
 export function ReinstatementRideAlongNotes() {
   return (
-    <EmptyNotesState
-      title="Reinstatement Ride-Along - reference notes"
-      message="Reinstatement ride-along content is paperwork-only. There is no separate reference-notes prose to display in this card."
-      tip={
-        <>
-          <Bold>Tip:</Bold> the standard{" "}
-          <Em>rideAlong</Em> card already covers the generic
-          ride-along checklists. The reinstatement form only differs
-          in its paperwork template (ride-along Type +
-          Reinstatee-specific rating scale).
-        </>
-      }
-    />
+    <div className="space-y-3">
+      <EmptyNotesState
+        title="Quick checklist for ride-alongs"
+        message="Use this checklist while you ride along to make sure the EMR covers the core responsibilities before you sign off:"
+        tip={
+          <ul className="list-disc pl-5 space-y-1 marker:text-[#800000] text-foreground/85 text-[13.5px]">
+            <li>
+              <Bold>Request Call Priority</Bold> on the MD frequency (or
+              have the trainee do it).
+            </li>
+            <li>
+              Have the EMR try <Bold>radio codes</Bold>,{" "}
+              <Bold>unit management</Bold>, and <Bold>call handling</Bold>{" "}
+              before stepping in - this is their play time.
+            </li>
+            <li>
+              Note any mistakes as you go and either give feedback live
+              or after the ride-along so they can correct it next
+              session.
+            </li>
+            <li>
+              <Bold>Honesty wins.</Bold> Generic praise only hurts the
+              trainee - call out what didn&rsquo;t work and assign
+              additional mandatories when needed.
+            </li>
+             <li>
+           It depends on the phase they're in and whether it's mandatory or optional. Treat optional sessions the same as mandatory ones. If they're struggling with something, be honest about it and assign additional mandatory sessions as needed.
+            </li>
+          </ul>
+        }
+      />
+    </div>
   );
 }

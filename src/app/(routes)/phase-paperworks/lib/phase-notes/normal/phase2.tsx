@@ -131,7 +131,7 @@ export function Phase2Notes() {
           </BulletList>
         </Item>
         <Item>
-          <SourceAnnotation>((</SourceAnnotation> Explain the process of how to use the stabilize
+          <OOC>Explain the process of how to use the stabilize
           command and explain it is considered powergaming if you stabilize
           before doing your roleplay to find the injuries on the patient.
           <div className="mt-2 space-y-2">
@@ -191,7 +191,7 @@ export function Phase2Notes() {
               </BulletList>
             </SourceCodeBlock>
           </div>
-          <SourceAnnotation>))</SourceAnnotation>
+          </OOC>
         </Item>
       </Category>
 

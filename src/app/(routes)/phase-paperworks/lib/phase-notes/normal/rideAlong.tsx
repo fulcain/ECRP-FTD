@@ -1,14 +1,8 @@
 "use client";
 
-// Stylised TSX fallback — the original BBCode slice for `rideAlong` is empty
-// (the `[spoiler=Ride Along Paperwork]` block only contains stripped template
-// markup), so we render a friendly reference card instead of nothing.
-
 import {
   Bold,
   EmptyNotesState,
-  Em,
-  ImportantNote,
 } from "@/app/(routes)/phase-paperworks/lib/phase-notes/primitives";
 
 export function RideAlongNotes() {

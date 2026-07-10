@@ -1,6 +1,10 @@
 "use client";
 
-import { Clock } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Check, Clock, Copy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { REINTRO_EMAIL_CONTENT } from "@/app/(routes)/phase-paperworks/lib/phase-notes/reinstatement/reintro-email-content";
+
 import {
   Aside,
   BbLink,
@@ -17,7 +21,39 @@ import {
   WarningCallout,
 } from "@/app/(routes)/phase-paperworks/lib/phase-notes/primitives";
 
+/**
+ * Phase notes for Reinstatement Phase I.
+ *
+ * The "Re-Introduction Email" category at the bottom renders a "Copy
+ * email" button next to the existing BbLink that copies
+ * `REINTRO_EMAIL_CONTENT` (the verbatim LSEMS re-introduction email
+ * BBCode) to the trainer's clipboard.
+ */
 export function ReinstatementPhase1Notes() {
+  const [copied, setCopied] = useState(false);
+  // Tracks the pending "reset copied state" timer so rapid re-clicks
+  // don't stack overlapping timers that race to flip the UI back early.
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+    },
+    [],
+  );
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(REINTRO_EMAIL_CONTENT);
+      setCopied(true);
+      if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+      copiedTimerRef.current = setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // Clipboard write can fail (e.g. permissions / insecure context);
+      // fall back silently — the link is still right there as a backup.
+      setCopied(false);
+    }
+  };
+
   return (
     <div className="space-y-2.5">
       <div className="rounded-md border border-border/60 bg-muted/30 px-4 py-2.5">
@@ -287,7 +323,7 @@ export function ReinstatementPhase1Notes() {
             supplies found in our vehicles, but that it should only
             be used for Code 1 situations or when otherwise
             specified.{" "}
-            <Aside>(( /blockade tent ))</Aside>
+            <OOC><Command>/blockade tent</Command></OOC>
           </Item>
           <Item>
             Show the reinstatee how to block incoming traffic using
@@ -439,8 +475,9 @@ export function ReinstatementPhase1Notes() {
             room) &amp; explain the program. The EMR is not
             obliged to join, so do inform them of this as well.{" "}
             <Aside>
-              {" "}
-              ((<Bold>Make sure you give them the discord role!</Bold>))
+              <OOC>
+                <Bold>Make sure you give them the discord role!</Bold>
+                </OOC>
             </Aside>
           </Item>
         </BulletList>
@@ -449,13 +486,35 @@ export function ReinstatementPhase1Notes() {
       <Category title="Re-Introduction Email">
         <BulletList>
           <Item>
-            Last but not least, send{" "}
-            <BbLink href="https://pastebin.com/raw/Dq7vYC7s">
-              this email
-            </BbLink>{" "}
-            to the Reinstatee! It contains useful things they may
-            or may not need during the reinstatement training
-            and/or employment.
+            <div className="space-y-2">
+              <div>
+                Last but not least, send{" "}
+              <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyEmail}
+                  aria-label={
+                    copied
+                      ? "Re-introduction email copied"
+                      : "Copy Re-Introduction Email"
+                  }
+                  className="h-7 gap-1.5 px-2.5 text-xs"
+                >
+                  {copied ? (
+                    <Check className="h-3.5 w-3.5 text-emerald-700 dark:text-emerald-400" />
+                  ) : (
+                    <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                  )}
+                  {copied ? "Copied!" : "This Email"}
+                </Button> {" "}
+                to the Reinstatee! It contains useful things they may
+                or may not need during the reinstatement training
+                and/or employment.
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+              </div>
+            </div>
           </Item>
         </BulletList>
       </Category>

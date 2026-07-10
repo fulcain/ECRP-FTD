@@ -108,7 +108,7 @@ export function OOC({ children }: { children: React.ReactNode }) {
     <span className="inline text-blue-700/80 dark:text-sky-300/85 italic">
       <span className="not-italic font-semibold tracking-wide text-[10px] uppercase mr-1 text-blue-600/70 dark:text-sky-400/70 border border-blue-600/30 dark:border-sky-400/30 rounded px-1 py-[1px]">
         ((
-      </span>
+      </span> 
       <span>{children}</span>
          <span className="not-italic font-semibold tracking-wide text-[10px] uppercase mr-1 text-blue-600/70 dark:text-sky-400/70 border border-blue-600/30 dark:border-sky-400/30 rounded px-1 py-[1px]">
         ))

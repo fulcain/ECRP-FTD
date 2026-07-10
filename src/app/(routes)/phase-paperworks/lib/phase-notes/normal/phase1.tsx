@@ -62,7 +62,7 @@ export function Phase1Notes() {
             </BulletList>
             <SubHeading>Status Codes</SubHeading>
             <BulletList>
-              <Item><Bold>Code 0</Bold> - Fell asleep <Aside>(( Game Crash ))</Aside></Item>
+              <Item><Bold>Code 0</Bold> - Fell asleep <OOC>Game Crash</OOC></Item>
               <Item><Bold>Code 1</Bold> - Urgent Assistance Required (ALL UNITS)</Item>
               <Item><Bold>Code 2</Bold> - Non-Emergency</Item>
               <Item><Bold>Code 3</Bold> - Emergency</Item>
@@ -187,7 +187,7 @@ export function Phase1Notes() {
         </Item>
         <Item>
           Inform the EMR that they can close a call if the call is older than
-          one hour. <Aside>((Phone time))</Aside>
+          one hour. <OOC>Phone time</OOC>
         </Item>
         <Item>
           Explain to the EMR why calls don&rsquo;t close by themselves. If the
@@ -250,10 +250,10 @@ export function Phase1Notes() {
             <Item>
               Armed assailants are standing over their patient(s) and are
               issuing threats.{" "}
-              <Aside>
-                (( Make sure to remind them of FearRP - they cannot hit
-                a panic while under FearRP! ))
-              </Aside>
+              <OOC>
+                 Make sure to remind them of FearRP - they cannot hit
+                a panic while under FearRP!
+              </OOC>
             </Item>
             <Item>They run out of fuel in their ambulance.</Item>
             <Item>
@@ -357,12 +357,11 @@ export function Phase1Notes() {
         <Item>
           If DOC calls you in to treat an inmate, bring them to the
           prison&rsquo;s medical ward and only then treat them.{" "}
-          <Aside>
-            (( Explain that you should then proceed to do regular medical RP
-            alongside a&apos; b&gt;There is a &apos;/dropbody&apos; point in
+          <OOC>Explain that you should then proceed to do regular medical RP.
+            alongside There is a <Command>/dropbody</Command> point in
             the medbay, only drop the inmate thereafter both the medical
-            roleplay and &apos;/stabilize&apos; have been completed. ))
-          </Aside>
+            roleplay and <Command>/stabilize</Command> have been completed.
+          </OOC>
         </Item>
         <Item>
           A Correctional Officer, or any form of Law Enforcement is{" "}
@@ -398,14 +397,12 @@ export function Phase1Notes() {
         </Item>
         <Item>
           <OOC>
-            <Bold>
               Inform the EMR that if they feel they need to page for AMU or
               otherwise, the patient has to be asked if they{" "}
               <Em>actually want to do that roleplay</Em> via{" "}
               <Command>/b</Command>. Both of these involve more in-depth
               character specific RP, and as such, the patient needs to have
               the time and willingness to do this RP!
-            </Bold>
           </OOC>
         </Item>
         <Item>

@@ -38,7 +38,7 @@ export function Phase3Notes() {
       <Category title="Garage and Ambulance" ordered>
         <Item>
           Show the EMR again how we get a vehicle from Betsy{" "}
-          <Aside>(( Via the vehicle menu, point them to Handbook Section 10.1 ))</Aside>
+          <OOC>Via the vehicle menu, point them to Handbook Section 10.1</OOC>
         </Item>
         <Item>
           There are 25 ambulances for EMRs to use in total. 10 EMT/orange
@@ -81,7 +81,7 @@ export function Phase3Notes() {
           <Em>
             <Bold>Lower Pillbox</Bold>
           </Em>{" "}
-          from their GPS <Aside>(( <Command>/hospital</Command> ))</Aside>.
+          from their GPS <OOC><Command>/hospital</Command></OOC>.
         </Item>
         <Item>
           Explain that the GPS system, while functional, may not give the
@@ -208,10 +208,10 @@ export function Phase3Notes() {
             <Item>
               Abandoned Cul-de-sac in Mirror Park, opposite house at{" "}
               <Command>7 East Mirror Dr</Command>{" "}
-              <Aside>((<Command>/setgps</Command>))</Aside>
+              <OOC><Command>/setgps</Command></OOC>
             </Item>
             <Item>
-              Terminal/Harbor <Aside>((Credit Store))</Aside>
+              Terminal/Harbor <OOC>Credit Store</OOC>
             </Item>
             <Item>
               Dead-end road close to Clothing Store 4/17

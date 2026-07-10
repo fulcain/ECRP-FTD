@@ -103,7 +103,7 @@ export function CertFailedNotes() {
               </Em>
             </Item>
             <Item>
-              Give them their medical license. <Aside>(( <Command>/givemedical</Command> ))</Aside>
+              Give them their medical license. <OOC><Command>/givemedical</Command></OOC>
             </Item>
             <Item>
               Tell the EMR about Duty Reports, and mention that they are
@@ -201,7 +201,7 @@ export function CertFailedNotes() {
               is the location to post it.
             </Item>
             <Item>
-              <Aside>(( Request an acp rank change in discord ))</Aside>
+              <OOC>Request an acp rank change in discord</OOC>
             </Item>
           </NumberedList>
         </Item>
