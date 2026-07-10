@@ -130,245 +130,244 @@ export function SessionDetailsCard() {
   };
 
   return (
-      <div className="max-w-4xl mx-auto py-8 px-4 space-y-6">
-
-    <Card className="border shadow-sm">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
-          Session Details
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* ---- FTO Name ---- */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <Label>Your Name</Label>
-            {isNameSelected && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={resetNameSelection}
-                className="h-7 px-2 text-muted-foreground hover:text-destructive gap-1"
-              >
-                <XCircle className="h-4 w-4" />
-                <span className="text-xs">Clear</span>
-              </Button>
-            )}
-          </div>
-          <Select
-            value={details.ftoName}
-            onValueChange={(v) => update({ ftoName: v })}
-            onOpenChange={(open) => { if (!open) setNameSearch(""); }}
-          >
-            <SelectTrigger className="cursor-pointer">
-              <SelectValue placeholder="Select your name" />
-            </SelectTrigger>
-            <SelectContent>
-              {ftoNames.length === 0 ? (
-                <div className="p-2 cursor-pointer">
-                  <Skeleton className="h-10 w-full rounded" />
-                </div>
-              ) : (
-                <>
-                  <div
-                    className="p-2 cursor-pointer"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Input
-                      placeholder="Search..."
-                      value={nameSearch}
-                      onChange={(e) => setNameSearch(e.target.value)}
-                      className="mb-2"
-                      autoFocus
-                    />
-                  </div>
-                  {ftoNames
-                    .filter((name) =>
-                      name.toLowerCase().includes(nameSearch.toLowerCase()),
-                    )
-                    .map((name) => (
-                      <SelectItem key={name} value={name}>
-                        {name}
-                      </SelectItem>
-                    ))}
-                </>
+    <div className="max-w-4xl mx-auto py-8 px-4 space-y-6">
+      <Card className="border shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            Session Details
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* ---- FTO Name ---- */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <Label>Your Name</Label>
+              {isNameSelected && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={resetNameSelection}
+                  className="h-7 px-2 text-muted-foreground hover:text-destructive gap-1"
+                >
+                  <XCircle className="h-4 w-4" />
+                  <span className="text-xs">Clear</span>
+                </Button>
               )}
-            </SelectContent>
-          </Select>
-        </div>
+            </div>
+            <Select
+              value={details.ftoName}
+              onValueChange={(v) => update({ ftoName: v })}
+              onOpenChange={(open) => { if (!open) setNameSearch(""); }}
+            >
+              <SelectTrigger className="cursor-pointer">
+                <SelectValue placeholder="Select your name" />
+              </SelectTrigger>
+              <SelectContent>
+                {ftoNames.length === 0 ? (
+                  <div className="p-2 cursor-pointer">
+                    <Skeleton className="h-10 w-full rounded" />
+                  </div>
+                ) : (
+                  <>
+                    <div
+                      className="p-2 cursor-pointer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Input
+                        placeholder="Search..."
+                        value={nameSearch}
+                        onChange={(e) => setNameSearch(e.target.value)}
+                        className="mb-2"
+                        autoFocus
+                      />
+                    </div>
+                    {ftoNames
+                      .filter((name) =>
+                        name.toLowerCase().includes(nameSearch.toLowerCase()),
+                      )
+                      .map((name) => (
+                        <SelectItem key={name} value={name}>
+                          {name}
+                        </SelectItem>
+                      ))}
+                  </>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
 
-        {/* ---- Date ---- */}
-        <div className="flex flex-col gap-2">
-          <Label>Date</Label>
-          <Popover open={dateOpen} onOpenChange={setDateOpen}>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-full justify-between">
-                {details.date ? format(details.date, "PPP") : "Select date"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent side="bottom" align="start" className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={details.date}
-                onSelect={(date) => {
-                  update({ date: date ?? undefined });
-                  setDateOpen(false);
-                }}
+          {/* ---- Date ---- */}
+          <div className="flex flex-col gap-2">
+            <Label>Date</Label>
+            <Popover open={dateOpen} onOpenChange={setDateOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full justify-between">
+                  {details.date ? format(details.date, "PPP") : "Select date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent side="bottom" align="start" className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={details.date}
+                  onSelect={(date) => {
+                    update({ date: date ?? undefined });
+                    setDateOpen(false);
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          {/* ---- Time Start / Time Finish (24h, free text) ---- */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-2">
+              <Label className="text-xs text-muted-foreground">
+                Time Start ((UTC))<span className="opacity-60">(24h)</span>
+              </Label>
+              <Input
+                placeholder="00:00"
+                maxLength={5}
+                value={details.timeStart}
+                onChange={(e) => update({ timeStart: e.target.value })}
               />
-            </PopoverContent>
-          </Popover>
-        </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label className="text-xs text-muted-foreground">
+                Time Finish <span className="opacity-60">(24h)</span>
+              </Label>
+              <Input
+                placeholder="00:00"
+                maxLength={5}
+                value={details.timeFinish}
+                onChange={(e) => update({ timeFinish: e.target.value })}
+              />
+            </div>
+          </div>
 
-        {/* ---- Time Start / Time Finish (24h, free text) ---- */}
-        <div className="grid grid-cols-2 gap-4">
+          {/* ---- EMR Name ---- */}
           <div className="flex flex-col gap-2">
-            <Label className="text-xs text-muted-foreground">
-              Time Start ((UTC))<span className="opacity-60">(24h)</span>
-            </Label>
-            <Input
-              placeholder="00:00"
-              maxLength={5}
-              value={details.timeStart}
-              onChange={(e) => update({ timeStart: e.target.value })}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label className="text-xs text-muted-foreground">
-              Time Finish <span className="opacity-60">(24h)</span>
-            </Label>
-            <Input
-              placeholder="00:00"
-              maxLength={5}
-              value={details.timeFinish}
-              onChange={(e) => update({ timeFinish: e.target.value })}
-            />
-          </div>
-        </div>
-
-        {/* ---- EMR Name ---- */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <Label>EMR&apos;s Name</Label>
-            {isEmrSelected && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={resetEMRSelection}
-                className="h-7 px-2 text-muted-foreground hover:text-destructive gap-1"
-              >
-                <XCircle className="h-4 w-4" />
-                <span className="text-xs">Clear</span>
-              </Button>
-            )}
-          </div>
-
-          <Select
-            value={details.emrName}
-            onValueChange={(v) => {
-              update({ emrName: v, emrNameManual: "" });
-              setEmrSearch("");
-            }}
-            onOpenChange={(open) => { if (!open) setEmrSearch(""); }}
-          >
-            <SelectTrigger className="cursor-pointer">
-              <SelectValue placeholder="Select EMR" />
-            </SelectTrigger>
-            <SelectContent>
-              {emrList.length === 0 ? (
-                <div className="p-2 cursor-pointer">
-                  <Skeleton className="h-10 w-full rounded" />
-                </div>
-              ) : (
-                <>
-                  <div
-                    className="p-2 cursor-pointer"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Input
-                      placeholder="Search EMR..."
-                      value={emrSearch}
-                      onChange={(e) => setEmrSearch(e.target.value)}
-                      className="mb-2"
-                      autoFocus
-                    />
-                  </div>
-                  {emrList
-                    .filter((emr) =>
-                      emr.EMR.toLowerCase().includes(emrSearch.toLowerCase()),
-                    )
-                    .map((emr, idx) => (
-                      <SelectItem key={`${emr.EMR}-${idx}`} value={emr.EMR}>
-                        {emr.EMR}
-                      </SelectItem>
-                    ))}
-                </>
+            <div className="flex items-center justify-between">
+              <Label>EMR&apos;s Name</Label>
+              {isEmrSelected && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={resetEMRSelection}
+                  className="h-7 px-2 text-muted-foreground hover:text-destructive gap-1"
+                >
+                  <XCircle className="h-4 w-4" />
+                  <span className="text-xs">Clear</span>
+                </Button>
               )}
-            </SelectContent>
-          </Select>
+            </div>
 
-          {/* Manual fallback */}
-          <div className="relative">
-            <Input
-              placeholder="Type EMR name manually"
-              value={details.emrNameManual}
-              onChange={(e) =>
-                update({ emrNameManual: e.target.value, emrName: "" })
-              }
-              className={details.emrNameManual ? "pr-8" : ""}
-            />
-            {details.emrNameManual && (
-              <button
-                type="button"
-                onClick={() => update({ emrNameManual: "" })}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                <XCircle className="h-4 w-4" />
-              </button>
+            <Select
+              value={details.emrName}
+              onValueChange={(v) => {
+                update({ emrName: v, emrNameManual: "" });
+                setEmrSearch("");
+              }}
+              onOpenChange={(open) => { if (!open) setEmrSearch(""); }}
+            >
+              <SelectTrigger className="cursor-pointer">
+                <SelectValue placeholder="Select EMR" />
+              </SelectTrigger>
+              <SelectContent>
+                {emrList.length === 0 ? (
+                  <div className="p-2 cursor-pointer">
+                    <Skeleton className="h-10 w-full rounded" />
+                  </div>
+                ) : (
+                  <>
+                    <div
+                      className="p-2 cursor-pointer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Input
+                        placeholder="Search EMR..."
+                        value={emrSearch}
+                        onChange={(e) => setEmrSearch(e.target.value)}
+                        className="mb-2"
+                        autoFocus
+                      />
+                    </div>
+                    {emrList
+                      .filter((emr) =>
+                        emr.EMR.toLowerCase().includes(emrSearch.toLowerCase()),
+                      )
+                      .map((emr, idx) => (
+                        <SelectItem key={`${emr.EMR}-${idx}`} value={emr.EMR}>
+                          {emr.EMR}
+                        </SelectItem>
+                      ))}
+                  </>
+                )}
+              </SelectContent>
+            </Select>
+
+            {/* Manual fallback */}
+            <div className="relative">
+              <Input
+                placeholder="Type EMR name manually"
+                value={details.emrNameManual}
+                onChange={(e) =>
+                  update({ emrNameManual: e.target.value, emrName: "" })
+                }
+                className={details.emrNameManual ? "pr-8" : ""}
+              />
+              {details.emrNameManual && (
+                <button
+                  type="button"
+                  onClick={() => update({ emrNameManual: "" })}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  <XCircle className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+
+            {isEmrSelected && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Selected: {resolvedEMR}
+                {details.emrName && " (from list)"}
+                {details.emrNameManual && " (manual entry)"}
+              </p>
             )}
           </div>
 
-          {isEmrSelected && (
-            <p className="text-xs text-muted-foreground mt-1">
-              Selected: {resolvedEMR}
-              {details.emrName && " (from list)"}
-              {details.emrNameManual && " (manual entry)"}
-            </p>
-          )}
-        </div>
-
-        {/* ---- Session Conducted ---- */}
-        <div className="flex flex-col gap-2">
-          <Label>Session Conducted</Label>
-          <Select
-            value={details.sessionConducted}
-            onValueChange={(v) => update({ sessionConducted: v })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select session" />
-            </SelectTrigger>
-            <SelectContent>
-              {sessions.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {s}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* ---- Action buttons ---- */}
-        <div className="flex gap-2 pt-2 items-center">
-          <Button type="submit" disabled={submitting} onClick={handleSubmit}>
-            {submitting ? "Saving..." : "Create Session"}
-          </Button>
-          <Button type="button" variant="outline" onClick={clearAll} className="px-3">
-            <RotateCcw className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          {/* ---- Session Conducted ---- */}
+          <div className="flex flex-col gap-2">
+            <Label>Session Conducted</Label>
+            <Select
+              value={details.sessionConducted}
+              onValueChange={(v) => update({ sessionConducted: v })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select session" />
+              </SelectTrigger>
+              <SelectContent>
+                {sessions.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+
+          {/* ---- Action buttons ---- */}
+          <div className="flex gap-2 pt-2 items-center">
+            <Button type="submit" disabled={submitting} onClick={handleSubmit}>
+              {submitting ? "Saving..." : "Create Session"}
+            </Button>
+            <Button type="button" variant="outline" onClick={clearAll} className="px-3">
+              <RotateCcw className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

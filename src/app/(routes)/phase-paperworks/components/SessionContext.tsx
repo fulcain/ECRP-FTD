@@ -29,6 +29,17 @@ const defaultDetails: SessionDetails = {
 };
 
 /* ------------------------------------------------------------------ */
+/*  Shared paperwork-mode state                                       */
+/* ------------------------------------------------------------------ */
+
+export type FormType = "normal" | "reinstatement";
+
+interface AdditionalMandatoriesState {
+  normal: string;
+  reinstatement: string;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Context                                                            */
 /* ------------------------------------------------------------------ */
 
@@ -50,6 +61,22 @@ interface SessionContextValue {
 
   /** Derive the profile-link for the currently-selected EMR. */
   selectedEMRProfileLink: string | undefined;
+
+  /** Which paperwork form is currently rendered. */
+  formType: FormType;
+  setFormType: (type: FormType) => void;
+
+  /** Current phase within the active form (e.g. "phase1", "reinstatementPhase2"). */
+  currentPhase: string | null;
+  setCurrentPhase: (phase: string | null) => void;
+
+  /**
+   * Live Additional Mandatories count for the *currently active* form type.
+   * Used by the SessionDetailsCard's "Pending Nx Mandatory" badge / dropdown
+   * option and by the form for BBCode generation.
+   */
+  additionalMandatories: string;
+  setAdditionalMandatories: (value: string) => void;
 }
 
 const SessionContext = createContext<SessionContextValue | null>(null);
@@ -124,6 +151,31 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     fetchEMRProfileLinks().then(setEmrList);
   }, []);
 
+  // Active paperwork form type — persists across reloads
+  const [formType, setFormTypeRaw] = useLocalStorage<FormType>(
+    "ftd-form-type",
+    "normal",
+  );
+  const setFormType = (type: FormType) => setFormTypeRaw(type);
+
+  // Currently selected phase within the active form (transient)
+  const [currentPhase, setCurrentPhase] = useState<string | null>(null);
+
+  // Additional Mandatories — kept separately per form type so switching tabs
+  // doesn't lose data.
+  const [additionalMandatoriesByType, setAdditionalMandatoriesByType] =
+    useLocalStorage<AdditionalMandatoriesState>(
+      "ftd-additional-mandatories",
+      { normal: "", reinstatement: "" },
+    );
+
+  const additionalMandatories =
+    additionalMandatoriesByType[formType] ?? "";
+
+  const setAdditionalMandatories = (value: string) => {
+    setAdditionalMandatoriesByType((prev) => ({ ...prev, [formType]: value }));
+  };
+
   const resolvedEMR = details.emrName || details.emrNameManual;
 
   const selectedEMRProfileLink = emrList.find(
@@ -139,6 +191,12 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         ftoNames,
         emrList,
         selectedEMRProfileLink,
+        formType,
+        setFormType,
+        currentPhase,
+        setCurrentPhase,
+        additionalMandatories,
+        setAdditionalMandatories,
       }}
     >
       {children}

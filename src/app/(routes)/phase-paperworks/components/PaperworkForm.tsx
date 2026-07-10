@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { BbcodeTextarea } from "@/app/(routes)/phase-paperworks/components/BbcodeTextarea";
+import { NextPhaseTitleCard } from "@/app/(routes)/phase-paperworks/components/NextPhaseTitleCard";
 import {
   Copy,
   Trash2,
@@ -41,15 +42,39 @@ export default function PaperworkForm() {
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
 
-  // Shared session context (time, EMR, etc.)
-  const { details, resolvedEMR, selectedEMRProfileLink } = useSession();
+  // Shared session context (time, EMR, current phase, additional mandatories, etc.)
+  const {
+    details,
+    resolvedEMR,
+    selectedEMRProfileLink,
+    setCurrentPhase,
+    additionalMandatories,
+    setAdditionalMandatories,
+  } = useSession();
+
+  // Keep the active form's current phase synced to shared context so the
+  // SessionDetailsCard's Next Phase Title feature can derive its default.
+  useEffect(() => {
+    setCurrentPhase(phase);
+  }, [phase, setCurrentPhase]);
+
+  // Clear the shared phase on unmount so we don't leak state across
+  // paperwork types when the user switches between forms.
+  useEffect(() => {
+    return () => {
+      setCurrentPhase(null);
+    };
+  }, [setCurrentPhase]);
 
   const openProfileLink = () => {
     if (!selectedEMRProfileLink) return;
     window.open(selectedEMRProfileLink, "_blank", "noopener,noreferrer");
   };
 
-  // Single localStorage hook for paperwork-specific form data (no time/EMR)
+  // Single localStorage hook for paperwork-specific form data (no time/EMR).
+  // additionalMandatories is intentionally NOT here — it lives in the shared
+  // SessionContext so the SessionDetailsCard can use it for the
+  // "Pending Nx Mandatory" badge / dropdown option.
   const [savedForm, setSavedForm] = useLocalStorage("ftd-paperwork-form-data", {
     participated: false,
     tenFifteenCalls: [],
@@ -66,7 +91,6 @@ export default function PaperworkForm() {
     wasQuizSent: false,
     wasMedicalGiven: false,
     callsign: 0,
-    additionalMandatories: "",
     notesNextTraining: "",
   });
 
@@ -94,13 +118,13 @@ export default function PaperworkForm() {
       wasQuizSent: false,
       wasMedicalGiven: false,
       callsign: 0,
-      additionalMandatories: "",
       notesNextTraining: "",
     };
 
     setForm(emptyForm);
     setOutput("");
     setCopied(false);
+    setAdditionalMandatories(""); // also clear the shared mandatories count
 
     toast.info("All fields cleared", { theme: "dark" });
   };
@@ -139,6 +163,9 @@ export default function PaperworkForm() {
   const generate = () => {
     const valuesWithSession = {
       ...form,
+      // Pull the additional mandatories count from shared context since it's
+      // no longer stored on the form's local state.
+      additionalMandatories,
       timeStarted: formatTime24h(details.timeStart),
       timeEnded: formatTime24h(details.timeFinish),
       emrName: resolvedEMR,
@@ -435,7 +462,11 @@ export default function PaperworkForm() {
             </Card>
           )}
 
-          {/* Next Training Notes */}
+          {/* Next Training Notes — the form keeps the Additional Mandatories
+              input + Focus Areas (their values are baked into the generated
+              BBCode). The Next Phase Title subsection was moved into the
+              shared NextPhaseTitleCard component, rendered next to the
+              action bar below. */}
           {phase !== "introduction" && phase !== "certPassed" && (
             <Card className="border shadow-sm">
               <CardHeader className="pb-3">
@@ -448,14 +479,16 @@ export default function PaperworkForm() {
                   <Label className="text-xs text-muted-foreground">
                     Additional Mandatories
                   </Label>
-                  <Input
-                    value={form.additionalMandatories}
-                    onChange={(e) =>
-                      update("additionalMandatories", e.target.value)
-                    }
-                    placeholder="0"
-                    className="bg-background w-32"
-                  />
+                  <div className="flex items-center gap-3">
+                    <Input
+                      value={additionalMandatories}
+                      onChange={(e) =>
+                        setAdditionalMandatories(e.target.value)
+                      }
+                      placeholder="0"
+                      className="bg-background w-32"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">
@@ -575,6 +608,10 @@ export default function PaperworkForm() {
           </Card>
 
         </div>
+
+        {/* Next Phase Title lives next to the action bar so users see it
+            immediately above Generate / Open EMR Profile. */}
+        <NextPhaseTitleCard />
 
         {/* Action Bar - Floating at bottom */}
         <div className="sticky bottom-4 bg-background/95 backdrop-blur-sm border rounded-lg p-3 flex gap-2 justify-center md:justify-start shadow-lg">

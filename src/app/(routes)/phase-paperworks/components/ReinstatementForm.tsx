@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { BbcodeTextarea } from "@/app/(routes)/phase-paperworks/components/BbcodeTextarea";
+import { NextPhaseTitleCard } from "@/app/(routes)/phase-paperworks/components/NextPhaseTitleCard";
 import {
   Copy,
   Trash2,
@@ -49,7 +50,6 @@ const defaultFormState = {
   ftsCompleted: false,
   wasMedicalGiven: false,
   callsign: 0,
-  additionalMandatories: "",
   notesNextTraining: "",
   departmentCalls: false,
   roleplayNotes: "",
@@ -62,15 +62,42 @@ export default function ReinstatementForm() {
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
 
-  // Shared session context (time, EMR, etc.)
-  const { details, resolvedEMR, selectedEMRProfileLink } = useSession();
+  // Shared session context (time, EMR, current phase, additional mandatories, etc.)
+  const {
+    details,
+    resolvedEMR,
+    selectedEMRProfileLink,
+    setCurrentPhase,
+    additionalMandatories,
+    setAdditionalMandatories,
+  } = useSession();
+
+  // Keep the active form's current phase synced to shared context so the
+  // SessionDetailsCard's Next Phase Title feature can derive its default.
+  useEffect(() => {
+    setCurrentPhase(phase);
+  }, [phase, setCurrentPhase]);
+
+  // Clear the shared phase on unmount so we don't leak state across
+  // paperwork types when the user switches between forms.
+  useEffect(() => {
+    return () => {
+      setCurrentPhase(null);
+    };
+  }, [setCurrentPhase]);
 
   const openProfileLink = () => {
     if (!selectedEMRProfileLink) return;
     window.open(selectedEMRProfileLink, "_blank", "noopener,noreferrer");
   };
 
-  // Separate localStorage key so it doesn't clash with normal paperwork
+  // Separate localStorage key so it doesn't clash with normal paperwork.
+  // additionalMandatories is intentionally NOT here — it lives in the shared
+  // SessionContext so the SessionDetailsCard can use it for the
+  // "Pending Nx Mandatory" badge / dropdown option. A legacy saved payload
+  // may still contain the old `additionalMandatories` field but generate()
+  // always overrides it with the value from context so the BBCode stays
+  // consistent. The next save call will overwrite the legacy shape cleanly.
   const [savedForm, setSavedForm] = useLocalStorage(
     "ftd-reinstatement-paperwork-form-data",
     { ...defaultFormState },
@@ -91,6 +118,7 @@ export default function ReinstatementForm() {
     });
     setOutput("");
     setCopied(false);
+    setAdditionalMandatories(""); // also clear the shared mandatories count
 
     toast.info("All fields cleared", { theme: "dark" });
   };
@@ -129,6 +157,9 @@ export default function ReinstatementForm() {
   const generate = () => {
     const valuesWithSession = {
       ...form,
+      // Pull the additional mandatories count from shared context since it's
+      // no longer stored on the form's local state.
+      additionalMandatories,
       timeStarted: formatTime24h(details.timeStart),
       timeEnded: formatTime24h(details.timeFinish),
       emrName: resolvedEMR,
@@ -476,7 +507,11 @@ export default function ReinstatementForm() {
             </Card>
           )}
 
-          {/* Next Training Notes */}
+          {/* Next Training Notes — the form keeps the Additional Mandatories
+              input + Focus Areas (their values are baked into the generated
+              BBCode). The Next Phase Title subsection was moved into the
+              shared NextPhaseTitleCard component, rendered next to the
+              action bar below. */}
           {phase !== "reinstatementCertPassed" && (
             <Card className="border shadow-sm">
               <CardHeader className="pb-3">
@@ -493,14 +528,16 @@ export default function ReinstatementForm() {
                       ? "Mandatory Ride-Alongs (Minimum 2)"
                       : "Mandatory Ride-Alongs"}
                   </Label>
-                  <Input
-                    value={form.additionalMandatories}
-                    onChange={(e) =>
-                      update("additionalMandatories", e.target.value)
-                    }
-                    placeholder="0"
-                    className="bg-background w-32"
-                  />
+                  <div className="flex items-center gap-3">
+                    <Input
+                      value={additionalMandatories}
+                      onChange={(e) =>
+                        setAdditionalMandatories(e.target.value)
+                      }
+                      placeholder="0"
+                      className="bg-background w-32"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">
@@ -620,6 +657,10 @@ export default function ReinstatementForm() {
           </Card>
 
         </div>
+
+        {/* Next Phase Title lives next to the action bar so users see it
+            immediately above Generate / Open EMR Profile. */}
+        <NextPhaseTitleCard />
 
         {/* Action Bar */}
         <div className="sticky bottom-4 bg-background/95 backdrop-blur-sm border rounded-lg p-3 flex gap-2 justify-center md:justify-start shadow-lg">
