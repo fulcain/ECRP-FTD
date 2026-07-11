@@ -3,11 +3,18 @@
 import {
   Bold,
   EmptyNotesState,
+  EyebrowLabel,
 } from "@/app/(routes)/phase-paperworks/lib/phase-notes/primitives";
+import { Clock } from "lucide-react";
 
 export function ReinstatementRideAlongNotes() {
   return (
     <div className="space-y-3">
+            <div className="rounded-md border border-border/60 bg-muted/30 px-4 py-2.5">
+        <EyebrowLabel icon={Clock}>
+          RIDE ALONG - EMT-I+ - MINIMUM 1H, DOESNT HAVE A TIME LIMIT IF ITS OPTIONAL
+        </EyebrowLabel>
+      </div>
       <EmptyNotesState
         title="Quick checklist for ride-alongs"
         message="Use this checklist while you ride along to make sure the EMR covers the core responsibilities before you sign off:"
