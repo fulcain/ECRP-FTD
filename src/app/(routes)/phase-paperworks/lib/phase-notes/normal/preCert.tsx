@@ -1,5 +1,10 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import { Check, Clock, Copy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { QUIZ_EMAIL_CONTENT } from "@/app/(routes)/phase-paperworks/lib/phase-notes/normal/quiz-email-content";
+
 import {
   Bold,
   BbLink,
@@ -10,9 +15,26 @@ import {
   Item,
   Spoiler,
 } from "@/app/(routes)/phase-paperworks/lib/phase-notes/primitives";
-import { Clock } from "lucide-react";
 
 export function PreCertNotes() {
+  const [copied, setCopied] = useState(false);
+  // Tracks the pending "reset copied state" timer so rapid re-clicks
+  // don't stack overlapping timers that race to flip the UI back early.
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+    },
+    [],
+  );
+
+  const handleCopyQuiz = async () => {
+    await navigator.clipboard.writeText(QUIZ_EMAIL_CONTENT);
+    setCopied(true);
+    if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+    copiedTimerRef.current = setTimeout(() => setCopied(false), 1800);
+  };
+
   return (
     <div className="space-y-2.5">
       <div className="rounded-md border border-border/60 bg-muted/30 px-4 py-2.5">
@@ -142,13 +164,30 @@ export function PreCertNotes() {
       </Category>
 
       <ImportantNote>
-        <Bold>Note:</Bold> The EMR should <em>only</em> be{" "}
-        <BbLink href="https://pastebin.com/raw/wCL1v4K7">sent</BbLink> the
-        quiz if they{" "}
-        <span className="font-semibold text-red-700 dark:text-red-400">
-          fail
-        </span>{" "}
-        their Pre-Certification.
+        <div className="space-y-2">
+          <div>
+            <Bold>Note:</Bold> The EMR should only be sent the quiz if they{" "}
+            <span className="font-semibold text-red-700 dark:text-red-400">
+              fail
+            </span>{" "}
+            their Pre-Certification.{" "}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleCopyQuiz}
+              aria-label={copied ? "Quiz copied" : "Copy Quiz"}
+              className="h-7 gap-1.5 px-2.5 text-xs"
+            >
+              {copied ? (
+                <Check className="h-3.5 w-3.5 text-emerald-700 dark:text-emerald-400" />
+              ) : (
+                <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+              )}
+              {copied ? "Copied!" : "Copy quiz"}
+            </Button>
+          </div>
+        </div>
       </ImportantNote>
     </div>
   );

@@ -15,13 +15,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { BbcodeTextarea } from "@/app/(routes)/phase-paperworks/components/BbcodeTextarea";
 import { NextPhaseTitleCard } from "@/app/(routes)/phase-paperworks/components/NextPhaseTitleCard";
 import { ReinstatementNotesCard } from "@/app/(routes)/phase-paperworks/components/ReinstatementNotesCard";
@@ -286,19 +279,47 @@ export default function ReinstatementForm() {
                   Ride Along
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <Select
-                  value={form.rideAlongType}
-                  onValueChange={(value) => update("rideAlongType", value)}
-                >
-                  <SelectTrigger className="w-full md:w-64">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="MANDATORY">Mandatory</SelectItem>
-                    <SelectItem value="OPTIONAL">Optional</SelectItem>
-                  </SelectContent>
-                </Select>
+              <CardContent className="space-y-3">
+                {/* Two checkbox rows wired as a single-select group — each
+                    checkbox represents one of the former <Select> options
+                    and sets `rideAlongType` to a stable string so the BBCode
+                    generator (`generateReinstatementBBCode`) keeps receiving
+                    the same shape it always did. Clicking the currently-
+                    selected checkbox clears the field (mirrors the
+                    dropdown's unselectable "Select type" placeholder).
+                    Layout matches the multi-checkbox Cards elsewhere in this
+                    form (see "Phase-Specific Checkboxes") for visual
+                    consistency. */}
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="rideAlongMandatory"
+                    checked={form.rideAlongType === "MANDATORY"}
+                    onCheckedChange={(val) =>
+                      update("rideAlongType", val ? "MANDATORY" : "")
+                    }
+                  />
+                  <Label
+                    htmlFor="rideAlongMandatory"
+                    className="text-sm cursor-pointer"
+                  >
+                    Mandatory
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="rideAlongOptional"
+                    checked={form.rideAlongType === "OPTIONAL"}
+                    onCheckedChange={(val) =>
+                      update("rideAlongType", val ? "OPTIONAL" : "")
+                    }
+                  />
+                  <Label
+                    htmlFor="rideAlongOptional"
+                    className="text-sm cursor-pointer"
+                  >
+                    Optional
+                  </Label>
+                </div>
               </CardContent>
             </Card>
           )}
