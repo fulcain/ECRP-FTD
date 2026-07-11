@@ -68,6 +68,33 @@ export function SessionDetailsCard() {
     toast.info("Name field cleared", { theme: "dark" });
   };
 
+  const handleTimeChange = (
+    field: 'timeStart' | 'timeFinish',
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const raw = e.target.value;
+    // Only allow digits and colon
+    // Only allow digits and colon, and collapse multiple colons
+    const filtered = raw.replace(/[^\d:]/g, '').replace(/:+/g, ':');
+    // Auto-insert colon after 2 digits if typing forward
+    if (
+      filtered.length === 2 &&
+      !filtered.includes(':') &&
+      details[field].length < 2
+    ) {
+      update({ [field]: filtered + ':' });
+    } else {
+      update({ [field]: filtered });
+    }
+  };
+
+  const handleTimeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Prevent non-numeric, non-colon, non-control keys
+    if (e.key.length === 1 && !/[\d:]/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   const clearAll = () => {
     setDetails({
       ftoName: "",
@@ -229,7 +256,8 @@ export function SessionDetailsCard() {
                 placeholder="00:00"
                 maxLength={5}
                 value={details.timeStart}
-                onChange={(e) => update({ timeStart: e.target.value })}
+                onChange={(e) => handleTimeChange('timeStart', e)}
+                onKeyDown={handleTimeKeyDown}
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -240,7 +268,8 @@ export function SessionDetailsCard() {
                 placeholder="00:00"
                 maxLength={5}
                 value={details.timeFinish}
-                onChange={(e) => update({ timeFinish: e.target.value })}
+                onChange={(e) => handleTimeChange('timeFinish', e)}
+                onKeyDown={handleTimeKeyDown}
               />
             </div>
           </div>
