@@ -3,6 +3,7 @@
 import { HeaderMobile } from "./components/header-mobile";
 import { HeaderDesktop } from "./components/header-desktop";
 import { headerLinks } from "@/components/layout/header/configs/HeaderLinks";
+import { UserMenu } from "@/components/layout/header/components/UserMenu";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -10,7 +11,7 @@ import React from "react";
 export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-slate-900 shadow-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 gap-4">
         <HeaderDesktop headerLinks={headerLinks} />
         <HeaderMobile headerLinks={headerLinks} />
         <Link
@@ -24,6 +25,7 @@ export function Header() {
             height={50}
           />
         </Link>
+        <UserMenu />
       </div>
     </header>
   );
