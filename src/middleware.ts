@@ -1,12 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { verifySessionToken } from "@/lib/jwt";
 import { readAuthCookie, AUTH_COOKIE_NAME } from "@/lib/cookies";
-import {
-  loadRoleConfig,
-  loadAdminIds,
-  matchRoleRule,
-  userHasAccess,
-} from "@/lib/role-config";
+import { matchRoleRule, userHasAccess } from "@/lib/role-config";
 
 /**
  * Paths that should NEVER go through Discord auth: OAuth flow itself,
@@ -31,9 +26,10 @@ function isPublicPath(pathname: string): boolean {
 
 /**
  * Edge-runtime middleware. Reads the `ftd_auth` cookie, verifies the JWT,
- * checks the user's Discord role IDs against `DISCORD_ROLE_CONFIG`, and
- * redirects to /login or /unauthorized as appropriate. `/api/auth/*` is
- * explicitly allowed through so the OAuth flow works.
+ * checks the user's Discord role IDs against the route-role rules in
+ * `src/configs/roles.ts`, and redirects to /login or /unauthorized as
+ * appropriate. `/api/auth/*` is explicitly allowed through so the OAuth
+ * flow works.
  */
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -48,20 +44,12 @@ export async function middleware(req: NextRequest) {
   const payload = await verifySessionToken(token);
   if (!payload) return redirectToLogin(req, /* expired */ true);
 
-  const config = loadRoleConfig();
-  const adminIds = loadAdminIds();
-
-  if (
-    !userHasAccess(pathname, payload.roles, config, {
-      discordId: payload.discordId,
-      adminIds,
-    })
-  ) {
-    const rule = matchRoleRule(pathname, config);
+  if (!userHasAccess(pathname, payload.roles, payload.discordId)) {
+    const rule = matchRoleRule(pathname);
     const url = req.nextUrl.clone();
     url.pathname = "/unauthorized";
     url.searchParams.set("path", pathname);
-    if (rule?.requireAnyRoleId?.length) {
+    if (rule?.requireAnyRole?.length) {
       url.searchParams.set("hint", "role");
     }
     return NextResponse.redirect(url);
