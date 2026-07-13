@@ -1,10 +1,9 @@
-
 export const ROLES = {
-  FTOHead: "459439795635224589",
-  FTOAssHead: "1030270859610423407",
-  Commad: "1189390497639301213",
-  FTI: "796493688649023518",
-  FTO: "836248428971425823",
+  FTHead: "459439795635224589",
+  FTAssHead: "1030270859610423407",
+  Command: "1189390497639301213",
+  FTO: "796493688649023518",
+  FTI: "836248428971425823",
 } as const;
 
 /** Union of role aliases above. Used to type-check `requireAnyRole[]`. */
@@ -19,19 +18,24 @@ export interface RouteRoleRule {
  * Map of path-prefix → rule. Path matching is exact-or-prefix, with the
  * longest matching key winning — see `matchRoleRule` in role-config.ts.
  * Adding a new gated page? Just add another entry below.
+ *
+ * Note: the FTO creation feature used to live at `/fto-creation`, but it
+ * was moved under the FT Command page (`/fd-command`) so users see it in
+ * the same surface as the EMR roster. If you ever need a standalone
+ * route for it again, just add back a `/fto-creation` entry here.
  */
 export const ROUTE_ACCESS: Record<string, RouteRoleRule> = {
   "/phase-paperworks": {
     requireAnyRole: [
-      "FTOHead",
-      "FTOAssHead",
-      "Commad",
-      "FTI",
+      "FTHead",
+      "FTAssHead",
+      "Command",
       "FTO",
+      "FTI",
     ],
   },
   "/fd-command": {
-    requireAnyRole: ["FTOHead", "FTOAssHead", "Commad",],
+    requireAnyRole: ["FTHead", "FTAssHead", "Command"],
   },
 };
 

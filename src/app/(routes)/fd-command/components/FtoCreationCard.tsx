@@ -1,0 +1,177 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import { Copy, ExternalLink, User, Calendar } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useLocalStorage } from "@/app/hooks/useLocalStorage";
+
+import {
+  generateFtoCreationBBCode,
+  GOV_FTO_CREATION_POST_URL,
+  GOV_FT_ROSTER_EDIT_URL,
+} from "@/app/(routes)/fd-command/lib/generate-fto-creation-bbcode";
+
+const FORM_STORAGE_KEY = "ftd-fto-creation-form-v2";
+
+export function FtoCreationCard() {
+  const [savedForm, setSavedForm] = useLocalStorage(FORM_STORAGE_KEY, {
+    ftoTraineeName: "",
+    applicationDate: "",
+  });
+
+  // Defensive `?? ""` fallback: if `savedForm` is `null` (edge case where
+  // localStorage had `null` written under our key) or if a partial JSON
+  // object was stored (e.g. `{}` from a previous code path), the field
+  // access would otherwise return `undefined` and `.trim()` on line below
+  // would throw "Cannot read properties of undefined (reading 'trim')".
+  const [ftoTraineeName, setFtoTraineeName] = useState<string>(
+    savedForm?.ftoTraineeName ?? "",
+  );
+  const [applicationDate, setApplicationDate] = useState<string>(
+    savedForm?.applicationDate ?? "",
+  );
+
+  // Persist form inputs to localStorage so a refresh doesn't wipe them out.
+  useEffect(() => {
+    setSavedForm({ ftoTraineeName: ftoTraineeName, applicationDate });
+  }, [ftoTraineeName, applicationDate, setSavedForm]);
+
+  const bbcode = useMemo(
+    () =>
+      generateFtoCreationBBCode({
+        applicationName: ftoTraineeName,
+        applicationDate,
+      }),
+    [ftoTraineeName, applicationDate],
+  );
+
+  const hasApplicationInfo = ftoTraineeName.trim() !== "";
+
+  const copyToClipboard = async (alsoOpenGov: boolean) => {
+    try {
+      await navigator.clipboard.writeText(bbcode);
+      toast.success("BBCode copied to clipboard", { theme: "dark" });
+    } catch {
+      toast.error("Couldn't copy to clipboard — check browser permissions.", {
+        theme: "dark",
+      });
+      return;
+    }
+    if (alsoOpenGov) {
+      window.open(GOV_FTO_CREATION_POST_URL, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  // Copies just the application name to clipboard, then opens the
+  // Field Training Roster editor in a new tab so the user can paste
+  // the name straight into the post.
+  const copyNameAndOpenRoster = async () => {
+    try {
+      await navigator.clipboard.writeText(ftoTraineeName);
+      toast.success("Application name copied to clipboard", { theme: "dark" });
+    } catch {
+      toast.error("Couldn't copy to clipboard — check browser permissions.", {
+        theme: "dark",
+      });
+      return;
+    }
+    window.open(GOV_FT_ROSTER_EDIT_URL, "_blank", "noopener,noreferrer");
+  };
+
+  return (
+    <div className="space-y-4">
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar
+      />
+
+      {/* ── Section heading + green-dot auto-save indicator ── */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-300">
+          FTO Creation
+        </h2>
+      </div>
+
+      {/* ── Application Info Card ────────────────────────────── */}
+      <Card className="border shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <User className="h-4 w-4 text-muted-foreground" />
+            Application Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">
+              Application Name
+            </Label>
+            <Input
+              value={ftoTraineeName}
+              onChange={(e) => setFtoTraineeName(e.target.value)}
+              placeholder="Fname Lname"
+              className="bg-background"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground flex items-center gap-1">
+              <Calendar className="h-3 w-3" />
+              Date of Application Acceptance
+            </Label>
+            <Input
+              value={applicationDate}
+              onChange={(e) => setApplicationDate(e.target.value)}
+              placeholder="DD/MMM/YYYY (e.g. 13/Jul/2026)"
+              className="bg-background"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="bg-background/95 backdrop-blur-sm border rounded-lg p-3 flex flex-wrap gap-2 justify-center md:justify-start shadow-lg">
+        <Button
+          size="sm"
+          variant="secondary"
+          disabled={!hasApplicationInfo}
+          onClick={() => copyToClipboard(false)}
+          className="px-6"
+        >
+          <Copy className="h-4 w-4 mr-2" />
+          Copy BBCode
+        </Button>
+        <Button
+          size="sm"
+          disabled={!hasApplicationInfo}
+          onClick={() => copyToClipboard(true)}
+          className="px-6"
+        >
+          <ExternalLink className="h-4 w-4 mr-2" />
+          Copy and Open Gov
+        </Button>
+        {/* Open FT Roster: button + caption stacked so the caption sits
+            directly beneath the button (visually attaches the affordance
+            of "copies the application name on click" to this button). */}
+        <div className="flex flex-col items-start gap-1">
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={!hasApplicationInfo}
+            onClick={copyNameAndOpenRoster}
+            className="px-6"
+          >
+            <ExternalLink className="h-4 w-4 mr-2" />
+            Open FT Roster
+          </Button>
+          <span className="text-xs text-muted-foreground italic">
+            Also copies the application name.
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
