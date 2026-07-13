@@ -92,6 +92,37 @@ export function userHasAccess(
 }
 
 /**
+ * Decide whether `userRoleIds` is allowed to edit FT session rows.
+ *
+ * Mirrors the same triple (FTHead / FTAssHead / Command) the
+ * `/fd-command` route already gates on, so editing a session has the
+ * same access bar as opening the Command page. Admins (in
+ * `ADMIN_USER_IDS`) short-circuit to `true` to match the rest of
+ * `userHasAccess`'s behavior.
+ *
+ * Used by:
+ *   - the `/api/update-session` route (server-side guard)
+ *   - `app/page.tsx` (server-rendered flag passed to <AllDataTable>)
+ */
+export function hasSessionEditAccess(
+  userRoleIds: readonly string[],
+  discordId?: string,
+): boolean {
+  if (discordId && ADMIN_USER_IDS.has(discordId)) {
+    return true;
+  }
+  const requiredIds = new Set<string>([
+    ROLES.FTHead,
+    ROLES.FTAssHead,
+    ROLES.Command,
+  ]);
+  for (const id of userRoleIds) {
+    if (requiredIds.has(id)) return true;
+  }
+  return false;
+}
+
+/**
  * Filter a list of nav-style links down to only those the caller is
  * permitted to open. Reuses `userHasAccess` so route rules stay as the
  * single source of truth — adding a new gated route in

@@ -21,8 +21,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/pagination";
 import { Calendar } from "@/components/ui/calendar";
-import { generateColumns } from "@/components/all-data-table/columns";
+import { createAllDataColumns } from "@/components/all-data-table/columns";
 import { fetchAllData } from "@/components/all-data-table/fetchAllData";
+import { EditSessionDialog } from "@/components/all-data-table/edit-session-dialog";
+import { DeleteSessionDialog } from "@/components/all-data-table/delete-session-dialog";
 
 import {
   ColumnDef,
@@ -39,13 +41,19 @@ import {
 import { TableDataType } from "@/app/page";
 
 /**
- * Read-only, filterable history table for all filed FT sessions.
+ * Read-only-by-default history table for all filed FT sessions. When
+ * the parent provides `canEditFT`, the table also exposes a per-row
+ * Actions dropdown with Edit and Delete items, both backed by
+ * `/api/update-session` and `/api/delete-session` respectively. The
+ * server-rendered `app/page.tsx` is the single source of truth for
+ * `canEditFT` — gating the column there avoids a render-time
+ * flicker when capabilities arrive via a client fetch.
  *
  * Loads the published Google Sheet CSV on mount, exposes a name filter
  * plus a date-range filter, and sorts results newest-first. Pagination
  * is delegated to the shared `<Pagination>` component.
  */
-export function AllDataTable() {
+export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
   const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -58,7 +66,63 @@ export function AllDataTable() {
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
 
-  const columns: ColumnDef<TableDataType>[] = generateColumns();
+  // Edit dialog state.
+  const [editRow, setEditRow] = useState<TableDataType | null>(null);
+  // 1-based sheet row we want to update. Sheet row 1 is the header;
+  // we forward `__csvIndex + 2` so the Apps Script update handler
+  // can write to that row directly, dodging every timezone /
+  // display-format / cell-type pitfall the earlier Timestamp
+  // matching strategies kept tripping over.
+  const [editRowNumber, setEditRowNumber] = useState<number | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
+
+  // Delete dialog state — same rowNumber provenance as edit.
+  const [deleteRow, setDeleteRow] = useState<TableDataType | null>(null);
+  const [deleteRowNumber, setDeleteRowNumber] = useState<number | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const handleEdit = (row: TableDataType) => {
+    setEditRow(row);
+    // __csvIndex is stamped onto every fetched row in fetchAllData
+    // (0-based position in the post-header CSV). With the header
+    // occupying sheet row 1, the 1-based sheet row is + 2.
+    const csvIndex = Number(row.__csvIndex);
+    setEditRowNumber(
+      Number.isFinite(csvIndex) && csvIndex >= 0 ? csvIndex + 2 : null,
+    );
+    setEditOpen(true);
+  };
+
+  const handleEditOpenChange = (open: boolean) => {
+    setEditOpen(open);
+    if (!open) {
+      setEditRow(null);
+      setEditRowNumber(null);
+    }
+  };
+
+  const handleDelete = (row: TableDataType) => {
+    setDeleteRow(row);
+    const csvIndex = Number(row.__csvIndex);
+    setDeleteRowNumber(
+      Number.isFinite(csvIndex) && csvIndex >= 0 ? csvIndex + 2 : null,
+    );
+    setDeleteOpen(true);
+  };
+
+  const handleDeleteOpenChange = (open: boolean) => {
+    setDeleteOpen(open);
+    if (!open) {
+      setDeleteRow(null);
+      setDeleteRowNumber(null);
+    }
+  };
+
+  const columns: ColumnDef<TableDataType>[] = createAllDataColumns({
+    canEdit: canEditFT,
+    onEdit: handleEdit,
+    onDelete: handleDelete,
+  });
 
   useEffect(() => {
     const loadData = async () => {
@@ -250,6 +314,21 @@ export function AllDataTable() {
           setPageSize={setPageSizeInput}
         />
       )}
+
+      <EditSessionDialog
+        row={editRow}
+        originalRowNumber={editRowNumber}
+        open={editOpen}
+        onOpenChange={handleEditOpenChange}
+        setData={setData}
+      />
+      <DeleteSessionDialog
+        row={deleteRow}
+        originalRowNumber={deleteRowNumber}
+        open={deleteOpen}
+        onOpenChange={handleDeleteOpenChange}
+        setData={setData}
+      />
     </div>
   );
 }
