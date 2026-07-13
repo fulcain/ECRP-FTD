@@ -9,6 +9,17 @@ import {
 // Re-export the source types so callers can import everything from one place.
 export type { RoleName, RouteRoleRule };
 
+/**
+ * Minimal shape a nav item must satisfy for `filterAccessibleLinks` to
+ * reason about who can see it. Top-level items expose an optional
+ * `href`; dropdown/grouped items expose `children` whose entries each
+ * carry their own `href`.
+ */
+export type AccessCheckableLink = {
+  href?: string;
+  children?: readonly { href: string }[];
+};
+
 // ─── One-time config sanity check ──────────────────────────────────────
 // Discord role and user snowflakes are 17–20 digits. A typo here would
 // silently disable admin bypass or a route gate, so we warn at module load
@@ -78,4 +89,50 @@ export function userHasAccess(
     if (requiredIds.has(id)) return true;
   }
   return false;
+}
+
+/**
+ * Filter a list of nav-style links down to only those the caller is
+ * permitted to open. Reuses `userHasAccess` so route rules stay as the
+ * single source of truth — adding a new gated route in
+ * `configs/roles.ts` automatically updates the header with no extra
+ * wiring.
+ *
+ *   • Items without children are kept iff the caller passes
+ *     `userHasAccess(item.href)`.
+ *   • Items with children have their non-accessible children stripped;
+ *     the parent is then KEPT iff at least one child remains, so we
+ *     never render an empty dropdown.
+ *   • `userRoleIds === null` means "unauthenticated"/"could not
+ *     verify session token". In that case we cannot identify an admin,
+ *     so we restrict to purely *open* routes (paths with no entry in
+ *     `ROUTE_ACCESS`) — keeping gated links off `/login` and
+ *     `/unauthorized`.
+ */
+export function filterAccessibleLinks<T extends AccessCheckableLink>(
+  items: readonly T[],
+  userRoleIds: readonly string[] | null,
+  discordId?: string,
+): T[] {
+  const isAuthed = userRoleIds !== null;
+
+  const canSee = (href: string): boolean =>
+    isAuthed && userRoleIds
+      ? userHasAccess(href, userRoleIds, discordId)
+      : matchRoleRule(href) === undefined;
+
+  return items.flatMap<T>((item) => {
+    if (item.children) {
+      const visibleChildren = item.children.filter((c) => canSee(c.href));
+      if (visibleChildren.length === 0) return [];
+      // Cast is safe: we are slicing the children subset of T and
+      // re-spreading the rest. Runtime shape is preserved.
+      return [{ ...item, children: visibleChildren } as T];
+    }
+    // Defensive: an item lacking both `href` and `children` would
+    // crash `HeaderDesktop`/`HeaderMobile` (they read `item.href!`).
+    // Drop it rather than leak it through to the renderer.
+    if (!item.href) return [];
+    return canSee(item.href) ? [item] : [];
+  });
 }
