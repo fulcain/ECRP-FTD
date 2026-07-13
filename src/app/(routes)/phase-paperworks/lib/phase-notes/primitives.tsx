@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   AlertOctagon,
   AlertTriangle,
@@ -8,8 +9,26 @@ import {
   Info,
   ChevronsRight,
   type LucideIcon,
+  Copy,
 } from "lucide-react";
 import * as React from "react";
+import { toast } from "react-toastify";
+
+function getText(node: React.ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") {
+    return String(node);
+  }
+
+  if (Array.isArray(node)) {
+    return node.map(getText).join("");
+  }
+
+if (React.isValidElement(node)) {
+  return getText((node.props as { children?: React.ReactNode }).children);
+}
+
+  return "";
+}
 
 export function EyebrowLabel({
   children,
@@ -105,23 +124,48 @@ export function ParaItem({ children }: { children: React.ReactNode }) {
 
 export function OOC({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline text-blue-700/80 dark:text-sky-300/85 italic">
-      <span className="not-italic font-semibold tracking-wide text-[10px] uppercase mr-1 text-blue-600/70 dark:text-sky-400/70 border border-blue-600/30 dark:border-sky-400/30 rounded px-1 py-[1px]">
-        ((
-      </span> 
-      <span>{children}</span>
-         <span className="not-italic font-semibold tracking-wide text-[10px] uppercase mr-1 text-blue-600/70 dark:text-sky-400/70 border border-blue-600/30 dark:border-sky-400/30 rounded px-1 py-[1px]">
-        ))
+    <Button
+      variant="ghost"
+      size="sm"
+      className="inline-flex h-auto p-0 hover:bg-transparent"
+    >
+      <span className="inline text-blue-700/80 dark:text-sky-300/85 italic">
+        <span className="not-italic font-semibold tracking-wide text-[10px] uppercase mr-1 text-blue-600/70 dark:text-sky-400/70 border border-blue-600/30 dark:border-sky-400/30 rounded px-1 py-[1px]">
+          ((
+        </span>
+
+        <span>{children}</span>
+
+        <span className="not-italic font-semibold tracking-wide text-[10px] uppercase ml-1 text-blue-600/70 dark:text-sky-400/70 border border-blue-600/30 dark:border-sky-400/30 rounded px-1 py-[1px]">
+          ))
+        </span>
       </span>
-    </span>
+    </Button>
   );
 }
 
 export function Command({ children }: { children: React.ReactNode }) {
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(getText(children));
+    toast.success("Copied!");
+  };
+
   return (
-    <code className="px-1.5 py-0.5 rounded bg-zinc-900/85 dark:bg-zinc-800/85 text-emerald-300 font-mono text-[12px] border border-zinc-700/70 dark:border-zinc-700 whitespace-nowrap align-baseline">
-      {children}
-    </code>
+    <span className="inline-flex items-center gap-1">
+      <code className="px-1.5 py-0.5 rounded bg-zinc-900/85 dark:bg-zinc-800/85 text-emerald-300 font-mono text-[12px] border border-zinc-700/70 dark:border-zinc-700 whitespace-nowrap align-baseline">
+        {children}
+      </code>
+
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        onClick={handleCopy}
+        className="h-5 w-5 p-0"
+      >
+        <Copy className="h-3.5 w-3.5" />
+      </Button>
+    </span>
   );
 }
 
