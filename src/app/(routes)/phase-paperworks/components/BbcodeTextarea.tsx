@@ -194,6 +194,12 @@ export function BbcodeTextarea({
       }
     };
 
+    // Bind the handler at the window level so Ctrl-shortcuts work even when
+    // focus is on sibling controls (toolbar buttons, etc.). We re-bind on
+    // `value`/`readOnly` rather than every render so a keypress mid-flight
+    // can't be lost when `applyTool` is re-created.
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
     // `applyTool` is derived from `value`, `readOnly`, and `textareaRef`,
     // which are already tracked here. Including it directly would force a
     // window-level listener tear-down + re-bind on every render (since

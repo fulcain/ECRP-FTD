@@ -177,9 +177,9 @@ export function EditSessionDialog({
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label>Instructor's Name</Label>
+              <Label>Instructor&apos;s Name</Label>
               <Input
-                placeholder="Enter instructor's name"
+                placeholder="Enter instructor&apos;s name"
                 value={form.yourName}
                 onChange={(e) =>
                   setForm({ ...form, yourName: e.target.value })
@@ -220,9 +220,9 @@ export function EditSessionDialog({
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label>EMR's Name</Label>
+              <Label>EMR&apos;s Name</Label>
               <Input
-                placeholder="Enter EMR's name"
+                placeholder="Enter EMR&apos;s name"
                 value={form.emrName}
                 onChange={(e) =>
                   setForm({ ...form, emrName: e.target.value })
