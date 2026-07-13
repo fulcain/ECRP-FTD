@@ -14,28 +14,27 @@ export interface RouteRoleRule {
   requireAnyRole: RoleName[];
 }
 
-/**
- * Map of path-prefix → rule. Path matching is exact-or-prefix, with the
- * longest matching key winning — see `matchRoleRule` in role-config.ts.
- * Adding a new gated page? Just add another entry below.
- *
- * Note: the FTO creation feature used to live at `/fto-creation`, but it
- * was moved under the FT Command page (`/fd-command`) so users see it in
- * the same surface as the EMR roster. If you ever need a standalone
- * route for it again, just add back a `/fto-creation` entry here.
- */
+/** Every FT Related role and Command+. */
+const everyone: RoleName[] = [
+  "FTHead",
+  "FTAssHead",
+  "Command",
+  "FTO",
+  "FTI",
+];
+
 export const ROUTE_ACCESS: Record<string, RouteRoleRule> = {
   "/phase-paperworks": {
-    requireAnyRole: [
-      "FTHead",
-      "FTAssHead",
-      "Command",
-      "FTO",
-      "FTI",
-    ],
+    requireAnyRole: everyone,
   },
   "/fd-command": {
     requireAnyRole: ["FTHead", "FTAssHead", "Command"],
+  },
+  "/change-log": {
+    requireAnyRole: everyone,
+  },
+  "/": {
+    requireAnyRole: everyone,
   },
 };
 
@@ -43,7 +42,6 @@ export const ROUTE_ACCESS: Record<string, RouteRoleRule> = {
  * Discord user IDs that bypass every role check. Useful for bootstrapping
  * (add yourself while you're setting things up) and for true operators.
  *
- * Keep this list small — anyone in `ADMIN_USER_IDS` can read every route.
  */
 export const ADMIN_USER_IDS: ReadonlySet<string> = new Set([
   "290467278540242944",
