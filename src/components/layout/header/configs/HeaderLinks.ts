@@ -11,4 +11,5 @@ export const headerLinks: HeaderLink[] = [
     href: "/",
   },
   { label: "FT Command", href: "/fd-command" },
+  { label: "Change Log", href: "/change-log" },
 ];
