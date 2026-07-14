@@ -1,7 +1,7 @@
 "use client";
 
 import { CurrentEMRsTable } from "@/components/current-emrs/current-emrs-table";
-import { FtoCreationCard } from "@/app/(routes)/fd-command/components/FtoCreationCard";
+import { FtoManagementCard } from "@/components/employee-stats/components/FtoManagementCard";
 import Image from "next/image";
 
 export type TableDataType = {
@@ -18,7 +18,7 @@ export default function Home() {
 
       <CurrentEMRsTable />
 
-      <FtoCreationCard />
+      <FtoManagementCard />
     </div>
   );
 }

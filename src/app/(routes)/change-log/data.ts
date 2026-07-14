@@ -34,18 +34,22 @@ export const changeLog: ChangeLogDay[] = [
    {
     date: "2026-07-14",
     entries:[
-      {
-        type:"changed",
-        description:"Change the 'Phase Paperwork' page to 'Paperwork' and change the way the type of paperwork was chosen."
-      },
-      {
-         type:"added",
-        description:"Added a feature so the rank of the user is selected automaticly."
+            {
+        type:"added",
+        description:"Added a new section in the Command page to Add, Edit, Remove and Reinstate FTOs."
       },
       {
         type:"added",
         description:"Added Civilian Ride-Along Formats to the paperwork page."
-      }
+      },
+            {
+        type:"changed",
+        description:"Change the 'Phase Paperwork' page to 'Paperwork' and change the way the type of paperwork was chosen."
+      },
+            {
+         type:"added",
+        description:"Added a feature so the rank of the user is selected automaticly."
+      },
     ]
    },
   {

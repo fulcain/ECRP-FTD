@@ -1,8 +1,10 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { RefreshCw } from "lucide-react";
 
 import {
   SortingState,
@@ -31,15 +33,6 @@ import { fetchEmployeeStats } from "@/components/employee-stats/fetchEmployeeSta
 import { Pagination } from "@/components/pagination";
 import { TableDataType } from "@/app/page";
 
-/**
- * Per-FTO aggregate view. Loads the published "Employee Stats" sheet and
- * renders session counts plus ribbon-eligibility markers for every active
- * FTO. Sorted by total sessions descending by default so the most-active
- * FTOs surface first.
- *
- * Rows past the "Ex FTOs" sentinel are dropped upstream — see
- * `fetchEmployeeStats`.
- */
 export function EmployeeStatsTable() {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "Total Sessions", desc: true },
@@ -49,14 +42,19 @@ export function EmployeeStatsTable() {
   const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadData = async () => {
+  const resync = useCallback(async () => {
+    setLoading(true);
+    try {
       const stats = await fetchEmployeeStats();
       setData(stats);
+    } finally {
       setLoading(false);
-    };
-    loadData();
+    }
   }, []);
+
+  useEffect(() => {
+    resync();
+  }, [resync]);
 
   const mappedData = useMemo(
     () =>
@@ -94,9 +92,23 @@ export function EmployeeStatsTable() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl md:text-3xl font-bold text-gray-300 mb-6">
-        Employee Stats Table
-      </h2>
+      <div className="flex items-center justify-between gap-3 flex-wrap mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-300">
+          Employee Stats Table
+        </h2>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={resync}
+          disabled={loading}
+          title="Re-sync from the live sheet"
+        >
+          <RefreshCw
+            className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
+          />
+          Refresh
+        </Button>
+      </div>
 
       {/* === Filters === */}
       <div className="flex items-center py-4 space-x-4">

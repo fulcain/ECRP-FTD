@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import { Copy, ExternalLink, User, Calendar } from "lucide-react";
+import { Copy, ExternalLink, User, Calendar, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,21 +14,17 @@ import {
   generateFtoCreationBBCode,
   GOV_FTO_CREATION_POST_URL,
   GOV_FT_ROSTER_EDIT_URL,
-} from "@/app/(routes)/fd-command/lib/generate-fto-creation-bbcode";
+} from "@/components/employee-stats/lib/generate-fto-creation-bbcode";
 
 const FORM_STORAGE_KEY = "ftd-fto-creation-form-v2";
 
-export function FtoCreationCard() {
+
+export function FtoCreationCard({ onRefresh }: { onRefresh?: () => void }) {
   const [savedForm, setSavedForm] = useLocalStorage(FORM_STORAGE_KEY, {
     ftoTraineeName: "",
     applicationDate: "",
   });
 
-  // Defensive `?? ""` fallback: if `savedForm` is `null` (edge case where
-  // localStorage had `null` written under our key) or if a partial JSON
-  // object was stored (e.g. `{}` from a previous code path), the field
-  // access would otherwise return `undefined` and `.trim()` on line below
-  // would throw "Cannot read properties of undefined (reading 'trim')".
   const [ftoTraineeName, setFtoTraineeName] = useState<string>(
     savedForm?.ftoTraineeName ?? "",
   );
@@ -67,9 +63,6 @@ export function FtoCreationCard() {
     }
   };
 
-  // Copies just the application name to clipboard, then opens the
-  // Field Training Roster editor in a new tab so the user can paste
-  // the name straight into the post.
   const copyNameAndOpenRoster = async () => {
     try {
       await navigator.clipboard.writeText(ftoTraineeName);
@@ -83,6 +76,18 @@ export function FtoCreationCard() {
     window.open(GOV_FT_ROSTER_EDIT_URL, "_blank", "noopener,noreferrer");
   };
 
+  const handleRefresh = () => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(FORM_STORAGE_KEY) ?? "{}");
+      setFtoTraineeName(parsed?.ftoTraineeName ?? "");
+      setApplicationDate(parsed?.applicationDate ?? "");
+    } catch {
+      setFtoTraineeName("");
+      setApplicationDate("");
+    }
+    onRefresh?.();
+  };
+
   return (
     <div className="space-y-4">
       <ToastContainer
@@ -91,11 +96,19 @@ export function FtoCreationCard() {
         hideProgressBar
       />
 
-      {/* ── Section heading + green-dot auto-save indicator ── */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3 justify-between">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-300">
           FTO Creation
         </h2>
+                <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleRefresh}
+          title="Refresh form values and roster"
+        >
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Refresh
+        </Button>
       </div>
 
       {/* ── Application Info Card ────────────────────────────── */}
@@ -153,9 +166,7 @@ export function FtoCreationCard() {
           <ExternalLink className="h-4 w-4 mr-2" />
           Copy and Open Gov
         </Button>
-        {/* Open FT Roster: button + caption stacked so the caption sits
-            directly beneath the button (visually attaches the affordance
-            of "copies the application name on click" to this button). */}
+    
         <div className="flex flex-col items-start gap-1">
           <Button
             size="sm"

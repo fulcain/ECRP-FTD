@@ -1,17 +1,10 @@
 import Papa from "papaparse";
 import { TableDataType } from "@/app/page";
 
-/**
- * Fetches and parses the Current EMRs data from /api/current-emrs.
- *
- * The published sheet has two leading blank rows before the real header row.
- * If those aren't stripped, papaparse (header: true) uses a blank row as the
- * header and every value ends up keyed under "" / "_1" / "_2"…, so the table
- * renders blank. We drop leading empty/whitespace-only rows first.
- */
+
 export async function fetchCurrentEMRs(): Promise<TableDataType[]> {
   try {
-    const res = await fetch("/api/current-emrs");
+    const res = await fetch("/api/current-emrs", { cache: "no-store" });
     const csvText = await res.text();
 
     const lines = csvText.split(/\r?\n/);
@@ -42,18 +35,10 @@ export interface EMRProfileLink {
   profileLink: string;
 }
 
-/**
- * Fetches and parses the Current EMRs data from /api/current-emrs, returning
- * only column A (EMR) and column I (profileLink) as a flat array of objects.
- *
- * This parses by raw column position rather than header name, since it skips
- * the same leading blank rows as fetchCurrentEMRs but still includes the
- * header row itself in the slice — so we additionally drop the first row
- * after cleaning (the actual header) to keep only data rows.
- */
+
 export async function fetchEMRProfileLinks(): Promise<EMRProfileLink[]> {
   try {
-    const res = await fetch("/api/current-emrs");
+    const res = await fetch("/api/current-emrs", { cache: "no-store" });
     const csvText = await res.text();
 
     const lines = csvText.split(/\r?\n/);
@@ -75,9 +60,6 @@ export async function fetchEMRProfileLinks(): Promise<EMRProfileLink[]> {
     // Drop the header row (first row after cleaning leading blanks).
     const rows = parsed.data.slice(1);
 
-    // Parse by raw column position rather than header name — `papaparse`
-    // kept the header row that we just bounced past, so column I (profile
-    // link) is still reliably column index 8 in the data rows below it.
     return rows
       .map((row) => ({
         EMR: (row[0] ?? "").trim(),

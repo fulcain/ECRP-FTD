@@ -16,13 +16,21 @@ export type TableDataType = {
 /**
  * `/` — the FT session reports landing page.
  *
- * Now a server component: pulls the JWT from the cookie once, asks
- * `hasSessionEditAccess` whether the visitor is allowed to edit FT
- * session rows, and passes that flag into <AllDataTable>. Doing this
- * on the server avoids a render flicker (the Actions column popping
- * in seconds after the table is hydrated) and reuses the same
- * role-check the `/api/update-session` route uses, so the table and
- * the API can't drift out of sync.
+ * Server component: pulls the JWT from the cookie once, resolves the
+ * session-edit capability flag, and forwards it into the matching
+ * client component:
+ *
+ *   • `canEditFT` (FTHead / FTAssHead / Command) → <AllDataTable>'s
+ *     per-row Edit / Delete Actions dropdown.
+ *
+ * The FTO-management surface (BBCode + Employee-Stats Add / Reinstate
+ * / Edit / Remove) lives on `/fd-command` instead, co-located with
+ * the rest of the Command-page utilities.
+ *
+ * Doing the gating on the server avoids a render flicker (the
+ * Actions column popping in seconds after the table is hydrated) and
+ * reuses the same role-check the `/api/update-session` route uses,
+ * so the table and the API can't drift out of sync.
  *
  * The child components are still `"use client"` — they're rendered as
  * RSC children and stay interactive on the client.

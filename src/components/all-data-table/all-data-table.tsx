@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useCallback, useState, useMemo, useEffect } from "react";
 import { format, isAfter, isBefore } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -40,19 +40,7 @@ import {
 
 import { TableDataType } from "@/app/page";
 
-/**
- * Read-only-by-default history table for all filed FT sessions. When
- * the parent provides `canEditFT`, the table also exposes a per-row
- * Actions dropdown with Edit and Delete items, both backed by
- * `/api/update-session` and `/api/delete-session` respectively. The
- * server-rendered `app/page.tsx` is the single source of truth for
- * `canEditFT` — gating the column there avoids a render-time
- * flicker when capabilities arrive via a client fetch.
- *
- * Loads the published Google Sheet CSV on mount, exposes a name filter
- * plus a date-range filter, and sorts results newest-first. Pagination
- * is delegated to the shared `<Pagination>` component.
- */
+
 export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
   const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,11 +56,6 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
 
   // Edit dialog state.
   const [editRow, setEditRow] = useState<TableDataType | null>(null);
-  // 1-based sheet row we want to update. Sheet row 1 is the header;
-  // we forward `__csvIndex + 2` so the Apps Script update handler
-  // can write to that row directly, dodging every timezone /
-  // display-format / cell-type pitfall the earlier Timestamp
-  // matching strategies kept tripping over.
   const [editRowNumber, setEditRowNumber] = useState<number | null>(null);
   const [editOpen, setEditOpen] = useState(false);
 
@@ -83,9 +66,6 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
 
   const handleEdit = (row: TableDataType) => {
     setEditRow(row);
-    // __csvIndex is stamped onto every fetched row in fetchAllData
-    // (0-based position in the post-header CSV). With the header
-    // occupying sheet row 1, the 1-based sheet row is + 2.
     const csvIndex = Number(row.__csvIndex);
     setEditRowNumber(
       Number.isFinite(csvIndex) && csvIndex >= 0 ? csvIndex + 2 : null,
@@ -124,14 +104,19 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
     onDelete: handleDelete,
   });
 
-  useEffect(() => {
-    const loadData = async () => {
+  const resync = useCallback(async () => {
+    setLoading(true);
+    try {
       const allData = await fetchAllData();
       setData(allData);
+    } finally {
       setLoading(false);
-    };
-    loadData();
+    }
   }, []);
+
+  useEffect(() => {
+    resync();
+  }, [resync]);
 
   const filteredData = useMemo(() => {
     const getRowStartDate = (row: TableDataType) => {
@@ -178,9 +163,23 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
 
   return (
     <div className="space-y-10 mt-40">
-      <h2 className="text-2xl md:text-3xl font-bold text-gray-300 mb-6">
-        Field Training Session Reports
-      </h2>
+      <div className="flex items-center justify-between gap-3 flex-wrap mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-300">
+          Field Training Session Reports
+        </h2>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={resync}
+          disabled={loading}
+          title="Re-sync from the live sheet"
+        >
+          <RefreshCw
+            className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
+          />
+          Refresh
+        </Button>
+      </div>
 
       {/* === Filters === */}
       <div className="flex items-center py-4 space-x-4">

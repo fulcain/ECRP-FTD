@@ -1,7 +1,9 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useCallback, useState, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { RefreshCw } from "lucide-react";
 import { Pagination } from "@/components/pagination";
 import {
   SortingState,
@@ -57,9 +59,6 @@ export function MonthlySessionStatsTable() {
   const [data, setData] = useState<TableDataType[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // `currentYear` is memoized so it has a stable identity across renders;
-  // otherwise the `yearList` useMemo below (which falls back to this value
-  // when no data is loaded yet) would be invalidated on every paint.
   const currentYear = useMemo(
     () => new Date().getFullYear().toString(),
     [],
@@ -70,19 +69,21 @@ export function MonthlySessionStatsTable() {
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [totalMonthSessions, setTotalMonthSessions] = useState(0);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const allData = await fetchAllData();
-        setData(allData);
-      } catch (err) {
-        console.error("Failed to load master sheet data", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
+  const resync = useCallback(async () => {
+    setLoading(true);
+    try {
+      const allData = await fetchAllData();
+      setData(allData);
+    } catch (err) {
+      console.error("Failed to load master sheet data", err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    resync();
+  }, [resync]);
 
   const yearList = useMemo(() => {
     if (!data?.length) return [currentYear];
@@ -154,9 +155,23 @@ export function MonthlySessionStatsTable() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl md:text-3xl font-bold text-gray-300 mb-6">
-        Monthly Session Stats Table
-      </h2>
+      <div className="flex items-center justify-between gap-3 flex-wrap mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-300">
+          Monthly Session Stats Table
+        </h2>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={resync}
+          disabled={loading}
+          title="Re-sync from the live sheet"
+        >
+          <RefreshCw
+            className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
+          />
+          Refresh
+        </Button>
+      </div>
 
       <div className="flex flex-wrap items-center gap-4 py-4">
         {loading ? (
