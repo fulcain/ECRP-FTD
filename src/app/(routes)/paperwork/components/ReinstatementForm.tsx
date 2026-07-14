@@ -15,6 +15,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { BbcodeTextarea } from "@/app/(routes)/paperwork/components/BbcodeTextarea";
 import { NextPhaseTitleCard } from "@/app/(routes)/paperwork/components/NextPhaseTitleCard";
 import { ReinstatementNotesCard } from "@/app/(routes)/paperwork/components/ReinstatementNotesCard";
@@ -27,9 +34,13 @@ import {
   FileCheck,
   AlertCircle,
   ExternalLink,
+  Pencil,
+  Lock,
 } from "lucide-react";
 import { useSession } from "@/app/(routes)/paperwork/components/SessionContext";
 import { formatTime24h } from "@/app/(routes)/paperwork/lib/formatTime";
+import { useHighestRank } from "@/app/hooks/useHighestRank";
+import { RANK_HIERARCHY, RANK_LABELS } from "@/lib/role-config";
 
 const defaultFormState = {
   participated: false,
@@ -66,6 +77,17 @@ export default function ReinstatementForm() {
     setAdditionalMandatories,
   } = useSession();
 
+  const { rankLabel: autoRankLabel } = useHighestRank();
+
+  // Rank dropdown is locked by default. The toggle only ever flips this
+  // boolean — it never mutates `form.rank` on its own, so re-locking keeps
+  // the user's last manual pick instead of snapping back to auto.
+  const [isRankEditing, setIsRankEditing] = useState(false);
+
+  // Dropdown options ordered high → low so they mirror the heading text.
+  // Pulled from RANK_HIERARCHY so adding more ranks later is automatic.
+  const rankOptions = RANK_HIERARCHY.map((alias) => RANK_LABELS[alias]);
+
   useEffect(() => {
     setCurrentPhase(phase);
   }, [phase, setCurrentPhase]);
@@ -93,11 +115,30 @@ export default function ReinstatementForm() {
     setSavedForm(form);
   }, [form, setSavedForm]);
 
+  // Auto-populate Rank from the user's highest Discord role once the
+  // /api/auth/me lookup resolves. Also migrates away any legacy value
+  // left over from the previous free-form `<Input>` design — if it's not
+  // one of the current options, drop it so the user gets the auto rank
+  // instead of a stale free-text string sneaking into the BBCode.
+  useEffect(() => {
+    if (!autoRankLabel) return;
+    setForm((prev: any) => {
+      const valid = prev.rank && rankOptions.includes(prev.rank);
+      return valid ? prev : { ...prev, rank: autoRankLabel };
+    });
+    // rankOptions is derived from RANK_HIERARCHY at module scope and only
+    // changes if the config is edited, so it's safe to capture by closure.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRankLabel]);
+
   const clearAllFields = () => {
     setForm({
       ...defaultFormState,
       signature: form.signature,
-      rank: form.rank,
+      // After clearing, fall back to the user's auto-detected rank rather
+      // than the previously-edited value. If we couldn't detect a rank,
+      // keep whatever the user had typed.
+      rank: autoRankLabel ?? form.rank,
     });
     setOutput("");
     setCopied(false);
@@ -190,14 +231,72 @@ export default function ReinstatementForm() {
                   className="bg-background"
                 />
               </div>
-              <div className="flex-1 min-w-[120px] space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Rank</Label>
-                <Input
-                  value={form.rank}
-                  onChange={(e) => update("rank", e.target.value)}
-                  placeholder="insert rank here"
-                  className="bg-background"
-                />
+              <div className="flex-1 min-w-[160px] space-y-1.5">
+                <Label className="text-xs text-muted-foreground flex items-center gap-1.5">
+                  Rank
+                  {autoRankLabel && form.rank === autoRankLabel && (
+                    <span
+                      aria-live="polite"
+                      className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wide text-primary/70"
+                      title={`Auto-detected: ${autoRankLabel}. Click the pencil to override.`}
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary/70" />
+                      auto
+                      <span className="sr-only">
+                        Auto-detected {autoRankLabel} from your Discord
+                        roles.
+                      </span>
+                    </span>
+                  )}
+                </Label>
+                <div className="flex items-center gap-1.5">
+                  <Select
+                    value={form.rank || undefined}
+                    onValueChange={(v) => update("rank", v)}
+                    disabled={!isRankEditing}
+                  >
+                    <SelectTrigger
+                      className="bg-background flex-1"
+                      aria-label="Rank"
+                    >
+                      <SelectValue
+                        placeholder={
+                          autoRankLabel ?? "No rank detected — click edit"
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {rankOptions.map((label) => (
+                        <SelectItem key={label} value={label}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsRankEditing((v) => !v)}
+                    aria-label={
+                      isRankEditing ? "Lock rank" : "Edit rank manually"
+                    }
+                    title={
+                      isRankEditing
+                        ? "Click to lock"
+                        : autoRankLabel
+                          ? `Auto-selected: ${autoRankLabel}. Click to edit.`
+                          : "Edit manually"
+                    }
+                    className="text-muted-foreground hover:text-foreground shrink-0"
+                  >
+                    {isRankEditing ? (
+                      <Lock className="h-4 w-4" />
+                    ) : (
+                      <Pencil className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
           </CardContent>

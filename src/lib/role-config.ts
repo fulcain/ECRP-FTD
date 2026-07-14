@@ -1,13 +1,22 @@
+/**
+ * Two-record architecture — keep these separate:
+ *   • `ROLES` (`configs/roles.ts`) gates FT route access.
+ *   • `RANKS` does the LSEMS org rank display on paperworks.
+ * Adding to one shouldn't bleed into the other.
+ */
+
 import {
   ROUTE_ACCESS,
   ROLES,
+  RANKS,
   ADMIN_USER_IDS,
   type RoleName,
+  type LsemsRankName,
   type RouteRoleRule,
 } from "@/configs/roles";
 
 // Re-export the source types so callers can import everything from one place.
-export type { RoleName, RouteRoleRule };
+export type { RoleName, LsemsRankName, RouteRoleRule };
 
 /**
  * Minimal shape a nav item must satisfy for `filterAccessibleLinks` to
@@ -36,6 +45,9 @@ function warnIfNotSnowflake(label: string, id: string): void {
 
 for (const [alias, id] of Object.entries(ROLES)) {
   warnIfNotSnowflake(`ROLES.${alias}`, id);
+}
+for (const [alias, id] of Object.entries(RANKS)) {
+  warnIfNotSnowflake(`RANKS.${alias}`, id);
 }
 for (const id of ADMIN_USER_IDS) {
   warnIfNotSnowflake("ADMIN_USER_IDS", id);
@@ -68,6 +80,79 @@ export function matchRoleRule(pathname: string): RouteRoleRule | undefined {
  *   3. Otherwise, the user must hold at least one of the route's
  *      `requireAnyRole` aliases (resolved via `ROLES`).
  */
+/**
+ * Friendly rank labels rendered into the paperwork "Rank" dropdown and
+ * BBCode signature. **This object is the single source of truth** for
+ * both the labels and the LSEMS rank ordering — `RANK_HIERARCHY` below
+ * is derived from its key order so adding a new rank here automatically
+ * slots it into `getHighestRank`'s iteration.
+ *
+ * `Object.keys` returns string keys in insertion order, so the order
+ * here IS the order users will see in the dropdown (highest → lowest).
+ * Customise any label string here without touching the snowflake
+ * config in `configs/roles.ts`.
+ *
+ * The `satisfies Record<LsemsRankName, string>` constraint enforces that
+ * every alias has a label, but does NOT lock the keys to a specific
+ * order — so it's safe to insert new ranks anywhere in this object.
+ */
+export const RANK_LABELS = {
+  ChiefOfEMS: "Chief of EMS",
+  AssistantChiefOfEMS: "Assistant Chief of EMS",
+  DeputyChiefOfEMS: "Deputy Chief of EMS",
+  Consultant: "Consultant",
+  Commander: "Commander",
+  Captain: "Captain",
+  Lieutenant: "Lieutenant",
+  LeadParamedic: "Lead Paramedic",
+  SeniorParamedic: "Senior Paramedic",
+  Paramedic: "Paramedic",
+  JuniorParamedic: "Junior Paramedic",
+  MasterEMT: "Master EMT",
+  EMPP: "EMP-P",
+  EMTAdvanced: "EMT-Advanced",
+  EMTIntermediate: "EMT-Intermediate",
+  EMTBasic: "EMT-Basic",
+  EMRTrainee: "EMR Trainee",
+} satisfies Record<LsemsRankName, string>;
+
+/**
+ * LSEMS rank hierarchy used for paperworks: HIGHEST → LOWEST. The first
+ * match in the user's Discord role snowflakes wins, so listing Chief of
+ * EMS first means a Chief of EMS user is ranked as "Chief of EMS" even
+ * if they also hold Paramedic, EMT-Basic, etc.
+ *
+ * Derived from `RANK_LABELS` key order so the labels object stays the
+ * single source of truth — `as readonly LsemsRankName[]` is safe because
+ * the `satisfies Record<LsemsRankName, string>` check above guarantees
+ * every key is a valid `LsemsRankName`.
+ */
+export const RANK_HIERARCHY: readonly LsemsRankName[] = Object.keys(
+  RANK_LABELS,
+) as readonly LsemsRankName[];
+
+/**
+ * Resolve a user's Discord role snowflakes down to their highest LSEMS
+ * rank. Returns `null` if the user holds no rank-related role.
+ *
+ * - Iterates `RANK_HIERARCHY` (highest first) so the first match wins.
+ * - Looks up snowflakes via `RANKS` so role aliases keep their single
+ *   source of truth in `configs/roles.ts`.
+ */
+export function getHighestRank(
+  userRoleIds: readonly string[],
+): LsemsRankName | null {
+  for (const alias of RANK_HIERARCHY) {
+    if (userRoleIds.includes(RANKS[alias])) return alias;
+  }
+  return null;
+}
+
+/** Convenience: look up the friendly label for an LSEMS rank alias. */
+export function rankLabel(alias: LsemsRankName): string {
+  return RANK_LABELS[alias];
+}
+
 export function userHasAccess(
   pathname: string,
   userRoleIds: readonly string[],
