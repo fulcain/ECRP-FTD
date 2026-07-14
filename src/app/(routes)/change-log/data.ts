@@ -41,6 +41,10 @@ export const changeLog: ChangeLogDay[] = [
       {
          type:"added",
         description:"Added a feature so the rank of the user is selected automaticly."
+      },
+      {
+        type:"added",
+        description:"Added Civilian Ride-Along Formats to the paperwork page."
       }
     ]
    },
