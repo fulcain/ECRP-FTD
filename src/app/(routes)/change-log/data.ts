@@ -31,6 +31,15 @@ export type ChangeLogDay = {
  * The page renders them in reverse chronological order.
  */
 export const changeLog: ChangeLogDay[] = [
+   {
+    date: "2026-07-14",
+    entries:[
+      {
+        type:"changed",
+        description:"Change the 'Phase Paperwork' page to 'Paperwork' and change the way the type of paperwork was chosen."
+      }
+    ]
+   },
   {
     date: "2026-07-13",
     entries: [

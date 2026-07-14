@@ -24,7 +24,7 @@ const everyone: RoleName[] = [
 ];
 
 export const ROUTE_ACCESS: Record<string, RouteRoleRule> = {
-  "/phase-paperworks": {
+  "/paperwork": {
     requireAnyRole: everyone,
   },
   "/fd-command": {

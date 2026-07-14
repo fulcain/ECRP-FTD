@@ -47,7 +47,7 @@ for (const id of ADMIN_USER_IDS) {
  * "open" downstream.
  *
  * The trailing `/` in the prefix check matters: it prevents keys like
- * `/phase-paperworks` from accidentally matching `/phase-paperworks-v2`.
+ * `/paperwork` from accidentally matching `/paperwork-v2`.
  */
 export function matchRoleRule(pathname: string): RouteRoleRule | undefined {
   let bestKey: string | null = null;
