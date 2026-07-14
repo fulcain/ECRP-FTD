@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, RefreshCcw } from "lucide-react";
+import { FileText, RefreshCcw, UserRound } from "lucide-react";
 
 import {
   FormType,
@@ -10,6 +10,7 @@ import {
 import { SessionDetailsCard } from "@/app/(routes)/paperwork/components/SessionDetailsCard";
 import PaperworkForm from "@/app/(routes)/paperwork/components/PaperworkForm";
 import ReinstatementForm from "@/app/(routes)/paperwork/components/ReinstatementForm";
+import CivilianRideAlongForm from "@/app/(routes)/paperwork/components/CivilianRideAlongForm";
 import { cn } from "@/lib/utils";
 
 interface PaperworkTypeOption {
@@ -32,17 +33,39 @@ const PAPERWORK_TYPES: PaperworkTypeOption[] = [
     description: "Phases for previous Employees of the Department.",
     Icon: RefreshCcw,
   },
+  {
+    value: "civilianRideAlong",
+    label: "Civilian Ride-Along",
+    description:
+      "Accept / Deny / Hold / Expire a request, or post a Ride-Along Report.",
+    Icon: UserRound,
+  },
 ];
 
+/**
+ * Outer shell — only job is to mount `SessionProvider`. The actual
+ * `useSession()` calls live in `PaperworkTypeContent` so the hook runs
+ * inside the provider's subtree (otherwise React throws the
+ * "useSession must be used within a <SessionProvider>" error).
+ */
 export function PaperworkTypeSelector() {
   return (
     <SessionProvider>
-      <div className="space-y-6">
-        <PaperworkHeader />
-        <PaperworkTypeRouter />
-        <SessionDetailsCard />
-      </div>
+      <PaperworkTypeContent />
     </SessionProvider>
+  );
+}
+
+function PaperworkTypeContent() {
+  const { formType } = useSession();
+  return (
+    <div className="space-y-6">
+      <PaperworkHeader />
+      <PaperworkTypeRouter />
+      {/* Session Details is irrelevant to the Civilian Ride-Along flow
+          (no EMR, no session row to save), so it's hidden in that mode. */}
+      {formType !== "civilianRideAlong" && <SessionDetailsCard />}
+    </div>
   );
 }
 
@@ -73,7 +96,7 @@ function PaperworkTypeTabs() {
   const { formType, setFormType } = useSession();
 
   return (
-    <nav aria-label="Paperwork type" className="grid gap-3 sm:grid-cols-2">
+    <nav aria-label="Paperwork type" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {PAPERWORK_TYPES.map(({ value, label, description, Icon }) => {
         const active = formType === value;
         return (
@@ -122,5 +145,11 @@ function PaperworkTypeTabs() {
 
 function PaperworkTypeRouter() {
   const { formType } = useSession();
-  return formType === "normal" ? <PaperworkForm /> : <ReinstatementForm />;
+  return formType === "normal" ? (
+    <PaperworkForm />
+  ) : formType === "reinstatement" ? (
+    <ReinstatementForm />
+  ) : (
+    <CivilianRideAlongForm />
+  );
 }

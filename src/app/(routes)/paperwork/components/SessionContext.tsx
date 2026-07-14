@@ -24,11 +24,12 @@ const defaultDetails: SessionDetails = {
   sessionConducted: "",
 };
 
-export type FormType = "normal" | "reinstatement";
+export type FormType = "normal" | "reinstatement" | "civilianRideAlong";
 
 interface AdditionalMandatoriesState {
   normal: string;
   reinstatement: string;
+  civilianRideAlong: string;
 }
 
 interface SessionContextValue {
@@ -138,7 +139,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [additionalMandatoriesByType, setAdditionalMandatoriesByType] =
     useLocalStorage<AdditionalMandatoriesState>(
       "ftd-additional-mandatories",
-      { normal: "", reinstatement: "" },
+      { normal: "", reinstatement: "", civilianRideAlong: "" },
     );
 
   const additionalMandatories =

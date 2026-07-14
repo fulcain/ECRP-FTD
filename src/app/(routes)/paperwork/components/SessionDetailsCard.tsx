@@ -28,7 +28,8 @@ import { useSession } from "@/app/(routes)/paperwork/components/SessionContext";
 import { formatTime12h } from "@/app/(routes)/paperwork/lib/formatTime";
 import { sessions } from "@/constants/sessions";
 
-/** Trainer/date/times/EMR/session inputs shared by both paperwork forms. */
+/** Trainer/date/times/EMR/session inputs shared by both paperwork forms.
+ *  (Civilian Ride-Along hides this card entirely at the parent level.) */
 export function SessionDetailsCard() {
   const {
     details,
