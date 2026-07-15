@@ -109,7 +109,7 @@ ${values.rank || ""}
 [/divbox]`;
 
   if (phase === "introduction") {
-    return `[img]https://i.imgur.com/9fbJGt0.png[/img]
+    return `[img]https://i.ibb.co/BHKjgFH0/9fb-JGt0.png[/img]
 [lsemssubtitle]SESSION DETAILS:[/lsemssubtitle]
 [divbox=white]
 [list]

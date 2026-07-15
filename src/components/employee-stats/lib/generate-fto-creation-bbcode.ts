@@ -1,4 +1,4 @@
-const FTO_CREATION_BBCODE_TEMPLATE = `[img]https://i.imgur.com/trqN8RV.png[/img]
+const FTO_CREATION_BBCODE_TEMPLATE = `[img]https://i.ibb.co/fzHPjY6Y/trq-N8RV.png[/img]
 
 [lsemssubtitle]STUDENT INFORMATION:[/lsemssubtitle]
 [divbox=white]
@@ -87,7 +87,7 @@ This [i][b]can be failed[/i][/b], and usually should lead to back and forth atte
 [*][url={FT_ROSTER_URL}]Add them to the Field Training Roster[/url]
 [spoiler=FTO Certification Paperwork]
 [code]
-[img]https://i.imgur.com/bJ9AtRT.png[/img]
+[img]https://i.ibb.co/pjD92GqW/b-J9-At-RT.png[/img]
 [divbox=white]
 
 [lsemssubtitle]Stage 1. Questions[/lsemssubtitle]

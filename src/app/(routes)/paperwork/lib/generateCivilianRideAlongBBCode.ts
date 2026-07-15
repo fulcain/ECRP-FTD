@@ -13,9 +13,9 @@ export interface CivilianRideAlongValues {
   rejectionReasons?: Array<{ reason: string }>;
 }
 
-const ACCEPTED_HEADER_URL = "https://i.imgur.com/oaiUnbA.png";
-const REPORT_HEADER_URL = "https://i.imgur.com/eIVCOfs.png";
-const REPORT_BANNER_URL = "https://i.imgur.com/7x0vy1x.png";
+const ACCEPTED_HEADER_URL = "https://i.ibb.co/GQ4G8VM4/oai-Unb-A.png";
+const REPORT_HEADER_URL = "https://i.ibb.co/WNrSTh8H/e-IVCOfs.png";
+const REPORT_BANNER_URL = "https://i.ibb.co/xKYgq6P0/7x0vy1x.png";
 
 function signatureBlock(values: CivilianRideAlongValues): string {
   return `[img]${values.signature || ""}[/img]

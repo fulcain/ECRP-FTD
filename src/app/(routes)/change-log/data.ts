@@ -31,6 +31,15 @@ export type ChangeLogDay = {
  * The page renders them in reverse chronological order.
  */
 export const changeLog: ChangeLogDay[] = [
+     {
+    date: "2026-07-15",
+    entries:[
+            {
+        type:"changed",
+        description:"Changed imgur links to imgbb."
+      },
+    ]
+   },
    {
     date: "2026-07-14",
     entries:[

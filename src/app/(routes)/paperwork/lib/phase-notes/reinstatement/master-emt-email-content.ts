@@ -1,6 +1,6 @@
-export const MASTER_EMT_EMAIL_CONTENT = `[img]https://i.imgur.com/HNP4ksW.png[/img]
+export const MASTER_EMT_EMAIL_CONTENT = `[img]https://i.ibb.co/7xQvQQQR/HNP4ks-W.png[/img]
 [divbox=white]
-[center][fpimg=55]https://i.imgur.com/C6b52lr.png[/fpimg]
+[center][fpimg=55]https://i.ibb.co/dsKf0v2p/C6b52lr.png[/fpimg]
 [color=transparent]spacer[/color][/center][font=Arial]
 [center][i][b]Los Santos Emergency Medical Services[/b]
 Master EMT Details
@@ -31,4 +31,4 @@ Should you wish to have more guidance towards anything, please do feel free to a
 [b]Thank you for reading through this! Keep up the great work![/b]
  
 [/divbox]
-[img]https://i.imgur.com/HNP4ksW.png[/img]`;
+[img]https://i.ibb.co/7xQvQQQR/HNP4ks-W.png[/img]`;

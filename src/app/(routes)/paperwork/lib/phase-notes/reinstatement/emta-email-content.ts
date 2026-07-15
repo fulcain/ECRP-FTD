@@ -1,6 +1,6 @@
-export const EMTA_EMAIL_CONTENT = `[img]https://i.imgur.com/HNP4ksW.png[/img]
+export const EMTA_EMAIL_CONTENT = `[img]https://i.ibb.co/7xQvQQQR/HNP4ks-W.png[/img]
 [divbox=white]
-[center][fpimg=55]https://i.imgur.com/C6b52lr.png[/fpimg]
+[center][fpimg=55]https://i.ibb.co/dsKf0v2p/C6b52lr.png[/fpimg]
 [color=transparent]spacer[/color][/center][font=Arial]
 [center][i][b]Los Santos Emergency Medical Services[/b]
 EMT-Advanced Details
@@ -33,4 +33,4 @@ Should you be unsure who to ask, just go for any of the Supervisors, but anyone 
 [b]Thank you for reading through this! Keep up the great work![/b]
  
 [/divbox]
-[img]https://i.imgur.com/HNP4ksW.png[/img]`;
+[img]https://i.ibb.co/7xQvQQQR/HNP4ks-W.png[/img]`;

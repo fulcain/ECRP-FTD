@@ -234,7 +234,7 @@ export function CertPassedNotes() {
       <SectionHeader>Hippocratic Oath</SectionHeader>
       <div className="rounded-lg border border-[#800000]/30 dark:border-rose-400/30 bg-amber-50/40 dark:bg-amber-950/20 px-4 py-5 space-y-3">
         <Figure
-          src="https://i.imgur.com/GReHLvT.png"
+          src="https://i.ibb.co/DD21k7y7/GRe-HLv-T.png"
           alt="Hippocratic Oath ornament"
         />
         <p className="text-center text-base font-semibold italic text-[#800000] dark:text-rose-300">
@@ -289,7 +289,7 @@ export function CertPassedNotes() {
           </p>
         </div>
         <Figure
-          src="https://i.imgur.com/7aQSsNs.png"
+          src="https://i.ibb.co/k6S5cfNk/7a-QSs-Ns.png"
           alt="LSEMS seal"
         />
       </div>

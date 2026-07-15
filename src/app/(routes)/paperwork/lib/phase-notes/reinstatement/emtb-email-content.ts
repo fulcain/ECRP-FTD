@@ -1,6 +1,6 @@
 export const EMTB_EMAIL_CONTENT = `[lsemsfooter][/lsemsfooter]
 [divbox=white]
-[center][img]https://i.imgur.com/C6b52lr.png[/img]
+[center][img]https://i.ibb.co/dsKf0v2p/C6b52lr.png[/img]
 
 [color=transparent]spacer[/color][/center][font=Arial]
 [center][i][b]Los Santos Emergency Medical Services[/b]
@@ -31,10 +31,10 @@ Duty Reports are optional but are [b]highly [/b]encouraged. They help us, Superv
 [*]After creating the topic with your name, further Duty Reports will go [b]into the same topic[/b].
 [/list] [/spoiler]
 
-[spoiler=Email Format][img]https://i.imgur.com/rLIJtNZ.png[/img]
+[spoiler=Email Format][img]https://i.ibb.co/7xQvQQQR/HNP4ks-W.png[/img]
 [divbox=white]
 [list][b]This is the email format you [b][u]need [/u][/b]to use when writing someone an email on the government website![/b][/list]
-[code][img]https://i.imgur.com/9uGiPqF.png[/img][aligntable=right,0,0,0,0,0,0][right][font=Arial][b]
+[code][img]https://i.ibb.co/v6VwdjB6/9u-Gi-Pq-F.png[/img][aligntable=right,0,0,0,0,0,0][right][font=Arial][b]
 [size=150]Los Santos Emergency Medical Services[/size][/b]
 [size=95]DAY/MON/YEAR[/size][/font][/right][/aligntable]
 [hr]
@@ -49,7 +49,7 @@ RANK
 [/divbox]
 [lsemsfooter][/lsemsfooter]
 [divbox=white]
-[center][img]https://i.imgur.com/VIVkAUP.png[/img][/center][font=Arial]
+[center][img]https://i.ibb.co/K1DPbcb/VIVk-AUP.png[/img][/center][font=Arial]
 [center][i][b]Los Santos Emergency Medical Services[/b]
 [size=95]DAY/MON/2022[/size][/font]
 [hr]
@@ -76,10 +76,10 @@ Duty Reports are optional but are [b]highly [/b]encouraged. They help us, Superv
 [*]After creating the topic with your name, further Duty Reports will go [b]into the same topic[/b].
 [/list] [/spoiler]
 
-[spoiler=Email Format][img]https://i.imgur.com/rLIJtNZ.png[/img]
+[spoiler=Email Format][img]https://i.ibb.co/7xQvQQQR/HNP4ks-W.png[/img]
 [divbox=white]
 [list][b]This is the email format you [b][u]need [/u][/b]to use when writing someone an email on the government website![/b][/list]
-[code][img]https://i.imgur.com/9uGiPqF.png[/img][aligntable=right,0,0,0,0,0,0][right][font=Arial][b]
+[code][img]https://i.ibb.co/v6VwdjB6/9u-Gi-Pq-F.png[/img][aligntable=right,0,0,0,0,0,0][right][font=Arial][b]
 [size=150]Los Santos Emergency Medical Services[/size][/b]
 [size=95]DAY/MON/YEAR[/size][/font][/right][/aligntable]
 [hr]
@@ -92,7 +92,7 @@ Kind regards,
 RANK
 [b]Los Santos Emergency Medical Services[/b]
 [/divbox]
-[img]https://i.imgur.com/HNP4ksW.png[/img][/code][/spoiler]
+[img]https://i.ibb.co/7xQvQQQR/HNP4ks-W.png[/img][/code][/spoiler]
 
 [spoiler=IA Report]
 You will have business with Internal Affairs (IA) when you encounter (or do) something on duty such as:

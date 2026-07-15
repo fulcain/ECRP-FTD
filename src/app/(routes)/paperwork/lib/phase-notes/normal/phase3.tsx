@@ -91,7 +91,7 @@ export function Phase3Notes() {
           </Em>
           <Spoiler title="GPS comparison image">
             <Figure
-              src="https://i.imgur.com/i5etN3F.png"
+              src="https://i.ibb.co/YxGLLsQ/i5et-N3F.png"
               caption="GPS routing provided, while functional, is inefficient. Going straight to Legion Square and turning from there instead, is going to be more efficient."
             />
           </Spoiler>
@@ -130,7 +130,7 @@ export function Phase3Notes() {
             <Command>/setgps 1 east galileo ave</Command>
           </OOC>
           <Spoiler title="Map location of The Observatory">
-            <Figure src="https://i.imgur.com/8Hw38YV.png" />
+            <Figure src="https://i.ibb.co/zTwYznX9/8Hw38YV.png" />
           </Spoiler>
         </Item>
         <Item>
@@ -139,7 +139,7 @@ export function Phase3Notes() {
           have them do a few laps to get a grasp of how the ambulance handles
           dirt. <Em>Encourage them to stay in control of the vehicle.</Em>
           <Spoiler title="Observatory courses">
-            <Figure src="https://i.imgur.com/lcxzHCq.jpeg" />
+            <Figure src="https://i.ibb.co/rfR2PCGL/lcxz-HCq.jpg" />
           </Spoiler>
         </Item>
         <Item>
@@ -171,7 +171,7 @@ export function Phase3Notes() {
           Finally, have the EMR drive to the Sandy Firestation (
           <Command>27 Panorama Dr</Command>), <Bold>Code 3</Bold>.
           <Spoiler title="Map location of Sandy Firestation">
-            <Figure src="https://i.imgur.com/Rm51qYX.png" />
+            <Figure src="https://i.ibb.co/C5Xgw01h/Rm51q-YX.png" />
           </Spoiler>
         </Item>
         <Item>
@@ -215,7 +215,7 @@ export function Phase3Notes() {
             <Item>
               Dead-end road close to Clothing Store 4/17
               <Spoiler title="Location of road close to Clothing Store 4/17">
-                <Figure src="https://i.imgur.com/UBq8bRR.png" />
+                <Figure src="https://i.ibb.co/Q7fx5VVZ/UBq8b-RR.png" />
               </Spoiler>
             </Item>
           </NumberedList>

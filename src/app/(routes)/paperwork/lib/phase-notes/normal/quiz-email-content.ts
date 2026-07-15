@@ -1,4 +1,4 @@
-export const QUIZ_EMAIL_CONTENT = `[img]https://i.imgur.com/IO4wR0k.png[/img]
+export const QUIZ_EMAIL_CONTENT = `[img]https://i.ibb.co/nMfgQ7C5/IO4w-R0k.png[/img]
 [lsemssubtitle]Quiz Introduction[/lsemssubtitle]
 [divbox=white]
 [color=transparent]spacer[/color]
@@ -29,7 +29,7 @@ You may reach out to [b][url=https://gov.eclipse-rp.net/viewtopic.php?p=126130#p
 [color=transparent]spacer[/color]
 Quiz Preview:
 [spoil]
-[img]https://i.imgur.com/3Z7zk17.png[/img]
+[img]https://i.ibb.co/LDShp77X/3Z7zk17.png[/img]
 [lsemssubtitle]Multiple Choice Questions[/lsemssubtitle]
 [divbox=white]
 [b][i]Add an "X" to the [] to pick your answer(s). Do keep in mind that multiple answers are possible![/i][/b]
@@ -179,7 +179,7 @@ Rank
 BBCode:
 [spoil]
 [code]
-[img]https://i.imgur.com/3Z7zk17.png[/img]
+[img]https://i.ibb.co/LDShp77X/3Z7zk17.png[/img]
 [lsemssubtitle]Multiple Choice Questions[/lsemssubtitle]
 [divbox=white]
 [b][i]Add an "X" to the [] to pick your answer(s). Do keep in mind that multiple answers are possible![/i][/b]
