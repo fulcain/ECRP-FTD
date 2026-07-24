@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +14,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { TableDataType } from "@/app/page";
+import {
+  parseDate,
+  formatDateForSheet,
+  formatDisplayDate,
+} from "@/lib/format-date";
 
 interface EditSessionDialogProps {
   row: TableDataType | null;
@@ -26,18 +38,12 @@ interface EditSessionDialogProps {
 /**
  * Edit dialog for a single FT session row.
  *
- * The Apps Script update handler locates the row by **sheet row
- * number** — sent as `originalRowNumber` — so the row lookup is
- * purely positional and dodges every timezone / display-format /
- * cell-type pitfall that bit the earlier `originalTimestamp`
- * strategies. We also send `originalTimestamp` so the Apps Script
- * can sanity-check that the row we landed on is the row we
- * intended (catches the rare case where the published CSV row
- * order drifted from the live sheet).
+ * Uses a calendar date-picker (not a free-text input) so the date format
+ * is always correct. The sheet stores dates as `M/D/YYYY`.
  *
- * After a successful save we patch the row in `setData` by
- * Timestamp equality so the table reflects the edit before the
- * published CSV re-caches.
+ * The Apps Script update handler locates the row by **sheet row number**
+ * — sent as `originalRowNumber`. We also send `originalTimestamp` for
+ * an optional sanity check.
  */
 export function EditSessionDialog({
   row,
@@ -47,23 +53,28 @@ export function EditSessionDialog({
   setData,
 }: EditSessionDialogProps) {
   const [submitting, setSubmitting] = useState(false);
+  const [dateOpen, setDateOpen] = useState(false);
+
+  // Selected date as a proper Date object (from the calendar picker).
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
 
   const [form, setForm] = useState({
     Timestamp: "",
     yourName: "",
-    date: "",
     timeStart: "",
     timeFinish: "",
     emrName: "",
     sessionConducted: "",
   });
 
+  // Parse the row's CSV date string into a Date when the dialog opens.
   useEffect(() => {
     if (!row) return;
+    const rawDate = String(row["Date"] ?? "");
+    setSelectedDate(parseDate(rawDate) ?? undefined);
     setForm({
       Timestamp: String(row["Timestamp"] ?? ""),
       yourName: String(row["Your Name"] ?? ""),
-      date: String(row["Date"] ?? ""),
       timeStart: String(row["Time Start"] ?? ""),
       timeFinish: String(row["Time Finish"] ?? ""),
       emrName: String(row["EMR's Name"] ?? ""),
@@ -78,7 +89,7 @@ export function EditSessionDialog({
 
     if (
       !form.yourName ||
-      !form.date ||
+      !selectedDate ||
       !form.timeStart ||
       !form.timeFinish ||
       !form.emrName ||
@@ -106,7 +117,7 @@ export function EditSessionDialog({
           originalRowNumber: String(originalRowNumber),
           originalTimestamp: String(row["Timestamp"] ?? ""),
           yourName: form.yourName,
-          date: form.date,
+          date: formatDateForSheet(selectedDate),
           timeStart: form.timeStart,
           timeFinish: form.timeFinish,
           emrName: form.emrName,
@@ -118,9 +129,10 @@ export function EditSessionDialog({
 
       if (result.success) {
         toast.success("FT session updated successfully", { theme: "dark" });
+        const formattedDate = formatDisplayDate(selectedDate);
         const updatedRow: TableDataType = {
           ...row,
-          "Date": form.date,
+          "Date": formattedDate,
           "Your Name": form.yourName,
           "Time Start": form.timeStart,
           "Time Finish": form.timeFinish,
@@ -189,11 +201,29 @@ export function EditSessionDialog({
 
             <div className="flex flex-col gap-2">
               <Label>Date</Label>
-              <Input
-                placeholder="Enter date"
-                value={form.date}
-                onChange={(e) => setForm({ ...form, date: e.target.value })}
-              />
+              <Popover open={dateOpen} onOpenChange={setDateOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-between font-normal"
+                  >
+                    {selectedDate
+                      ? formatDisplayDate(selectedDate)
+                      : "Pick a date"}
+                    <CalendarIcon className="ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(date) => {
+                      setSelectedDate(date);
+                      setDateOpen(false);
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">

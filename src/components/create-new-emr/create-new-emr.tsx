@@ -1,12 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { TableDataType } from "@/app/page";
+import { formatDisplayDate } from "@/lib/format-date";
 
 interface CreateNewEMRProps {
   setData: React.Dispatch<React.SetStateAction<TableDataType[]>>;
@@ -18,14 +26,21 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
   const [form, setForm] = useState({
     EMR: "",
     profileLink: "",
-    startDate: "",
-    trainingReminder: "",
-    fourWeeks: "",
     reminderSent: false,
     reinstatee: false,
     loa: false,
     notes: "",
   });
+
+  // Calendar date pickers (Date objects, formatted when sent to API)
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [trainingReminderDate, setTrainingReminderDate] = useState<Date | undefined>();
+  const [fourWeeksDate, setFourWeeksDate] = useState<Date | undefined>();
+
+  // Popover open states
+  const [startOpen, setStartOpen] = useState(false);
+  const [trainingOpen, setTrainingOpen] = useState(false);
+  const [fourWeeksOpen, setFourWeeksOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,9 +48,9 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
     if (
       !form.EMR ||
       !form.profileLink ||
-      !form.trainingReminder ||
-      !form.startDate ||
-      !form.fourWeeks
+      !trainingReminderDate ||
+      !startDate ||
+      !fourWeeksDate
     ) {
       toast.error("Fill all required fields", { theme: "dark" });
       return;
@@ -44,7 +59,12 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
     setSubmitting(true);
 
     try {
-      const payload = { ...form };
+      const payload = {
+        ...form,
+        startDate: formatDisplayDate(startDate),
+        trainingReminder: formatDisplayDate(trainingReminderDate),
+        fourWeeks: formatDisplayDate(fourWeeksDate),
+      };
 
       const res = await fetch("/api/create-new-emr", {
         method: "POST",
@@ -57,13 +77,16 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
       if (result.success) {
         toast.success("EMR record created successfully", { theme: "dark" });
 
+        const formattedStart = formatDisplayDate(startDate);
+        const formattedTraining = formatDisplayDate(trainingReminderDate);
+        const formattedFourWeeks = formatDisplayDate(fourWeeksDate);
+
         // Append to local state immediately so the table updates right away
-        // (the published CSV can be cached for several minutes).
         const newRow: TableDataType = {
           "EMR": form.EMR,
-          "Start Date": form.startDate,
-          "Training Reminder Date": form.trainingReminder,
-          "4 Weeks": form.fourWeeks,
+          "Start Date": formattedStart,
+          "Training Reminder Date": formattedTraining,
+          "4 Weeks": formattedFourWeeks,
           "Reminder Sent?": form.reminderSent ? "TRUE" : "FALSE",
           "Reinstatee?": form.reinstatee ? "TRUE" : "FALSE",
           "LOA?": form.loa ? "TRUE" : "FALSE",
@@ -74,15 +97,15 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
 
         setForm({
           EMR: "",
-          startDate: "",
-          trainingReminder: "",
-          fourWeeks: "",
+          profileLink: "",
           reminderSent: false,
           reinstatee: false,
           loa: false,
           notes: "",
-          profileLink: "",
         });
+        setStartDate(undefined);
+        setTrainingReminderDate(undefined);
+        setFourWeeksDate(undefined);
       } else {
         toast.error(
           `Something went wrong: ${result.error ?? result.raw ?? JSON.stringify(result)}`,
@@ -129,31 +152,81 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
 
         <div className="flex flex-col gap-2">
           <Label>Start Date</Label>
-          <Input
-            placeholder="Enter Date"
-            value={form.startDate}
-            onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-          />
+          <Popover open={startOpen} onOpenChange={setStartOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-between font-normal"
+              >
+                {startDate ? formatDisplayDate(startDate) : "Pick a date"}
+                <CalendarIcon className="ml-2 h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={startDate}
+                onSelect={(date) => {
+                  setStartDate(date);
+                  setStartOpen(false);
+                }}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="flex flex-col gap-2">
           <Label>Training Reminder Date</Label>
-          <Input
-            placeholder="Enter Date"
-            value={form.trainingReminder}
-            onChange={(e) =>
-              setForm({ ...form, trainingReminder: e.target.value })
-            }
-          />
+          <Popover open={trainingOpen} onOpenChange={setTrainingOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-between font-normal"
+              >
+                {trainingReminderDate
+                  ? formatDisplayDate(trainingReminderDate)
+                  : "Pick a date"}
+                <CalendarIcon className="ml-2 h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={trainingReminderDate}
+                onSelect={(date) => {
+                  setTrainingReminderDate(date);
+                  setTrainingOpen(false);
+                }}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="flex flex-col gap-2">
           <Label>4 Weeks</Label>
-          <Input
-            placeholder="Enter Date"
-            value={form.fourWeeks}
-            onChange={(e) => setForm({ ...form, fourWeeks: e.target.value })}
-          />
+          <Popover open={fourWeeksOpen} onOpenChange={setFourWeeksOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-between font-normal"
+              >
+                {fourWeeksDate
+                  ? formatDisplayDate(fourWeeksDate)
+                  : "Pick a date"}
+                <CalendarIcon className="ml-2 h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={fourWeeksDate}
+                onSelect={(date) => {
+                  setFourWeeksDate(date);
+                  setFourWeeksOpen(false);
+                }}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="flex items-center gap-2">

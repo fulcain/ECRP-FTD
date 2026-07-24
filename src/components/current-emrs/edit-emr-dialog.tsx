@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,7 +15,17 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { TableDataType } from "@/app/page";
+import {
+  parseDate,
+  formatDisplayDate,
+} from "@/lib/format-date";
 
 interface EditEMRDialogProps {
   row: TableDataType | null;
@@ -28,8 +39,9 @@ const toBool = (value: unknown) =>
   String(value).trim().toUpperCase() === "TRUE";
 
 /**
- * Edit dialog for a single EMR row. Pre-fills every field from the selected
- * row, posts the full updated row to /api/update-emr on save, then refetches.
+ * Edit dialog for a single EMR row. Uses calendar date pickers for
+ * Start Date / Training Reminder Date / 4 Weeks. Sends dates in
+ * `DD/MMM` format to match the sheet.
  */
 export function EditEMRDialog({
   row,
@@ -39,31 +51,39 @@ export function EditEMRDialog({
 }: EditEMRDialogProps) {
   const [submitting, setSubmitting] = useState(false);
 
+  // Popover open states
+  const [startOpen, setStartOpen] = useState(false);
+  const [trainingOpen, setTrainingOpen] = useState(false);
+  const [fourWeeksOpen, setFourWeeksOpen] = useState(false);
+
+  // Calendar date pickers
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [trainingReminderDate, setTrainingReminderDate] = useState<Date | undefined>();
+  const [fourWeeksDate, setFourWeeksDate] = useState<Date | undefined>();
+
   const [form, setForm] = useState({
     EMR: "",
     profileLink: "",
-    startDate: "",
-    trainingReminder: "",
-    fourWeeks: "",
     reminderSent: false,
     reinstatee: false,
     loa: false,
     notes: "",
   });
 
+  // Parse the row's CSV date strings into Date objects when the dialog opens.
   useEffect(() => {
     if (!row) return;
     setForm({
       EMR: String(row["EMR"] ?? ""),
-      startDate: String(row["Start Date"] ?? ""),
-      trainingReminder: String(row["Training Reminder Date"] ?? ""),
-      fourWeeks: String(row["4 Weeks"] ?? ""),
+      profileLink: String(row["Profile Link"] ?? ""),
       reminderSent: toBool(row["Reminder Sent?"]),
       reinstatee: toBool(row["Reinstatee?"]),
       loa: toBool(row["LOA?"]),
       notes: String(row["Notes"] ?? ""),
-      profileLink: String(row["Profile Link"] ?? "")
     });
+    setStartDate(parseDate(String(row["Start Date"] ?? "")) ?? undefined);
+    setTrainingReminderDate(parseDate(String(row["Training Reminder Date"] ?? "")) ?? undefined);
+    setFourWeeksDate(parseDate(String(row["4 Weeks"] ?? "")) ?? undefined);
   }, [row]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,9 +94,9 @@ export function EditEMRDialog({
     if (
       !form.EMR ||
       !form.profileLink ||
-      !form.trainingReminder ||
-      !form.startDate ||
-      !form.fourWeeks
+      !trainingReminderDate ||
+      !startDate ||
+      !fourWeeksDate
     ) {
       toast.error("Fill all required fields", { theme: "dark" });
       return;
@@ -85,14 +105,19 @@ export function EditEMRDialog({
     setSubmitting(true);
 
     try {
+      const formattedStart = formatDisplayDate(startDate);
+      const formattedTraining = formatDisplayDate(trainingReminderDate);
+      const formattedFourWeeks = formatDisplayDate(fourWeeksDate);
+
       const res = await fetch("/api/update-emr", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // Keep the original name so the backend can locate the row even if
-          // the user renames the EMR.
           originalEMR: String(row["EMR"] ?? ""),
           ...form,
+          startDate: formattedStart,
+          trainingReminder: formattedTraining,
+          fourWeeks: formattedFourWeeks,
         }),
       });
 
@@ -104,9 +129,9 @@ export function EditEMRDialog({
         // reflects the change right away (published CSV can be cached).
         const updatedRow: TableDataType = {
           "EMR": form.EMR,
-          "Start Date": form.startDate,
-          "Training Reminder Date": form.trainingReminder,
-          "4 Weeks": form.fourWeeks,
+          "Start Date": formattedStart,
+          "Training Reminder Date": formattedTraining,
+          "4 Weeks": formattedFourWeeks,
           "Reminder Sent?": form.reminderSent ? "TRUE" : "FALSE",
           "Reinstatee?": form.reinstatee ? "TRUE" : "FALSE",
           "LOA?": form.loa ? "TRUE" : "FALSE",
@@ -173,35 +198,81 @@ export function EditEMRDialog({
 
             <div className="flex flex-col gap-2">
               <Label>Start Date</Label>
-              <Input
-                placeholder="Enter Date"
-                value={form.startDate}
-                onChange={(e) =>
-                  setForm({ ...form, startDate: e.target.value })
-                }
-              />
+              <Popover open={startOpen} onOpenChange={setStartOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-between font-normal"
+                  >
+                    {startDate ? formatDisplayDate(startDate) : "Pick a date"}
+                    <CalendarIcon className="ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={(date) => {
+                      setStartDate(date);
+                      setStartOpen(false);
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="flex flex-col gap-2">
               <Label>Training Reminder Date</Label>
-              <Input
-                placeholder="Enter Date"
-                value={form.trainingReminder}
-                onChange={(e) =>
-                  setForm({ ...form, trainingReminder: e.target.value })
-                }
-              />
+              <Popover open={trainingOpen} onOpenChange={setTrainingOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-between font-normal"
+                  >
+                    {trainingReminderDate
+                      ? formatDisplayDate(trainingReminderDate)
+                      : "Pick a date"}
+                    <CalendarIcon className="ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={trainingReminderDate}
+                    onSelect={(date) => {
+                      setTrainingReminderDate(date);
+                      setTrainingOpen(false);
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="flex flex-col gap-2">
               <Label>4 Weeks</Label>
-              <Input
-                placeholder="Enter Date"
-                value={form.fourWeeks}
-                onChange={(e) =>
-                  setForm({ ...form, fourWeeks: e.target.value })
-                }
-              />
+              <Popover open={fourWeeksOpen} onOpenChange={setFourWeeksOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-between font-normal"
+                  >
+                    {fourWeeksDate
+                      ? formatDisplayDate(fourWeeksDate)
+                      : "Pick a date"}
+                    <CalendarIcon className="ml-2 h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={fourWeeksDate}
+                    onSelect={(date) => {
+                      setFourWeeksDate(date);
+                      setFourWeeksOpen(false);
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="flex items-center gap-2">

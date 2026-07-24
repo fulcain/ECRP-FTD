@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
+import { formatDateForSheet } from "@/lib/format-date";
 import { XCircle, RotateCcw } from "lucide-react";
 
 import { Label } from "@/components/ui/label";
@@ -122,7 +123,7 @@ export function SessionDetailsCard() {
     try {
       const payload = {
         yourName: details.ftoName,
-        date: format(details.date, "M/dd/yyyy"),
+        date: formatDateForSheet(details.date),
         timeStart: formatTime12h(details.timeStart),
         timeFinish: formatTime12h(details.timeFinish),
         emrName: resolvedEMR,
