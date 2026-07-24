@@ -28,7 +28,13 @@ export async function fetchWithRetry(
     } catch (err) {
       lastError = err;
 
-      const code = (err as { cause?: { code?: string } }).cause?.code;
+      // Check both err.code and err.cause?.code — different Node.js
+      // / Next.js runtimes structure fetch errors differently (some
+      // put the code directly on the error, others nest it under
+      // cause). The known transient codes are DNS / connection
+      // errors that warrant a retry.
+      const errAny = err as { code?: string; cause?: { code?: string } };
+      const code: string | undefined = errAny.code ?? errAny.cause?.code;
       const isTransient =
         code === "EAI_AGAIN" ||
         code === "ENOTFOUND" ||

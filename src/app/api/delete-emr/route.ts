@@ -31,7 +31,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       ...result,
-      success: res.ok && result.success !== false,
+      success: res.ok && result.success === true,
     });
   } catch (err) {
     console.error("Error posting to webhook:", err);

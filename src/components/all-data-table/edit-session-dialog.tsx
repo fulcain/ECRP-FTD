@@ -137,7 +137,7 @@ export function EditSessionDialog({
         onOpenChange(false);
       } else {
         toast.error(
-          `Something went wrong: ${result.error ?? result.raw ?? JSON.stringify(result)}`,
+          `Something went wrong: ${result.error ?? result.raw ?? result.detail ?? JSON.stringify(result)}`,
           { theme: "dark" },
         );
       }
