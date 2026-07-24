@@ -34,25 +34,9 @@ export const changeLog: ChangeLogDay[] = [
        {
     date: "2026-07-25",
     entries:[
-      {
-        type:"changed",
-        description:"Replaced all free-text date inputs with calendar date pickers (session edit, EMR create/edit)."
-      },
-      {
-        type:"changed",
-        description:"Dates now display as DD/MMM (e.g. 12/Jul) and are stored consistently per sheet format."
-      },
-      {
+            {
         type:"fixed",
-        description:"Session details and EMR records not being updated properly after edit."
-      },
-      {
-        type:"fixed",
-        description:"Apps Script API calls could silently report success when the sheet was never modified (non-JSON responses treated as success)."
-      },
-      {
-        type:"fixed",
-        description:"fetchWithRetry not detecting DNS error codes across different Node.js runtimes (causing non-retry on transient failures)."
+        description:"Session details and EMR Table not being edited properly."
       },
     ]
    },
