@@ -12,6 +12,7 @@ export interface SessionDetails {
   emrName: string;     // selected from EMR dropdown
   emrNameManual: string; // manual fallback
   sessionConducted: string;
+  signature: string;   // FTO signature — shared across all form types
 }
 
 const defaultDetails: SessionDetails = {
@@ -22,6 +23,7 @@ const defaultDetails: SessionDetails = {
   emrName: "",
   emrNameManual: "",
   sessionConducted: "",
+  signature: "",
 };
 
 export type FormType = "normal" | "reinstatement" | "civilianRideAlong";
@@ -76,6 +78,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     emrName: string;
     emrNameManual: string;
     sessionConducted: string;
+    signature: string;
   }>("ftd-session-details", {
     ftoName: "",
     date: null,
@@ -84,6 +87,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     emrName: "",
     emrNameManual: "",
     sessionConducted: "",
+    signature: "",
   });
 
   const [details, setDetails] = useState<SessionDetails>(() => ({
@@ -95,6 +99,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     emrName: persisted.emrName,
     emrNameManual: persisted.emrNameManual,
     sessionConducted: persisted.sessionConducted,
+    signature: persisted.signature,
   }));
 
   useEffect(() => {
@@ -106,6 +111,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       emrName: details.emrName,
       emrNameManual: details.emrNameManual,
       sessionConducted: details.sessionConducted,
+      signature: details.signature,
     });
   }, [details, setPersisted]);
 

@@ -55,6 +55,7 @@ export default function PaperworkForm() {
     setCurrentPhase,
     additionalMandatories,
     setAdditionalMandatories,
+    setDetails,
   } = useSession();
 
   const { rankLabel: autoRankLabel } = useHighestRank();
@@ -91,7 +92,6 @@ export default function PaperworkForm() {
     detailedNotesListNone: false,
     issues: "",
     reasonFailure: "",
-    signature: "",
     rank: "",
     rideAlongType: "",
     ftsCompleted: false,
@@ -110,18 +110,12 @@ export default function PaperworkForm() {
   }, [form, setSavedForm]);
 
   // Auto-populate the Rank field with the user's highest Discord role once
-  // the /api/auth/me lookup resolves. Also migrates away any legacy value
-  // left over from the previous free-form `<Input>` design — if it's not
-  // one of the current options, drop it so the user gets the auto rank
-  // instead of a stale free-text string sneaking into the BBCode.
+  // the /api/auth/me lookup resolves. Always overwrites on page reload so
+  // the rank reflects their current Discord roles even if it changed since
+  // the last visit.
   useEffect(() => {
     if (!autoRankLabel) return;
-    setForm((prev: any) => {
-      const valid = prev.rank && rankOptions.includes(prev.rank);
-      return valid ? prev : { ...prev, rank: autoRankLabel };
-    });
-    // rankOptions is derived from RANK_HIERARCHY at module scope and only
-    // changes if the config is edited, so it's safe to capture by closure.
+    setForm((prev: any) => ({ ...prev, rank: autoRankLabel }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoRankLabel]);
 
@@ -133,7 +127,6 @@ export default function PaperworkForm() {
       detailedNotesListNone: false,
       issues: "",
       reasonFailure: "",
-      signature: form.signature, // Keep signature
       // After clearing, fall back to the user's auto-detected rank rather
       // than the previously-edited value. If we couldn't detect a rank,
       // keep whatever the user had typed.
@@ -190,6 +183,7 @@ export default function PaperworkForm() {
     const valuesWithSession = {
       ...form,
       additionalMandatories,
+      signature: details.signature,
       timeStarted: formatTime24h(details.timeStart),
       timeEnded: formatTime24h(details.timeFinish),
       emrName: resolvedEMR,
@@ -231,10 +225,14 @@ export default function PaperworkForm() {
                 <Label className="text-xs text-muted-foreground flex items-center gap-1.5">
                   <User className="h-3.5 w-3.5" />
                   Signature (image link)
-                </Label>
-                <Input
-                  value={form.signature}
-                  onChange={(e) => update("signature", e.target.value)}
+                </Label>                  <Input
+                  value={details.signature}
+                  onChange={(e) =>
+                    setDetails((prev) => ({
+                      ...prev,
+                      signature: e.target.value,
+                    }))
+                  }
                   placeholder="insert link here"
                   className="bg-background"
                 />

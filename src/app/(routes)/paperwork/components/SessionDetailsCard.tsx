@@ -98,6 +98,7 @@ export function SessionDetailsCard() {
       emrName: "",
       emrNameManual: "",
       sessionConducted: "",
+      signature: "",
     });
     setNameSearch("");
     setEmrSearch("");

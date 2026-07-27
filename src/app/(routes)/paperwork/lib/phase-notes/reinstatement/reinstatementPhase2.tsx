@@ -4,8 +4,11 @@ import { Clock } from "lucide-react";
 import {
   Bold,
   BulletList,
+  Category,
+  Command,
   EyebrowLabel,
   Item,
+  OOC,
   ParagraphList,
   ParaItem,
   Spoiler,
@@ -111,6 +114,41 @@ export function ReinstatementPhase2Notes() {
           Pre-Certification.
         </Item>
       </BulletList>
+
+      <Category title="Breathalyser" ordered>
+        <Item>
+          Inform the EMR that before conducting a breathalyzer, they must
+          have the consent of the patient. Explain that if consent is not
+          given, and this is linked to a potential criminal charge, they
+          are required to notify the patient that separate charges can be
+          levied for &lsquo;Failure to Comply&rsquo; or potentially
+          &lsquo;Tampering with Evidence&rsquo;.{" "}
+          <OOC>
+            <Command>/breathanalyse</Command>
+          </OOC>
+        </Item>
+        <Item>
+          Inform the EMR that if a patient&rsquo;s blood alcohol percentage
+          is 0.08% and above, they are legally considered intoxicated as
+          per the San Andreas Penal Code.
+        </Item>
+        <Item>
+          Remind the EMR that we can offer intoxicated patients water,
+          food, and/or a safe ride home by requesting a taxi or calling a
+          friend depending on the situation. If they witness an intoxicated
+          patient attempting to operate a vehicle following a breathalyzer
+          test, that PD/SD should be contacted via department radio as it
+          poses a risk to their safety and the safety of others.
+        </Item>
+        <Item>
+          <OOC>
+            Inform the EMR roleplay must be completed before using the
+            command, without any roleplay, you&apos;ll be breaking
+            powergaming by forcing roleplay without allowing the other
+            player a chance and abusing faction commands.
+          </OOC>
+        </Item>
+      </Category>
     </div>
   );
 }

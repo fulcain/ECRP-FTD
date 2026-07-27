@@ -215,7 +215,8 @@ export function Phase1Notes() {
         </Item>
         <Item>
           Inform the EMR that if they want to do a backup call, they have to
-          provide a brief summary of the situation.{" "}
+          provide a brief summary of the situation, and specify if
+          it&rsquo;s MD only.{" "}
           <OOC>
             <Command>/backup [text]</Command>
           </OOC>
@@ -225,8 +226,16 @@ export function Phase1Notes() {
           location as these are associated with their cruiser.
         </Item>
         <Item>
-          Let the EMR know that unfortunately, panic button calls will not
-          show in PD / SD dispatch{" "}
+          Explain that an EMR&rsquo;s panic button is connected to the
+          location of their radio. Let them know that panics cannot have
+          reasonings specified when creating them{" "}
+          <OOC>CTRL + E</OOC>.
+        </Item>
+        <Item>
+          Let the EMR know that our panics/backups now appear in PD / SD
+          dispatch, and if they create a panic/backup for a situation that
+          doesn&rsquo;t require PD/SD support, they should use the department
+          radio to inform those departments to disregard it.{" "}
           <OOC>
             <Command>/calls</Command>
           </OOC>
@@ -235,7 +244,7 @@ export function Phase1Notes() {
         <Item>
           Tell the EMR that if they need help from PD or SD, they should use
           the department radio and provide them with the backup/panic call
-          number.{" "}
+          number to provide more information.{" "}
           <OOC>
             <Command>/dep</Command>
           </OOC>

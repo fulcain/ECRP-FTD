@@ -47,7 +47,6 @@ const RIDE_ALONG_PROGRAM_URL =
 
 const defaultFormState = {
   applicantName: "",
-  signature: "",
   rank: "",
   notes: "",
   rejectionReasons: [] as Array<{ reason: string }>,
@@ -59,7 +58,7 @@ export default function CivilianRideAlongForm() {
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const { setCurrentPhase } = useSession();
+  const { details, setDetails, setCurrentPhase } = useSession();
   const { rankLabel: autoRankLabel } = useHighestRank();
 
   // Rank dropdown is locked by default, matching the other papers.
@@ -77,15 +76,15 @@ export default function CivilianRideAlongForm() {
     setSavedForm(form);
   }, [form, setSavedForm]);
 
-  // Auto-populate Rank from highest Discord role on hook resolve, with the
-  // same legacy-migration guard as the other papers (drop stale values not
-  // in the current option set so BBCode never ships an invalid rank).
+  // Auto-populate Rank from highest Discord role on hook resolve.
+  // Always overwrites on page reload so the rank reflects their current
+  // Discord roles even if it changed since the last visit.
   useEffect(() => {
     if (!autoRankLabel) return;
-    setForm((prev: typeof defaultFormState) => {
-      const valid = prev.rank && rankOptions.includes(prev.rank);
-      return valid ? prev : { ...prev, rank: autoRankLabel };
-    });
+    setForm((prev: typeof defaultFormState) => ({
+      ...prev,
+      rank: autoRankLabel,
+    }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoRankLabel]);
 
@@ -102,7 +101,6 @@ export default function CivilianRideAlongForm() {
   const clearAllFields = () => {
     setForm({
       ...defaultFormState,
-      signature: form.signature,
       rank: autoRankLabel ?? form.rank,
     });
     setOutput("");
@@ -143,7 +141,7 @@ export default function CivilianRideAlongForm() {
   const generate = () => {
     const values: CivilianRideAlongValues = {
       applicantName: form.applicantName,
-      signature: form.signature,
+      signature: details.signature,
       rank: form.rank,
       notes: form.notes,
       rejectionReasons: form.rejectionReasons,
@@ -190,10 +188,14 @@ export default function CivilianRideAlongForm() {
                 <Label className="text-xs text-muted-foreground flex items-center gap-1.5">
                   <User className="h-3.5 w-3.5" />
                   Signature (image link)
-                </Label>
-                <Input
-                  value={form.signature}
-                  onChange={(e) => update("signature", e.target.value)}
+                </Label>                  <Input
+                  value={details.signature}
+                  onChange={(e) =>
+                    setDetails((prev) => ({
+                      ...prev,
+                      signature: e.target.value,
+                    }))
+                  }
                   placeholder="insert link here"
                   className="bg-background"
                 />

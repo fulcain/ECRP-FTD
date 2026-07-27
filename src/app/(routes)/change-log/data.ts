@@ -31,6 +31,46 @@ export type ChangeLogDay = {
  * The page renders them in reverse chronological order.
  */
 export const changeLog: ChangeLogDay[] = [
+  {
+    date: "2026-07-27",
+    entries: [
+      {
+        type: "changed",
+        description:
+          "Start Date in Create/Edit EMR forms in FT Command page now auto-fills Training Reminder Date (+21 days) and 4 Weeks (+28 days) automatically.",
+      },
+      {
+        type: "changed",
+        description:
+          "Updated Phase 1 (Normal & Reinstatement) panic/backup system notes - panics/backups now appear in PD/SD dispatch with disregard instructions.",
+      },
+      {
+        type: "changed",
+        description:
+          "Updated Phase 2 (Normal & Reinstatement) Breathalyser section with consent/Failure to Comply details, 0.08% BAC threshold per SAPC, and safe ride/PD-SD escalation guidelines.",
+      },
+      {
+        type: "changed",
+        description:
+          "Next Phase Title now includes the selected EMR name and square brackets (e.g. [Pending Phase 1] (John Doe)) for one-click copy-pasting.",
+      },
+      {
+        type: "added",
+        description:
+          "Added inline EMR selector to the Next Phase Title card so EMR can be changed without scrolling to Session Details.",
+      },
+      {
+        type: "fixed",
+        description:
+          "Signature field now persists across all paperwork types (Normal FT, Reinstatement, Civilian Ride-Along) - stored in shared session context instead of per-form.",
+      },
+      {
+        type: "fixed",
+        description:
+          "OOC content in phase notes no longer renders centered - complex blocks like stabilize/heal/CPR instructions now display left-aligned.",
+      },
+    ],
+  },
        {
     date: "2026-07-25",
     entries:[

@@ -168,6 +168,15 @@ export function CreateNewEMR({ setData }: CreateNewEMRProps) {
                 selected={startDate}
                 onSelect={(date) => {
                   setStartDate(date);
+                  if (date) {
+                    const training = new Date(date);
+                    training.setDate(training.getDate() + 21);
+                    setTrainingReminderDate(training);
+
+                    const fourWeeks = new Date(date);
+                    fourWeeks.setDate(fourWeeks.getDate() + 28);
+                    setFourWeeksDate(fourWeeks);
+                  }
                   setStartOpen(false);
                 }}
               />

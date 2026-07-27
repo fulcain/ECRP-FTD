@@ -32,7 +32,7 @@ export function Phase2Notes() {
         and managing their unit.
       </WarningCallout>
 
-      <Category title="Volatile Patient List" ordered>
+      <Category title="Volatile Patient List">
         <Item>
           Inform the EMR of the{" "}
           <BbLink href="https://gov.eclipse-rp.net/viewtopic.php?p=769876">
@@ -63,7 +63,7 @@ export function Phase2Notes() {
         </Item>
       </Category>
 
-      <Category title="Hostile Situations" ordered>
+      <Category title="Hostile Situations">
         <Item>
           Inform the EMR that our safety comes first on every scene.
         </Item>
@@ -95,7 +95,7 @@ export function Phase2Notes() {
         </Item>
       </Category>
 
-      <Category title="GSB" ordered>
+      <Category title="GSB">
         <Item>
           Let the EMR know that sometimes GSB will reach out and ask if we
           require any assistance. Let them know that usually whoever is shift
@@ -191,7 +191,7 @@ export function Phase2Notes() {
         </Item>
       </Category>
 
-      <Category title="Methadone" ordered>
+      <Category title="Methadone">
         <Item>
           Instruct the EMR to open the following section in the Department
           Manual:{" "}
@@ -246,17 +246,30 @@ export function Phase2Notes() {
         </Item>
       </Category>
 
-      <Category title="Breathalyser" ordered>
+      <Category title="Breathalyser">
         <Item>
-          Explain to the EMR the process of conducting a breathalyzer on a
-          patient and give them an example of how to do it.{" "}
+          Inform the EMR that before conducting a breathalyzer, they must
+          have the consent of the patient. Explain that if consent is not
+          given, and this is linked to a potential criminal charge, they
+          are required to notify the patient that separate charges can be
+          levied for &lsquo;Failure to Comply&rsquo; or potentially
+          &lsquo;Tampering with Evidence&rsquo;.{" "}
           <OOC>
             <Command>/breathanalyse</Command>
           </OOC>
         </Item>
         <Item>
-          Inform the EMR that before conducting a breathalyzer they must
-          have the consent of the patient.
+          Inform the EMR that if a patient&rsquo;s blood alcohol percentage
+          is 0.08% and above, they are legally considered intoxicated as
+          per the San Andreas Penal Code.
+        </Item>
+        <Item>
+          Remind the EMR that we can offer intoxicated patients water,
+          food, and/or a safe ride home by requesting a taxi or calling a
+          friend depending on the situation. If they witness an intoxicated
+          patient attempting to operate a vehicle following a breathalyzer
+          test, that PD/SD should be contacted via department radio as it
+          poses a risk to their safety and the safety of others.
         </Item>
         <Item>
           <OOC>

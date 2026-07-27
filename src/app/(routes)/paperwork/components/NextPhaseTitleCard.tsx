@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { Copy } from "lucide-react";
+import { Copy, UserRound, XCircle } from "lucide-react";
 
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -99,8 +100,17 @@ function getNextPhaseConfig(formType: FormType): NextPhaseConfig {
 
 /** Dropdown + clipboard helper for the next pending phase title. */
 export function NextPhaseTitleCard() {
-  const { formType, currentPhase, additionalMandatories } = useSession();
+  const {
+    formType,
+    currentPhase,
+    additionalMandatories,
+    resolvedEMR,
+    details,
+    setDetails,
+    emrList,
+  } = useSession();
   const [phaseCopied, setPhaseCopied] = useState(false);
+  const [emrSearch, setEmrSearch] = useState("");
 
   const config = getNextPhaseConfig(formType);
 
@@ -156,13 +166,21 @@ export function NextPhaseTitleCard() {
       ? dynamicMandatoryLabel
       : selectedOption?.label || "";
 
+  // Build the full title with brackets and the selected EMR name for easy
+  // copy-pasting into the forum topic title field.
+  const fullTitle = resolvedEMR
+    ? `[${resolvedTitle}] ${resolvedEMR}`
+    : `[${resolvedTitle}]`;
+
   const copyTitle = async () => {
     if (!resolvedTitle) return;
-    await navigator.clipboard.writeText(resolvedTitle);
+    await navigator.clipboard.writeText(fullTitle);
     setPhaseCopied(true);
     toast.success("Next phase title copied!", { theme: "dark" });
     setTimeout(() => setPhaseCopied(false), 2000);
   };
+
+  const hasEMR = Boolean(resolvedEMR);
 
   return (
     <Card className="border shadow-sm">
@@ -172,7 +190,8 @@ export function NextPhaseTitleCard() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2">
+        <div className="space-y-3">
+          {/* Phase title dropdown + copy */}
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Title</Label>
             <div className="flex items-center gap-2">
@@ -212,9 +231,117 @@ export function NextPhaseTitleCard() {
               </Button>
             </div>
           </div>
+
+          {/* Inline EMR selector */}
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground flex items-center gap-1.5">
+              <UserRound className="h-3 w-3" />
+              EMR
+            </Label>
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <Select
+                  value={details.emrName}
+                  onValueChange={(v) => {
+                    setDetails((prev) => ({
+                      ...prev,
+                      emrName: v,
+                      emrNameManual: "",
+                    }));
+                    setEmrSearch("");
+                  }}
+                  onOpenChange={(open) => {
+                    if (!open) setEmrSearch("");
+                  }}
+                >
+                  <SelectTrigger className="bg-background">
+                    <SelectValue placeholder="Select EMR…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <div
+                      className="p-2 cursor-pointer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Input
+                        placeholder="Search EMR…"
+                        value={emrSearch}
+                        onChange={(e) => setEmrSearch(e.target.value)}
+                        className="mb-2"
+                        autoFocus
+                      />
+                    </div>
+                    {emrList
+                      .filter((emr) =>
+                        emr.EMR.toLowerCase().includes(
+                          emrSearch.toLowerCase(),
+                        ),
+                      )
+                      .map((emr, idx) => (
+                        <SelectItem
+                          key={`${emr.EMR}-${idx}`}
+                          value={emr.EMR}
+                        >
+                          {emr.EMR}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {hasEMR && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() =>
+                    setDetails((prev) => ({
+                      ...prev,
+                      emrName: "",
+                      emrNameManual: "",
+                    }))
+                  }
+                  className="shrink-0 h-8 w-8 text-muted-foreground hover:text-destructive"
+                  title="Clear EMR"
+                >
+                  <XCircle className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+            {/* Manual EMR entry — shown only when no EMR is selected via dropdown */}
+            {!details.emrName && (
+              <Input
+                placeholder="Or type EMR name manually…"
+                value={details.emrNameManual}
+                onChange={(e) =>
+                  setDetails((prev) => ({
+                    ...prev,
+                    emrNameManual: e.target.value,
+                    emrName: "",
+                  }))
+                }
+                className="bg-background text-xs"
+              />
+            )}
+          </div>
+
+          {/* Preview the full title that will be copied */}
+          {resolvedTitle && (
+            <div className="rounded-md border bg-muted/30 px-3 py-2 text-xs">
+              <span className="text-muted-foreground">Copies as: </span>
+              <code className="text-foreground font-mono text-[11px]">
+                {fullTitle}
+              </code>
+              {!hasEMR && (
+                <span className="ml-2 text-amber-600 dark:text-amber-400">
+                  (select an EMR above to include their name)
+                </span>
+              )}
+            </div>
+          )}
+
           {safeNextPhaseDropdown === "pending-mandatory" && (
             <div className="text-xs rounded-md border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-amber-700 dark:text-amber-300">
-              Go to the Next Session Focus Section and choose amount of Adittional Mandatories they have to do.
+              Go to the Next Session Focus Section and choose amount of
+              Additional Mandatories they have to do.
             </div>
           )}
         </div>
