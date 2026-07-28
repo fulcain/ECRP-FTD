@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense, useEffect } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { FileText, RefreshCcw, UserRound } from "lucide-react";
 
 import {
@@ -59,13 +61,21 @@ export function PaperworkTypeSelector() {
 function PaperworkTypeContent() {
   const { formType } = useSession();
   return (
-    <div className="space-y-6">
-      <PaperworkHeader />
-      <PaperworkTypeRouter />
-      {/* Session Details is irrelevant to the Civilian Ride-Along flow
-          (no EMR, no session row to save), so it's hidden in that mode. */}
-      {formType !== "civilianRideAlong" && <SessionDetailsCard />}
-    </div>
+    <>
+      {/* Synchronise the ?tab= URL parameter with the active form type so users
+          can share/bookmark links to a specific paperwork format. Must be
+          wrapped in <Suspense> because useSearchParams() requires it. */}
+      <Suspense fallback={null}>
+        <FormTypeUrlSyncer />
+      </Suspense>
+      <div className="space-y-6">
+        <PaperworkHeader />
+        <PaperworkTypeRouter />
+        {/* Session Details is irrelevant to the Civilian Ride-Along flow
+            (no EMR, no session row to save), so it's hidden in that mode. */}
+        {formType !== "civilianRideAlong" && <SessionDetailsCard />}
+      </div>
+    </>
   );
 }
 
@@ -90,6 +100,39 @@ function PaperworkHeader() {
       <PaperworkTypeTabs />
     </header>
   );
+}
+
+/**
+ * Reads the ?tab= query param on mount and writes the active form type back
+ * to the URL whenever it changes, without scrolling or adding a history entry.
+ * Must be rendered inside <Suspense> (Next.js requirement for useSearchParams).
+ */
+function FormTypeUrlSyncer() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { formType, setFormType } = useSession();
+
+  // On mount, read ?tab= and sync into context.
+  useEffect(() => {
+    const tab = searchParams.get("tab") as FormType | null;
+    const validTypes: FormType[] = ["normal", "reinstatement", "civilianRideAlong"];
+    if (tab && validTypes.includes(tab)) {
+      setFormType(tab);
+    }
+    // Intentionally run only once on mount — the effect below keeps the URL
+    // in sync whenever formType changes afterwards.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Whenever formType changes, update ?tab= in the URL.
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", formType);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [formType, pathname, router, searchParams]);
+
+  return null;
 }
 
 function PaperworkTypeTabs() {

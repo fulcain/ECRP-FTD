@@ -32,6 +32,21 @@ export type ChangeLogDay = {
  */
 export const changeLog: ChangeLogDay[] = [
   {
+    date: "2026-07-28",
+    entries: [
+      {
+        type: "added",
+        description:
+          "Paperwork page tabs are now reflected in the URL (?tab=normal, ?tab=reinstatement, ?tab=civilianRideAlong) so users can bookmark or share direct links to a specific paperwork format.",
+      },
+      {
+        type: "changed",
+        description:
+          "Paperwork link in the header now points to /paperwork?tab=normal for a consistent, shareable URL on arrival.",
+      },
+    ],
+  },
+  {
     date: "2026-07-27",
     entries: [
       {
