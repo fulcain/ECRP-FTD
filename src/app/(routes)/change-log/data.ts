@@ -31,6 +31,16 @@ export type ChangeLogDay = {
  * The page renders them in reverse chronological order.
  */
 export const changeLog: ChangeLogDay[] = [
+   {
+    date: "2026-08-17",
+    entries: [
+      {
+        type: "added",
+        description:
+          "Added scripts to each phase. Some of them are still in the Guide view.",
+      },
+    ],
+  },
   {
     date: "2026-07-28",
     entries: [

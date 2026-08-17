@@ -13,19 +13,20 @@ import {
   PhaseKey,
 } from "@/app/(routes)/paperwork/lib/paperworkConfig";
 import { resolveNormalNotes } from "@/app/(routes)/paperwork/lib/phase-notes/registry";
+import { NotesPanel } from "@/app/(routes)/paperwork/components/NotesPanel";
 
 function isPaperworkPhaseKey(value: unknown): value is PhaseKey {
   return typeof value === "string" && value in paperworkConfig;
 }
 
-/** Read-only reference panel for the active normal-form phase. */
+/** Reference panel for the active normal-form phase, with Guide/Script views. */
 export function PhaseNotesCard() {
   const { currentPhase } = useSession();
 
   if (!isPaperworkPhaseKey(currentPhase)) return null;
   const phase: PhaseKey = currentPhase;
   const config = paperworkConfig[phase];
-  const NotesComponent = resolveNormalNotes(phase);
+  const entry = resolveNormalNotes(phase);
 
   return (
     <Card className="border shadow-sm">
@@ -36,15 +37,15 @@ export function PhaseNotesCard() {
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="max-h-[600px] overflow-y-auto rounded-md bg-muted/30 border border-border/40 px-4 py-4">
-          {NotesComponent ? (
-            <NotesComponent />
-          ) : (
-            <p className="text-xs text-muted-foreground italic">
-              No reference notes available for this phase.
-            </p>
-          )}
-        </div>
+        {entry ? (
+          <NotesPanel spoken={entry.Spoken} storageKey={phase}>
+            <entry.Visual />
+          </NotesPanel>
+        ) : (
+          <p className="text-xs text-muted-foreground italic">
+            No reference notes available for this phase.
+          </p>
+        )}
       </CardContent>
     </Card>
   );

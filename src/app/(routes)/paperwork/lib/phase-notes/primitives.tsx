@@ -146,8 +146,12 @@ export function OOC({ children }: { children: React.ReactNode }) {
 
 export function Command({ children }: { children: React.ReactNode }) {
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(getText(children));
-    toast.success("Copied!");
+    const text = getText(children);
+    const isSlashCommand = text.startsWith("/");
+    // Slash commands copy as /b so they can be shown in OOC chat without
+    // executing; keys like Q/E copy as-is.
+    await navigator.clipboard.writeText(isSlashCommand ? `/b ${text}` : text);
+    toast.success(isSlashCommand ? "Copied as /b" : "Copied!");
   };
 
   return (

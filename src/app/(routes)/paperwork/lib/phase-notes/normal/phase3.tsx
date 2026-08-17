@@ -191,12 +191,6 @@ export function Phase3Notes() {
           Take them to Central and then finally to Mount Zonah and show them
           how to call Betsy so she can retrieve a vehicle for them.
         </Item>
-        <Item>
-          <OOC>
-            Pictures will go in here. I just have to get them from above and
-            mark where the points are on the map with blips.
-          </OOC>
-        </Item>
       </Category>
 
       <Category title="Scene Management" ordered>

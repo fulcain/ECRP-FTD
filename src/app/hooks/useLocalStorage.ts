@@ -10,7 +10,7 @@ export function useLocalStorage<T>(
       const stored = localStorage.getItem(key);
       return stored ? JSON.parse(stored) : defaultValue;
     } catch (error) {
-      console.error(`Error reading localStorage key “${key}”:`, error);
+      console.error(`Error reading localStorage key '${key}':`, error);
       return defaultValue;
     }
   });
@@ -19,7 +19,7 @@ export function useLocalStorage<T>(
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-      console.error(`Error writing to localStorage key “${key}”:`, error);
+      console.error(`Error writing to localStorage key '${key}':`, error);
     }
   }, [key, value]);
 

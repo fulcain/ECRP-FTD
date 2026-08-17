@@ -19,40 +19,76 @@ import { ReinstatementCertPassedNotes } from "@/app/(routes)/paperwork/lib/phase
 import { ReinstatementCertFailedNotes } from "@/app/(routes)/paperwork/lib/phase-notes/reinstatement/reinstatementCertFailed";
 import { ReinstatementRideAlongNotes } from "@/app/(routes)/paperwork/lib/phase-notes/reinstatement/reinstatementRideAlong";
 
-export const NORMAL_NOTES: Record<PhaseKey, React.ComponentType> = {
-  introduction: IntroductionNotes,
-  phase1: Phase1Notes,
-  phase2: Phase2Notes,
-  phase3: Phase3Notes,
-  preCert: PreCertNotes,
-  certPassed: CertPassedNotes,
-  certFailed: CertFailedNotes,
-  rideAlong: RideAlongNotes,
+import { INTRODUCTION_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/introduction";
+import { PHASE1_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/phase1";
+import { PHASE2_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/phase2";
+import { PHASE3_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/phase3";
+import { PRECERT_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/preCert";
+import { CERT_PASSED_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/certPassed";
+import { CERT_FAILED_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/certFailed";
+import { RIDE_ALONG_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/rideAlong";
+
+import { REINSTATEMENT_PHASE1_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/reinstatementPhase1";
+import { REINSTATEMENT_PHASE2_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/reinstatementPhase2";
+import { REINSTATEMENT_CERT_PASSED_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/reinstatementCertPassed";
+import { REINSTATEMENT_CERT_FAILED_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/reinstatementCertFailed";
+import { REINSTATEMENT_RIDE_ALONG_SPOKEN } from "@/app/(routes)/paperwork/lib/phase-notes/spoken/reinstatementRideAlong";
+
+/**
+ * A phase note has two always-available views: `Visual` (the original
+ * formatted reference) and `Spoken` (a paste-friendly, first-person script).
+ */
+export interface PhaseNoteEntry {
+  Visual: React.ComponentType;
+  Spoken: string;
+}
+
+export const NORMAL_NOTES: Record<PhaseKey, PhaseNoteEntry> = {
+  introduction: { Visual: IntroductionNotes, Spoken: INTRODUCTION_SPOKEN },
+  phase1: { Visual: Phase1Notes, Spoken: PHASE1_SPOKEN },
+  phase2: { Visual: Phase2Notes, Spoken: PHASE2_SPOKEN },
+  phase3: { Visual: Phase3Notes, Spoken: PHASE3_SPOKEN },
+  preCert: { Visual: PreCertNotes, Spoken: PRECERT_SPOKEN },
+  certPassed: { Visual: CertPassedNotes, Spoken: CERT_PASSED_SPOKEN },
+  certFailed: { Visual: CertFailedNotes, Spoken: CERT_FAILED_SPOKEN },
+  rideAlong: { Visual: RideAlongNotes, Spoken: RIDE_ALONG_SPOKEN },
 };
 
-export const REINSTATEMENT_NOTES: Record<
-  ReinstatementPhaseKey,
-  React.ComponentType
-> = {
-  reinstatementPhase1: ReinstatementPhase1Notes,
-  reinstatementPhase2: ReinstatementPhase2Notes,
-  reinstatementCertPassed: ReinstatementCertPassedNotes,
-  reinstatementCertFailed: ReinstatementCertFailedNotes,
-  reinstatementRideAlong: ReinstatementRideAlongNotes,
+export const REINSTATEMENT_NOTES: Record<ReinstatementPhaseKey, PhaseNoteEntry> = {
+  reinstatementPhase1: {
+    Visual: ReinstatementPhase1Notes,
+    Spoken: REINSTATEMENT_PHASE1_SPOKEN,
+  },
+  reinstatementPhase2: {
+    Visual: ReinstatementPhase2Notes,
+    Spoken: REINSTATEMENT_PHASE2_SPOKEN,
+  },
+  reinstatementCertPassed: {
+    Visual: ReinstatementCertPassedNotes,
+    Spoken: REINSTATEMENT_CERT_PASSED_SPOKEN,
+  },
+  reinstatementCertFailed: {
+    Visual: ReinstatementCertFailedNotes,
+    Spoken: REINSTATEMENT_CERT_FAILED_SPOKEN,
+  },
+  reinstatementRideAlong: {
+    Visual: ReinstatementRideAlongNotes,
+    Spoken: REINSTATEMENT_RIDE_ALONG_SPOKEN,
+  },
 };
 
 export function resolveNormalNotes(
   key: string | null | undefined,
-): React.ComponentType | undefined {
+): PhaseNoteEntry | undefined {
   if (!key) return undefined;
-  return (NORMAL_NOTES as Record<string, React.ComponentType | undefined>)[key];
+  return (NORMAL_NOTES as Record<string, PhaseNoteEntry | undefined>)[key];
 }
 
 export function resolveReinstatementNotes(
   key: string | null | undefined,
-): React.ComponentType | undefined {
+): PhaseNoteEntry | undefined {
   if (!key) return undefined;
-  return (REINSTATEMENT_NOTES as Record<string, React.ComponentType | undefined>)[
+  return (REINSTATEMENT_NOTES as Record<string, PhaseNoteEntry | undefined>)[
     key
   ];
 }
