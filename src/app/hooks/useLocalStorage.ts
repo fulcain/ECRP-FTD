@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function useLocalStorage<T>(
   key: string,
@@ -24,4 +24,52 @@ export function useLocalStorage<T>(
   }, [key, value]);
 
   return [value, setValue];
+}
+
+/**
+ * Like `useLocalStorage<string>` but stays in sync across components in the
+ * same window via custom events — when component A writes, component B
+ * re-reads immediately. Used for shared fields like FTD Rank that appear
+ * in multiple cards on the same page.
+ */
+export function useSharedLocalStorageString(
+  key: string,
+  defaultValue: string,
+): [string, (value: string) => void] {
+  const [value, setValue] = useState<string>(() => {
+    if (typeof window === "undefined") return defaultValue;
+    try {
+      return localStorage.getItem(key) ?? defaultValue;
+    } catch {
+      return defaultValue;
+    }
+  });
+
+  useEffect(() => {
+    const onCustom = (e: Event) => {
+      if (!(e instanceof CustomEvent)) return;
+      if (e.detail?.key === key) {
+        setValue((e.detail.value as string) ?? defaultValue);
+      }
+    };
+    window.addEventListener("local-storage-sync", onCustom);
+    return () => window.removeEventListener("local-storage-sync", onCustom);
+  }, [key, defaultValue]);
+
+  const write = useCallback(
+    (newValue: string) => {
+      setValue(newValue);
+      try {
+        localStorage.setItem(key, newValue);
+      } catch { /* noop */ }
+      window.dispatchEvent(
+        new CustomEvent("local-storage-sync", {
+          detail: { key, value: newValue },
+        }),
+      );
+    },
+    [key],
+  );
+
+  return [value, write];
 }
