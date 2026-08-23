@@ -31,6 +31,21 @@ export type ChangeLogDay = {
  * The page renders them in reverse chronological order.
  */
 export const changeLog: ChangeLogDay[] = [
+  {
+    date: "2026-08-23",
+    entries: [
+      {
+        type: "added",
+        description:
+          "Command page is now split into tabs - EMRs, FTOs, and Emails.",
+      },
+      {
+        type: "added",
+        description:
+          "Command page - Emails tab added with three email generators: FTI Promotion Email, EMR Training Time Reminder, and EMR Discharge Email.",
+      },
+    ],
+  },
    {
     date: "2026-08-17",
     entries: [
