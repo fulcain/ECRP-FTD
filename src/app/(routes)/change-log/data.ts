@@ -37,12 +37,12 @@ export const changeLog: ChangeLogDay[] = [
       {
         type: "added",
         description:
-          "Field Training Instructor page added — phase notes, trainer info, and auto-generated certification paperwork &amp; divisional file for FTO certifications. Accessible to FT Head, Ass Head &amp; Command.",
+          "Field Training Instructor page added - phase notes, trainer info, and auto-generated certification paperwork, divisional file for FTO certifications. Accessible to FT Head, Ass Head, Command+ and FTIs.",
       },
       {
         type: "changed",
         description:
-          "All copy buttons on the Command page and FTI page are now always available — empty fields keep their placeholder text so you can copy now and fill in the blanks later.",
+          "All copy buttons on the Command page and FTI page are now always available - empty fields keep their placeholder text so you can copy now and fill in the blanks later.",
       },
     ],
   },
