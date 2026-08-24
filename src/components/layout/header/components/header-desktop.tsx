@@ -19,7 +19,7 @@ export function HeaderDesktop({ headerLinks }: HeaderDesktopProps) {
           key={item.label}
           href={item.href!}
           className={cn(
-            "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+            "cursor-pointer rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
             item.href === "/" ? pathname === "/" : pathname.startsWith(item.href!)
               ? "bg-surface-hover text-foreground"
               : "text-muted-foreground hover:text-foreground hover:bg-surface-hover/50",

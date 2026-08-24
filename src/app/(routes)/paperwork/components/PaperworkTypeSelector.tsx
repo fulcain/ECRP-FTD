@@ -149,7 +149,7 @@ function PaperworkTypeTabs() {
             aria-current={active ? "true" : undefined}
             onClick={() => setFormType(value)}
             className={cn(
-              "group flex items-start gap-3 rounded-xl border p-4 text-left transition-all",
+              "cursor-pointer group flex items-start gap-3 rounded-xl border p-4 text-left transition-all",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
               active
                 ? "border-primary/70 bg-primary/5 shadow-sm"

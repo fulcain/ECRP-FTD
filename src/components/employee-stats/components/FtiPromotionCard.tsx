@@ -69,7 +69,7 @@ export function FtiPromotionCard() {
             onClick={copyTitle}
             title="Copy title"
             aria-label="Copy title"
-            className="ml-auto inline-flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted-foreground/10 hover:text-foreground"
+            className="cursor-pointer ml-auto inline-flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted-foreground/10 hover:text-foreground"
           >
             {titleCopied ? (
               <Check className="h-3 w-3 text-emerald-600" />

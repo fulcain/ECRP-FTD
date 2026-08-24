@@ -69,7 +69,7 @@ export function HeaderMobile({ headerLinks }: HeaderMobileProps) {
                         <Link
                           href={child.href}
                           className={cn(
-                            "rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-surface-hover",
+                            "cursor-pointer rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-surface-hover",
                             pathname === child.href
                               ? "text-foreground font-medium"
                               : "text-muted-foreground",
@@ -87,7 +87,7 @@ export function HeaderMobile({ headerLinks }: HeaderMobileProps) {
                   <Link
                     href={item.href!}
                     className={cn(
-                      "rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-surface-hover",
+                      "cursor-pointer rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-surface-hover",
                       pathname === item.href
                         ? "text-foreground font-medium"
                         : "text-muted-foreground",

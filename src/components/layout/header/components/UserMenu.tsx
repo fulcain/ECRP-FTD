@@ -47,7 +47,7 @@ export function UserMenu() {
     return (
       <Link
         href="/login"
-        className="inline-flex items-center gap-2 rounded-md bg-[#5865F2] hover:bg-[#4752c4] text-white text-sm font-semibold px-3 py-2 transition-colors"
+        className="cursor-pointer inline-flex items-center gap-2 rounded-md bg-[#5865F2] hover:bg-[#4752c4] text-white text-sm font-semibold px-3 py-2 transition-colors"
         title="Sign in with Discord"
       >
         <MessageCircle className="h-4 w-4" />
@@ -82,7 +82,7 @@ export function UserMenu() {
       <form action="/api/auth/logout" method="post">
         <button
           type="submit"
-          className="inline-flex items-center gap-2 rounded-md bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium px-3 py-2 transition-colors"
+          className="cursor-pointer inline-flex items-center gap-2 rounded-md bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium px-3 py-2 transition-colors"
           title="Sign out"
         >
           <LogOut className="h-4 w-4" />
