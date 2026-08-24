@@ -409,7 +409,7 @@ export default function FtiPage() {
           {/* ---- FTO Certification Paperwork ---- */}
           <div className="space-y-4">
             <h3 className="text-base font-semibold">
-              FTO Certification Paperwork — FTO Profile
+              FTO Certification Paperwork - FTO Profile
             </h3>
 
             {/* Student details needed for the paperwork */}
