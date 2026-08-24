@@ -67,6 +67,15 @@ export function CurrentEMRsTable() {
 
   const tableData = useMemo(() => mapEmployeeDataRaw(data), [data]);
 
+  const emrStats = useMemo(() => {
+    const total = tableData.length;
+    const reinstated = tableData.filter(
+      (row) => (row["Reinstatee?"] as string)?.toUpperCase() === "TRUE",
+    ).length;
+    const normal = total - reinstated;
+    return { total, normal, reinstated };
+  }, [tableData]);
+
   const tableRows = useMemo(
     () =>
       tableData.filter((row) =>
@@ -114,6 +123,21 @@ export function CurrentEMRsTable() {
       <h2 className="text-2xl md:text-3xl font-bold text-gray-300 mb-6">
         Current EMRs Table
       </h2>
+
+      {/* === Stats === */}
+      {!loading && (
+        <div className="flex gap-4 text-sm">
+          <span className="bg-secondary/50 rounded-md px-3 py-1.5">
+            Total: <span className="font-semibold">{emrStats.total}</span>
+          </span>
+          <span className="bg-secondary/50 rounded-md px-3 py-1.5">
+            Normal: <span className="font-semibold">{emrStats.normal}</span>
+          </span>
+          <span className="bg-secondary/50 rounded-md px-3 py-1.5">
+            Reinstated: <span className="font-semibold">{emrStats.reinstated}</span>
+          </span>
+        </div>
+      )}
 
       {/* === Filters === */}
       <div className="flex items-center py-4 space-x-4">
