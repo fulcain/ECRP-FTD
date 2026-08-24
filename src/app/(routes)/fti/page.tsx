@@ -328,7 +328,7 @@ export default function FtiPage() {
   };
 
   return (
-    <PageContainer className="max-w-5xl">
+    <PageContainer className="max-w-5xl space-y-6">
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
 
       <PageHeader
