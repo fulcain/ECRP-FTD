@@ -25,7 +25,7 @@ export function PageHeader({
         </div>
       )}
       {!showLogo && icon && (
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent ring-1 ring-inset ring-accent/20">
+        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-inset ring-primary/20">
           {icon}
         </span>
       )}
