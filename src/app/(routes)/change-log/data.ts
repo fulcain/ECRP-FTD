@@ -40,6 +40,21 @@ export const changeLog: ChangeLogDay[] = [
           "Complete UI redesign — minimal, modern look applied across every page. New design system with refined colors, surfaces, typography, glass-morphism header, and smooth animations.",
       },
       {
+        type: "fixed",
+        description:
+          "All tables now scroll horizontally on mobile instead of overflowing off-screen.",
+      },
+      {
+        type: "fixed",
+        description:
+          "FT Sessions link in the header no longer appears active on every page.",
+      },
+      {
+        type: "fixed",
+        description:
+          "Several section headings had hardcoded white text — now follows the app theme properly.",
+      },
+      {
         type: "added",
         description:
           "Current EMRs table now shows total, normal, and reinstated EMR counts as summary chips.",
