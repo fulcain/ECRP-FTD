@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import type { Metadata } from "next";
 import { ShieldAlert } from "lucide-react";
 
@@ -58,7 +57,6 @@ export default async function UnauthorizedPage({
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10 ring-1 ring-amber-500/20">
             <ShieldAlert className="h-6 w-6 text-amber-500" />
           </div>
-          <Image alt="FT" src="/FT.png" height={36} width={36} className="opacity-50" />
           <h1 className="text-lg font-semibold">{heading}</h1>
         </div>
 

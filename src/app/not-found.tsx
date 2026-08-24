@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Home } from "lucide-react";
 import type { Metadata } from "next";
@@ -21,7 +20,6 @@ export default function NotFoundPage() {
           <span className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-800 text-3xl font-bold text-slate-400">
             404
           </span>
-          <Image alt="FT" src="/FT.png" height={50} width={50} />
           <h1 className="text-2xl font-bold">Page not found</h1>
           <p className="text-center text-sm text-muted-foreground">
             The page you&apos;re looking for doesn&apos;t exist or has been

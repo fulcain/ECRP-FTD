@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import Image from "next/image";
 
 import { AUTH_COOKIE_NAME } from "@/lib/cookies";
 import { verifySessionToken } from "@/lib/jwt";
@@ -26,7 +25,6 @@ export default async function HomePage() {
   return (
     <PageContainer className="space-y-12">
       <header className="mb-2 flex flex-col items-center gap-3 text-center">
-        <Image alt="FT" src="/FT.png" height={40} width={40} className="opacity-90" />
         <h1 className="text-2xl font-semibold tracking-tight">FT Session Reports</h1>
       </header>
 

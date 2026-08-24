@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { LoginButton } from "@/app/login/LoginButton";
@@ -13,9 +12,6 @@ export default function LoginPage() {
     <div className="flex min-h-[calc(100vh-3rem)] items-center justify-center p-6">
       <div className="w-full max-w-sm rounded-lg border border-border/40 bg-surface p-8 text-center space-y-6">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/20">
-            <Image alt="FT" src="/FT.png" height={36} width={36} priority />
-          </div>
           <div className="space-y-1">
             <h1 className="text-xl font-semibold tracking-tight">
               FTD App

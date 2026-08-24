@@ -14,7 +14,7 @@ export function PageHeader({
   title,
   subtitle,
   icon,
-  showLogo = true,
+  showLogo = false,
   className,
 }: PageHeaderProps) {
   return (
