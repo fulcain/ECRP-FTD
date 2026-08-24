@@ -32,6 +32,31 @@ export type ChangeLogDay = {
  */
 export const changeLog: ChangeLogDay[] = [
   {
+    date: "2026-08-25",
+    entries: [
+      {
+        type: "changed",
+        description:
+          "Deeper dark theme with richer blacks and amber accent — background, cards, and surfaces all got a refined color palette. Header is now a smooth glass blur effect with rounded pill-style nav links.",
+      },
+      {
+        type: "changed",
+        description:
+          "Cards now have a subtle gradient top-border accent and softer rounded corners. Buttons got a hover glow effect and new gradient variant. Tables have better hover states and cleaner borders.",
+      },
+      {
+        type: "fixed",
+        description:
+          "Header nav link active-state bug (FT Sessions always lit up) is now properly fixed with parenthesized ternary logic.",
+      },
+      {
+        type: "added",
+        description:
+          "Custom scrollbar styling for dark mode — thinner, more subtle, matches the aesthetic.",
+      },
+    ],
+  },
+  {
     date: "2026-08-24",
     entries: [
       {

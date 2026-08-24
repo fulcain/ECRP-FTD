@@ -59,12 +59,12 @@ function Collapsible({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <details className="border rounded-lg group" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
-      <summary className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium cursor-pointer hover:bg-muted/30 transition-colors rounded-lg list-none">
+    <details className="border border-border/40 rounded-xl group" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
+      <summary className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium cursor-pointer hover:bg-surface-hover/40 transition-colors rounded-xl list-none">
         <span>{label}</span>
-        <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-0 -rotate-90 text-muted-foreground" />
+        <ChevronDown className="h-4 w-4 transition-transform duration-200 group-open:rotate-0 -rotate-90 text-muted-foreground" />
       </summary>
-      <div className="px-5 pb-5 pt-1 border-t">{children}</div>
+      <div className="px-5 pb-5 pt-1 border-t border-border/30">{children}</div>
     </details>
   );
 }
@@ -340,8 +340,8 @@ export default function FtiPage() {
 
       {/* ---- Phase Notes ---- */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <CardHeader>
+          <CardTitle>
             <BookOpen className="h-4 w-4 text-muted-foreground" />
             Phase Notes
           </CardTitle>
@@ -358,8 +358,8 @@ export default function FtiPage() {
 
       {/* ---- Trainer Information ---- */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <CardHeader>
+          <CardTitle>
             <UserCheck className="h-4 w-4 text-muted-foreground" />
             Trainer Information
           </CardTitle>
@@ -399,8 +399,8 @@ export default function FtiPage() {
 
       {/* ---- Paperwork ---- */}
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <CardHeader>
+          <CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
             Paperwork
           </CardTitle>

@@ -5,7 +5,6 @@ type PageHeaderProps = {
   title: string;
   subtitle?: string;
   icon?: React.ReactNode;
-  /** Show the FT logo next to title. Default true. */
   showLogo?: boolean;
   className?: string;
 };
@@ -26,14 +25,14 @@ export function PageHeader({
         </div>
       )}
       {!showLogo && icon && (
-        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/20">
+        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent ring-1 ring-inset ring-accent/20">
           {icon}
         </span>
       )}
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
         {subtitle && (
-          <p className="mt-1 text-sm text-muted-foreground max-w-lg">{subtitle}</p>
+          <p className="mt-1 text-sm text-muted-foreground max-w-lg mx-auto">{subtitle}</p>
         )}
       </div>
     </header>

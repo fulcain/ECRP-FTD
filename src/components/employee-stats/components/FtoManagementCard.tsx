@@ -126,15 +126,15 @@ export function FtoManagementCard() {
       <FtoCreationCard onRefresh={resync} />
 
       {/* ── Section 2: Employee Stats management ── */}
-      <Card className="border shadow-sm">
+      <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
+          <CardTitle>
             <UserPlus className="h-4 w-4 text-muted-foreground" />
             Employee Stats - Roster Management
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <div className="bg-background/95 backdrop-blur-sm border rounded-lg p-3 flex flex-wrap gap-2 justify-center md:justify-start shadow-lg">
+          <div className="rounded-lg border border-border/40 bg-surface-hover/30 p-3 flex flex-wrap gap-2 justify-center md:justify-start">
             <Button
               size="sm"
               variant="secondary"

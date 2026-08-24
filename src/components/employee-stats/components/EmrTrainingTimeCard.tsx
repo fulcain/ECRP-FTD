@@ -48,69 +48,55 @@ export function EmrTrainingTimeCard() {
     [emrName, daysLeft, sigName, sigRank, ftdRank, signature, date],
   );
 
-  const emailBB = useMemo(
-    () => generateEmrTrainingTimeEmailBBCode(values),
-    [values],
-  );
+  const emailBB = useMemo(() => generateEmrTrainingTimeEmailBBCode(values), [values]);
 
-  const profileBB = useMemo(
-    () => generateEmrTrainingTimeProfileBBCode(values),
-    [values],
-  );
+  const profileBB = useMemo(() => generateEmrTrainingTimeProfileBBCode(values), [values]);
 
   const handleCopy = async (label: string, content: string) => {
     try {
       await navigator.clipboard.writeText(content);
       toast.success(`${label} copied to clipboard`, { theme: "dark" });
     } catch {
-      toast.error("Couldn't copy to clipboard — check browser permissions.", {
-        theme: "dark",
-      });
+      toast.error("Couldn't copy to clipboard — check browser permissions.", { theme: "dark" });
     }
   };
 
   return (
-    <Card className="border shadow-sm">
+    <Card>
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <CardTitle>
           <Mail className="h-4 w-4 text-muted-foreground" />
           EMR Training Time Reminder
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">EMR Name</Label>
+            <Label className="text-[11px] text-muted-foreground">EMR Name</Label>
             <Input
               value={emrName}
               onChange={(e) => setEmrName(e.target.value)}
               placeholder="Lastname"
-              className="bg-background"
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Days Left</Label>
+            <Label className="text-[11px] text-muted-foreground">Days Left</Label>
             <Input
               value={daysLeft}
               onChange={(e) => setDaysLeft(e.target.value)}
               placeholder="14"
-              className="bg-background"
             />
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground italic">
+        <p className="text-[11px] text-muted-foreground italic">
           Date, name, rank, FTD rank and signature are pulled from the Shared Signature bar above.
         </p>
 
         <div className="flex flex-wrap gap-2">
-          <Button
-            size="sm"
-            onClick={() => handleCopy("Email", emailBB)}
-            className="px-6"
-          >
-            <Copy className="h-4 w-4 mr-2" />
+          <Button size="sm" onClick={() => handleCopy("Email", emailBB)} className="px-6">
+            <Copy className="h-4 w-4 mr-1.5" />
             Copy Email
           </Button>
           <Button
@@ -119,7 +105,7 @@ export function EmrTrainingTimeCard() {
             onClick={() => handleCopy("Profile post", profileBB)}
             className="px-6"
           >
-            <ClipboardList className="h-4 w-4 mr-2" />
+            <ClipboardList className="h-4 w-4 mr-1.5" />
             Copy Profile Post
           </Button>
         </div>

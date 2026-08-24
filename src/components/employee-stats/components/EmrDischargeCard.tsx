@@ -69,9 +69,7 @@ export function EmrDischargeCard() {
       await navigator.clipboard.writeText(bbcode);
       toast.success("Discharge email copied to clipboard", { theme: "dark" });
     } catch {
-      toast.error("Couldn't copy to clipboard — check browser permissions.", {
-        theme: "dark",
-      });
+      toast.error("Couldn't copy to clipboard — check browser permissions.", { theme: "dark" });
     }
   };
 
@@ -87,37 +85,36 @@ export function EmrDischargeCard() {
   };
 
   return (
-    <Card className="border shadow-sm">
+    <Card>
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <CardTitle>
           <UserX className="h-4 w-4 text-muted-foreground" />
           EMR Discharge Email
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Title indicator with its own copy button */}
-        <div className="flex items-center gap-2 rounded-md border border-border/50 bg-muted/20 px-3 py-2">
-          <span className="text-xs text-muted-foreground">Title:</span>
+        <div className="flex items-center gap-2 rounded-lg border border-border/40 bg-surface-hover/30 px-3 py-2">
+          <span className="text-[11px] text-muted-foreground">Title:</span>
           <code className="text-xs font-mono text-foreground/80">{DISCHARGE_EMAIL_TITLE}</code>
           <button
             type="button"
             onClick={copyTitle}
             title="Copy title"
             aria-label="Copy title"
-            className="cursor-pointer ml-auto inline-flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted-foreground/10 hover:text-foreground"
+            className="cursor-pointer ml-auto inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
           >
             {titleCopied ? (
-              <Check className="h-3 w-3 text-emerald-600" />
+              <Check className="h-3 w-3 text-emerald-400" />
             ) : (
               <Copy className="h-3 w-3" />
             )}
           </button>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Salutation</Label>
+            <Label className="text-[11px] text-muted-foreground">Salutation</Label>
             <Select value={salutation} onValueChange={(v) => setSalutation(v)}>
               <SelectTrigger className="cursor-pointer">
                 <SelectValue placeholder="Mr. or Ms." />
@@ -129,22 +126,21 @@ export function EmrDischargeCard() {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Name</Label>
+            <Label className="text-[11px] text-muted-foreground">Name</Label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Lastname"
-              className="bg-background"
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Discharge Date</Label>
+            <Label className="text-[11px] text-muted-foreground">Discharge Date</Label>
             <div className="flex gap-1.5">
               <Input
                 value={dischargeDate}
                 onChange={(e) => setDischargeDate(e.target.value)}
                 placeholder="23/AUG/2026"
-                className="bg-background flex-1"
+                className="flex-1"
               />
               <Button
                 type="button"
@@ -158,26 +154,21 @@ export function EmrDischargeCard() {
             </div>
           </div>
           <div className="space-y-1.5 sm:col-span-2">
-            <Label className="text-xs text-muted-foreground">Reason</Label>
+            <Label className="text-[11px] text-muted-foreground">Reason</Label>
             <Input
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Failure to complete training within the designated timeframe"
-              className="bg-background"
             />
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground italic">
-          Header title date, name, rank and signature image are pulled from the Shared Signature bar above.
+        <p className="text-[11px] text-muted-foreground italic">
+          Header title date, name, rank and signature are pulled from the Shared Signature bar above.
         </p>
 
-        <Button
-          size="sm"
-          onClick={handleCopy}
-          className="px-6"
-        >
-          <Copy className="h-4 w-4 mr-2" />
+        <Button size="sm" onClick={handleCopy} className="px-6">
+          <Copy className="h-4 w-4 mr-1.5" />
           Copy Discharge Email
         </Button>
       </CardContent>

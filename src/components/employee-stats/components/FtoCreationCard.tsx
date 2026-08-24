@@ -112,27 +112,26 @@ export function FtoCreationCard({ onRefresh }: { onRefresh?: () => void }) {
       </div>
 
       {/* ── Application Info Card ────────────────────────────── */}
-      <Card className="border shadow-sm">
+      <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
+          <CardTitle>
             <User className="h-4 w-4 text-muted-foreground" />
             Application Information
           </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">
+            <Label className="text-[11px] text-muted-foreground">
               Application Name
             </Label>
             <Input
               value={ftoTraineeName}
               onChange={(e) => setFtoTraineeName(e.target.value)}
               placeholder="Fname Lname"
-              className="bg-background"
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground flex items-center gap-1">
+            <Label className="text-[11px] text-muted-foreground flex items-center gap-1">
               <Calendar className="h-3 w-3" />
               Date of Application Acceptance
             </Label>
@@ -140,13 +139,12 @@ export function FtoCreationCard({ onRefresh }: { onRefresh?: () => void }) {
               value={applicationDate}
               onChange={(e) => setApplicationDate(e.target.value)}
               placeholder="DD/MMM/YYYY (e.g. 13/Jul/2026)"
-              className="bg-background"
             />
           </div>
         </CardContent>
       </Card>
 
-      <div className="bg-background/95 backdrop-blur-sm border rounded-lg p-3 flex flex-wrap gap-2 justify-center md:justify-start shadow-lg">
+      <div className="rounded-lg border border-border/40 bg-surface-hover/30 p-3 flex flex-wrap gap-2 justify-center md:justify-start">
         <Button
           size="sm"
           variant="secondary"

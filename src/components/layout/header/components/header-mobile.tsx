@@ -40,7 +40,7 @@ export function HeaderMobile({ headerLinks }: HeaderMobileProps) {
 
         <SheetContent
           side="right"
-          className="border-l border-border/40 bg-surface px-5 pb-6 [&>button[data-radix-collection-item]]:hidden"
+          className="border-l border-border/30 bg-surface/95 backdrop-blur-xl px-5 pb-6 [&>button[data-radix-collection-item]]:hidden"
         >
           <div className="flex items-center justify-between">
             <SheetHeader>
@@ -54,13 +54,13 @@ export function HeaderMobile({ headerLinks }: HeaderMobileProps) {
             </SheetClose>
           </div>
 
-          <Separator className="my-3 bg-border/40" />
+          <Separator className="my-3 bg-border/30" />
 
           <nav className="flex flex-col gap-1">
             {headerLinks.map((item) =>
               item.children ? (
                 <div key={item.label}>
-                  <p className="mb-1 px-2 text-xs font-medium text-muted-foreground">
+                  <p className="mb-1 px-2 text-[11px] font-medium text-muted-foreground">
                     {item.label}
                   </p>
                   <div className="flex flex-col gap-0.5 pl-2">
@@ -69,7 +69,7 @@ export function HeaderMobile({ headerLinks }: HeaderMobileProps) {
                         <Link
                           href={child.href}
                           className={cn(
-                            "cursor-pointer rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-surface-hover",
+                            "cursor-pointer rounded-lg px-3 py-2 text-sm transition-colors hover:bg-surface-hover",
                             pathname === child.href
                               ? "text-foreground font-medium"
                               : "text-muted-foreground",
@@ -80,14 +80,14 @@ export function HeaderMobile({ headerLinks }: HeaderMobileProps) {
                       </SheetClose>
                     ))}
                   </div>
-                  <Separator className="my-2 bg-border/30" />
+                  <Separator className="my-2 bg-border/20" />
                 </div>
               ) : (
                 <SheetClose asChild key={item.label}>
                   <Link
                     href={item.href!}
                     className={cn(
-                      "cursor-pointer rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-surface-hover",
+                      "cursor-pointer rounded-lg px-3 py-2 text-sm transition-colors hover:bg-surface-hover",
                       pathname === item.href
                         ? "text-foreground font-medium"
                         : "text-muted-foreground",

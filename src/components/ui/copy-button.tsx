@@ -6,11 +6,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type CopyButtonProps = {
-  /** The text to copy. Use a getter to avoid stale closures. */
   getText: () => string;
   label?: string;
   size?: "sm" | "default";
-  variant?: "default" | "outline" | "ghost";
+  variant?: "default" | "outline" | "ghost" | "gradient";
   className?: string;
 };
 
@@ -36,9 +35,13 @@ export function CopyButton({
   return (
     <Button
       size={size}
-      variant={copied ? "outline" : variant}
+      variant={copied ? "ghost" : variant}
       onClick={handleCopy}
-      className={cn("transition-all duration-200", copied && "border-emerald-500/50 text-emerald-400", className)}
+      className={cn(
+        "transition-all duration-200",
+        copied && "text-emerald-400 hover:text-emerald-300",
+        className,
+      )}
     >
       {copied ? (
         <>
