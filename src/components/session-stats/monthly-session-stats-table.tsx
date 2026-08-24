@@ -218,7 +218,6 @@ export function MonthlySessionStatsTable() {
         )}
       </div>
 
-      <div className="overflow-x-auto rounded-md border">
         {loading ? (
           <Skeleton className="h-96 w-full rounded-b" />
         ) : (
@@ -266,7 +265,6 @@ export function MonthlySessionStatsTable() {
             </TableBody>
           </Table>
         )}
-      </div>
 
       {!loading && (
         <Pagination

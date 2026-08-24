@@ -182,7 +182,7 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
       </div>
 
       {/* === Filters === */}
-      <div className="flex items-center py-4 space-x-4">
+      <div className="flex flex-wrap items-center gap-3 py-4">
         {loading ? (
           <Skeleton className="h-10 w-full rounded" />
         ) : (
@@ -195,7 +195,7 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
               onChange={(event) =>
                 table.getColumn("Your Name")?.setFilterValue(event.target.value)
               }
-              className="max-w-sm"
+              className="max-w-full sm:max-w-sm"
             />
 
             <Popover open={startOpen} onOpenChange={setStartOpen}>
@@ -203,7 +203,7 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
                 <Button
                   variant="outline"
                   data-empty={!startDate}
-                  className="w-[180px] justify-between font-normal"
+                  className="w-full sm:w-[180px] justify-between font-normal"
                 >
                   {startDate ? format(startDate, "PPP") : "Start date"}
                   <CalendarIcon className="ml-2 h-4 w-4" />
@@ -226,7 +226,7 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
                 <Button
                   variant="outline"
                   data-empty={!endDate}
-                  className="w-[180px] justify-between font-normal"
+                  className="w-full sm:w-[180px] justify-between font-normal"
                 >
                   {endDate ? format(endDate, "PPP") : "End date"}
                   <CalendarIcon className="ml-2 h-4 w-4" />
@@ -244,7 +244,7 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
               </PopoverContent>
             </Popover>
 
-            <span className="ml-auto text-sm text-muted-foreground">
+            <span className="ml-auto text-sm text-muted-foreground whitespace-nowrap">
               Total: <span className="font-semibold text-foreground">{table.getFilteredRowModel().rows.length}</span>
             </span>
           </>
@@ -252,7 +252,6 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
       </div>
 
       {/* === Table === */}
-      <div className="overflow-x-auto rounded-md border">
         {loading ? (
           <Skeleton className="h-96 w-full rounded-b" />
         ) : (
@@ -300,7 +299,6 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
             </TableBody>
           </Table>
         )}
-      </div>
 
       {/* === Pagination === */}
       {!loading && (

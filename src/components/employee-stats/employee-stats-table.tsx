@@ -111,7 +111,7 @@ export function EmployeeStatsTable() {
       </div>
 
       {/* === Filters === */}
-      <div className="flex items-center py-4 space-x-4">
+      <div className="flex flex-wrap items-center gap-3 py-4">
         {loading ? (
           <Skeleton className="h-10 w-full rounded" />
         ) : (
@@ -119,13 +119,12 @@ export function EmployeeStatsTable() {
             placeholder="Filter Your Name..."
             value={nameFilter}
             onChange={(e) => setNameFilter(e.target.value)}
-            className="max-w-sm"
+            className="max-w-full sm:max-w-sm"
           />
         )}
       </div>
 
       {/* === Table === */}
-      <div className="overflow-x-auto rounded-md border">
         {loading ? (
           <>
             <Skeleton className="h-96 w-full rounded-b" />
@@ -176,7 +175,6 @@ export function EmployeeStatsTable() {
             </TableBody>
           </Table>
         )}
-      </div>
 
       {/* === Pagination === */}
       {!loading && (

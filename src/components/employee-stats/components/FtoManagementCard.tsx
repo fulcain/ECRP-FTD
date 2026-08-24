@@ -167,12 +167,11 @@ export function FtoManagementCard() {
                 placeholder="Filter active FTOs…"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="max-w-sm"
+                className="max-w-full sm:max-w-sm"
                 disabled={loading}
               />
             </div>
 
-            <div className="overflow-x-auto rounded-md border">
               {loading ? (
                 <Skeleton className="h-72 w-full rounded-b" />
               ) : (
@@ -339,7 +338,6 @@ export function FtoManagementCard() {
                   </TableBody>
                 </Table>
               )}
-            </div>
           </div>
         </CardContent>
       </Card>
