@@ -120,7 +120,7 @@ export function CurrentEMRsTable() {
     <div className="space-y-4">
       <CreateNewEMR setData={setData} />
 
-      <h2 className="text-2xl md:text-3xl font-bold text-gray-300 mb-6">
+      <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
         Current EMRs Table
       </h2>
 

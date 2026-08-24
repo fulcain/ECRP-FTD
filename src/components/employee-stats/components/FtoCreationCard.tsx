@@ -97,7 +97,7 @@ export function FtoCreationCard({ onRefresh }: { onRefresh?: () => void }) {
       />
 
       <div className="flex items-center gap-3 justify-between">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-300">
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground">
           FTO Creation
         </h2>
                 <Button
