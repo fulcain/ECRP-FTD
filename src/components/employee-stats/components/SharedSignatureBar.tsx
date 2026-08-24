@@ -35,7 +35,11 @@ function readSessionDefaults() {
  * All email cards on the Emails tab read from these same keys, so you
  * only fill in your signature once.
  */
-export function SharedSignatureBar() {
+export function SharedSignatureBar({
+  subtitle = "applies to all emails below",
+}: {
+  subtitle?: string;
+}) {
   const [sigName, setSigName] = useSharedLocalStorageString(SHARED_SIG_NAME_KEY, "");
   const [sigRank, setSigRank] = useSharedLocalStorageString(SHARED_SIG_RANK_KEY, "");
   const [ftdRank, setFtdRank] = useSharedLocalStorageString(SHARED_FTD_RANK_KEY, "");
@@ -74,7 +78,7 @@ export function SharedSignatureBar() {
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <Signature className="h-4 w-4 text-muted-foreground" />
-          Shared Signature - applies to all emails below
+          Shared Signature - {subtitle}
         </CardTitle>
       </CardHeader>
       <CardContent>

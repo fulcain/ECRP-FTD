@@ -32,6 +32,16 @@ export type ChangeLogDay = {
  */
 export const changeLog: ChangeLogDay[] = [
   {
+    date: "2026-08-24",
+    entries: [
+      {
+        type: "added",
+        description:
+          "Field Training Instructor page added - phase notes, trainer info, divisional file for FTO certifications. Accessible to FT Head, Asss Head, Command+, FTIs.",
+      },
+    ],
+  },
+  {
     date: "2026-08-23",
     entries: [
       {

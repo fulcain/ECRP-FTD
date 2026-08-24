@@ -55,6 +55,9 @@ export const ROUTE_ACCESS: Record<string, RouteRoleRule> = {
   "/fd-command": {
     requireAnyRole: ["FTHead", "FTAssHead", "Command", "Consultant"],
   },
+  "/fti": {
+    requireAnyRole: ["FTHead", "FTAssHead", "Command","FTI","Consultant"],
+  },
   "/change-log": {
     requireAnyRole: everyone,
   },
