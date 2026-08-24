@@ -81,10 +81,10 @@ function PaperworkTypeContent() {
 
 function PaperworkHeader() {
   return (
-    <header className="max-w-4xl mx-auto py-8 px-4 space-y-5">
+    <header className="max-w-4xl mx-auto space-y-5">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1.5">
-          <h1 className="text-2xl font-light tracking-tight">Paperwork</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Paperwork</h1>
           <p className="text-sm text-muted-foreground">
             Choose a paperwork format to begin.
           </p>

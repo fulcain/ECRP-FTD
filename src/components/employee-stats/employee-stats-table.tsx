@@ -92,9 +92,9 @@ export function EmployeeStatsTable() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3 flex-wrap mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-300">
-          Employee Stats Table
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <h2 className="text-lg font-semibold tracking-tight">
+          Employee Stats
         </h2>
         <Button
           variant="ghost"

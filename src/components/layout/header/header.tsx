@@ -12,7 +12,6 @@ import { filterAccessibleLinks } from "@/lib/role-config";
 
 export const dynamic = "force-dynamic";
 
-
 export async function Header() {
   const jar = await cookies();
   const token = jar.get(AUTH_COOKIE_NAME)?.value;
@@ -25,21 +24,21 @@ export async function Header() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-slate-900 shadow-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 gap-4">
+    <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border/40">
+      <div className="mx-auto flex max-w-6xl items-center justify-between h-12 px-4 sm:px-6 lg:px-8">
         <HeaderDesktop headerLinks={visibleLinks} />
         <HeaderMobile headerLinks={visibleLinks} />
-        <Link
-          href="/"
-          className="text-lg font-semibold text-white transition-colors hover:text-slate-300"
-        >
+
+        <Link href="/" className="absolute left-1/2 -translate-x-1/2">
           <Image
-            src="https://i.ibb.co/hFgqLTmk/General.png"
-            alt="logo"
-            width={50}
-            height={50}
+            src="/FT.png"
+            alt="FTD App"
+            width={28}
+            height={28}
+            className="opacity-90 hover:opacity-100 transition-opacity"
           />
         </Link>
+
         <UserMenu />
       </div>
     </header>

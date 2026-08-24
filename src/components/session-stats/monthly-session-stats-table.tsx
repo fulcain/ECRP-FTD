@@ -155,9 +155,9 @@ export function MonthlySessionStatsTable() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3 flex-wrap mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-300">
-          Monthly Session Stats Table
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <h2 className="text-lg font-semibold tracking-tight">
+          Monthly Stats
         </h2>
         <Button
           variant="ghost"
@@ -179,7 +179,7 @@ export function MonthlySessionStatsTable() {
         ) : (
           <>
             <Select value={selectedYear} onValueChange={setSelectedYear}>
-              <SelectTrigger className="w-[140px] text-white border">
+              <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="Year" />
               </SelectTrigger>
               <SelectContent className="text-gray-100">
@@ -192,7 +192,7 @@ export function MonthlySessionStatsTable() {
             </Select>
 
             <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-              <SelectTrigger className="w-[160px] text-white border">
+              <SelectTrigger className="w-[160px]">
                 <SelectValue placeholder="Month" />
               </SelectTrigger>
               <SelectContent className="text-gray-100">
@@ -211,12 +211,9 @@ export function MonthlySessionStatsTable() {
               className="max-w-sm"
             />
 
-            <div className="text-xl">
-              <span>Total Sessions: </span>
-              <span className="font-bold text-red-400">
-                {totalMonthSessions}
-              </span>
-            </div>
+            <span className="ml-auto text-sm text-muted-foreground">
+              Total: <span className="font-semibold text-foreground">{totalMonthSessions}</span>
+            </span>
           </>
         )}
       </div>

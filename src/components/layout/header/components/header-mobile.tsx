@@ -14,71 +14,84 @@ import {
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 type HeaderMobileProps = {
   headerLinks: HeaderLink[];
 };
 
 export function HeaderMobile({ headerLinks }: HeaderMobileProps) {
+  const pathname = usePathname();
+
   return (
     <div className="md:hidden">
       <Sheet>
         <SheetTrigger asChild>
           <Button
-            className="cursor-pointer text-white transition-colors hover:text-slate-300"
-            aria-label="Toggle menu"
-            variant="outline"
+            variant="ghost"
             size="icon"
+            className="h-8 w-8"
+            aria-label="Toggle menu"
           >
-            <Menu className="h-7 w-7" />
+            <Menu className="h-4 w-4" />
           </Button>
         </SheetTrigger>
 
         <SheetContent
           side="right"
-          className="border-l border-slate-700 bg-slate-800 px-6 pb-6 text-white [&>button[data-radix-collection-item]]:hidden"
+          className="border-l border-border/40 bg-surface px-5 pb-6 [&>button[data-radix-collection-item]]:hidden"
         >
           <div className="flex items-center justify-between">
             <SheetHeader>
-              <SheetTitle className="text-lg text-white">Navigation</SheetTitle>
+              <SheetTitle className="text-sm font-semibold">Navigation</SheetTitle>
             </SheetHeader>
-
             <SheetClose asChild>
               <X
-                size={22}
-                className="cursor-pointer text-white transition-colors hover:text-slate-400"
+                size={18}
+                className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
               />
             </SheetClose>
           </div>
 
-          <Separator className="my-4 bg-slate-600" />
+          <Separator className="my-3 bg-border/40" />
 
-          <nav className="mt-2 flex flex-col gap-3">
+          <nav className="flex flex-col gap-1">
             {headerLinks.map((item) =>
               item.children ? (
                 <div key={item.label}>
-                  <p className="mb-2 font-semibold text-slate-200">
+                  <p className="mb-1 px-2 text-xs font-medium text-muted-foreground">
                     {item.label}
                   </p>
-                  <div className="flex flex-col gap-1 pl-3">
+                  <div className="flex flex-col gap-0.5 pl-2">
                     {item.children.map((child) => (
                       <SheetClose asChild key={child.href}>
                         <Link
                           href={child.href}
-                          className="block rounded-md px-3 py-1.5 text-slate-300 transition-colors hover:bg-slate-700 hover:text-white"
+                          className={cn(
+                            "rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-surface-hover",
+                            pathname === child.href
+                              ? "text-foreground font-medium"
+                              : "text-muted-foreground",
+                          )}
                         >
                           {child.label}
                         </Link>
                       </SheetClose>
                     ))}
                   </div>
-                  <Separator className="my-3 bg-slate-700" />
+                  <Separator className="my-2 bg-border/30" />
                 </div>
               ) : (
                 <SheetClose asChild key={item.label}>
                   <Link
                     href={item.href!}
-                    className="rounded-md px-3 py-2 text-slate-300 transition-colors hover:bg-slate-700 hover:text-white"
+                    className={cn(
+                      "rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-surface-hover",
+                      pathname === item.href
+                        ? "text-foreground font-medium"
+                        : "text-muted-foreground",
+                    )}
                   >
                     {item.label}
                   </Link>

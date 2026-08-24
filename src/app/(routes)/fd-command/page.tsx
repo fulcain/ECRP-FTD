@@ -3,8 +3,10 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Mail, UserPlus, Users } from "lucide-react";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
+
+import { PageContainer } from "@/components/ui/page-container";
+import { PageHeader } from "@/components/ui/page-header";
+import { TabBar, type Tab } from "@/components/ui/tab-bar";
 
 import { CurrentEMRsTable } from "@/components/current-emrs/current-emrs-table";
 import { FtoManagementCard } from "@/components/employee-stats/components/FtoManagementCard";
@@ -21,10 +23,10 @@ type CommandTab = "emrs" | "ftos" | "emails";
 
 const VALID_TABS: CommandTab[] = ["emrs", "ftos", "emails"];
 
-const TABS: { value: CommandTab; label: string; Icon: React.ComponentType<{ className?: string }> }[] = [
-  { value: "emrs", label: "EMRs", Icon: Users },
-  { value: "ftos", label: "FTOs", Icon: UserPlus },
-  { value: "emails", label: "Emails", Icon: Mail },
+const TABS: Tab<CommandTab>[] = [
+  { value: "emrs", label: "EMRs", icon: Users },
+  { value: "ftos", label: "FTOs", icon: UserPlus },
+  { value: "emails", label: "Emails", icon: Mail },
 ];
 
 function isValidTab(value: string): value is CommandTab {
@@ -75,35 +77,14 @@ function CommandPageContent() {
   }, [tab, pathname, router, searchParams]);
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <h1 className="flex items-center justify-center text-3xl font-bold mb-2 space-x-3">
-        <Image alt="FT" src="/FT.png" height={50} width={50} />
-        <span>Command Page</span>
-      </h1>
+    <PageContainer>
+      <PageHeader
+        title="Command Page"
+        subtitle="Manage EMRs, FTOs, and ready-to-send emails from one place."
+      />
 
-      <div
-        role="tablist"
-        aria-label="Command sections"
-        className="inline-flex items-center rounded-lg border border-border/70 bg-muted/40 p-0.5"
-      >
-        {TABS.map(({ value, label, Icon }) => (
-          <button
-            key={value}
-            type="button"
-            role="tab"
-            aria-selected={tab === value}
-            onClick={() => setTab(value)}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
-              tab === value
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            <Icon className="h-3.5 w-3.5" />
-            {label}
-          </button>
-        ))}
+      <div className="mb-8 flex justify-center">
+        <TabBar tabs={TABS} active={tab} onChange={setTab} />
       </div>
 
       {tab === "emrs" && <CurrentEMRsTable />}
@@ -118,6 +99,6 @@ function CommandPageContent() {
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }

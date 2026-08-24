@@ -162,10 +162,10 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
   }, [pageSizeInput, table]);
 
   return (
-    <div className="space-y-10 mt-40">
-      <div className="flex items-center justify-between gap-3 flex-wrap mb-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-300">
-          Field Training Session Reports
+    <div className="space-y-8">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <h2 className="text-lg font-semibold tracking-tight">
+          Session Reports
         </h2>
         <Button
           variant="ghost"
@@ -244,12 +244,9 @@ export function AllDataTable({ canEditFT = false }: { canEditFT?: boolean }) {
               </PopoverContent>
             </Popover>
 
-            <div className="text-xl">
-              <span>Total Sessions: </span>
-              <span className="font-bold text-red-400">
-                {table.getFilteredRowModel().rows.length}
-              </span>
-            </div>
+            <span className="ml-auto text-sm text-muted-foreground">
+              Total: <span className="font-semibold text-foreground">{table.getFilteredRowModel().rows.length}</span>
+            </span>
           </>
         )}
       </div>

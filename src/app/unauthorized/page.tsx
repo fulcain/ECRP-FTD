@@ -8,16 +8,6 @@ export const metadata: Metadata = {
   description: "Your Discord account doesn't have access to this page.",
 };
 
-/**
- * /unauthorized
- *
- * Shown by middleware when:
- *   • reason=not_in_guild  — Discord says the user isn't in our guild.
- *   • role gating failed for the requested path.
- *
- * The path is preserved so we can tell the user *what* they were trying
- * to access.
- */
 export default async function UnauthorizedPage({
   searchParams,
 }: {
@@ -43,12 +33,12 @@ export default async function UnauthorizedPage({
           }
           target="_blank"
           rel="noopener noreferrer"
-          className="text-primary font-semibold hover:underline"
+          className="text-primary font-medium hover:underline"
         >
           Join the server
         </Link>
         , then{" "}
-        <Link href="/login" className="text-primary font-semibold hover:underline">
+        <Link href="/login" className="text-primary font-medium hover:underline">
           sign in again
         </Link>
         .
@@ -56,31 +46,31 @@ export default async function UnauthorizedPage({
     ) : (
       <>
         Your Discord account doesn&apos;t have a role that grants access to{" "}
-        <code className="rounded bg-muted px-1.5 py-0.5 text-sm">{path}</code>.
+        <code className="rounded bg-surface-hover px-1.5 py-0.5 text-xs">{path}</code>.
         Contact an FTD administrator to request the appropriate role.
       </>
     );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-6">
-      <div className="w-full max-w-md rounded-xl border bg-card text-card-foreground shadow-2xl p-8 space-y-6 text-center">
+    <div className="flex min-h-[calc(100vh-3rem)] items-center justify-center p-6">
+      <div className="w-full max-w-sm rounded-lg border border-border/40 bg-surface p-8 text-center space-y-6">
         <div className="flex flex-col items-center gap-3">
-          <ShieldAlert className="h-12 w-12 text-amber-500" />
-          <Image alt="FT" src="/FT.png" height={50} width={50} />
-          <h1 className="text-2xl font-bold">{heading}</h1>
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/10 ring-1 ring-amber-500/20">
+            <ShieldAlert className="h-6 w-6 text-amber-500" />
+          </div>
+          <Image alt="FT" src="/FT.png" height={36} width={36} className="opacity-50" />
+          <h1 className="text-lg font-semibold">{heading}</h1>
         </div>
 
         <p className="text-sm text-muted-foreground">{body}</p>
 
-        <div className="flex flex-col gap-2 pt-4 border-t border-border">
+        <div className="flex flex-col gap-2 pt-4 border-t border-border/30">
           <Link
             href="/login"
-            className="inline-flex items-center justify-center w-full rounded-md bg-primary text-primary-foreground font-semibold py-2.5 px-4 hover:opacity-90 transition-opacity"
+            className="inline-flex items-center justify-center w-full rounded-md bg-primary text-primary-foreground font-medium text-sm py-2.5 px-4 hover:opacity-90 transition-opacity"
           >
             Sign in with a different account
           </Link>
-          {/* Sign out is a POST via form submit — /api/auth/logout is
-              intentionally GET-less to prevent accidental CSRF signouts. */}
           <form action="/api/auth/logout" method="post">
             <button
               type="submit"
@@ -93,4 +83,4 @@ export default async function UnauthorizedPage({
       </div>
     </div>
   );
-}
+}

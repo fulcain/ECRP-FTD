@@ -10,8 +10,9 @@ import {
   FileText,
   UserCheck,
 } from "lucide-react";
-import Image from "next/image";
 
+import { PageContainer } from "@/components/ui/page-container";
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -327,14 +328,13 @@ export default function FtiPage() {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
+    <PageContainer className="max-w-5xl">
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
 
-      {/* ---- Header ---- */}
-      <div className="flex items-center justify-center gap-3">
-        <Image alt="FT" src="/FT.png" height={50} width={50} />
-        <h1 className="text-3xl font-bold">Field Training Instructor</h1>
-      </div>
+      <PageHeader
+        title="Field Training Instructor"
+        subtitle="Phase notes, trainer info, and auto-generated FTO certification paperwork."
+      />
 
       <SharedSignatureBar subtitle="applies to all paperwork on this page" />
 
@@ -532,6 +532,6 @@ export default function FtiPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </PageContainer>
   );
 }

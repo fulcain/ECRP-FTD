@@ -1,10 +1,11 @@
 "use client";
 import { PaperworkTypeSelector } from "@/app/(routes)/paperwork/components/PaperworkTypeSelector";
+import { PageContainer } from "@/components/ui/page-container";
 
 export default function Home() {
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-10">
+    <PageContainer>
       <PaperworkTypeSelector />
-    </div>
+    </PageContainer>
   );
 }

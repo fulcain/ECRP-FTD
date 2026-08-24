@@ -35,6 +35,16 @@ export const changeLog: ChangeLogDay[] = [
     date: "2026-08-24",
     entries: [
       {
+        type: "changed",
+        description:
+          "Complete UI redesign — minimal, modern look applied across every page. New design system with refined colors, surfaces, typography, glass-morphism header, and smooth animations.",
+      },
+      {
+        type: "added",
+        description:
+          "Current EMRs table now shows total, normal, and reinstated EMR counts as summary chips.",
+      },
+      {
         type: "added",
         description:
           "Field Training Instructor page added - phase notes, trainer info, and auto-generated certification paperwork, divisional file for FTO certifications. Accessible to FT Head, Ass Head, Command+ and FTIs.",
