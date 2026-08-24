@@ -156,7 +156,7 @@ export function MonthlySessionStatsTable() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <h2 className="text-lg font-semibold tracking-tight">
+        <h2 className="text-lg font-semibold tracking-tight text-foreground">
           Monthly Stats
         </h2>
         <Button

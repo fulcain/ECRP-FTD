@@ -25,7 +25,7 @@ export default async function HomePage() {
   return (
     <PageContainer className="space-y-12">
       <header className="mb-2 flex flex-col items-center gap-3 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">FT Session Reports</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">FT Session Reports</h1>
       </header>
 
       <AllDataTable canEditFT={canEditFT} />
