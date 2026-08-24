@@ -64,15 +64,6 @@ export function EmrDischargeCard() {
     [name, mdhDate, dischargeDate, reason, salutation, sigName, sigRank, signature],
   );
 
-  const hasRequired =
-    name.trim() !== "" &&
-    mdhDate.trim() !== "" &&
-    dischargeDate.trim() !== "" &&
-    reason.trim() !== "" &&
-    salutation.trim() !== "" &&
-    sigName.trim() !== "" &&
-    signature.trim() !== "";
-
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(bbcode);
@@ -183,7 +174,6 @@ export function EmrDischargeCard() {
 
         <Button
           size="sm"
-          disabled={!hasRequired}
           onClick={handleCopy}
           className="px-6"
         >

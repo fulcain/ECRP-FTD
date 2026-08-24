@@ -58,12 +58,6 @@ export function EmrTrainingTimeCard() {
     [values],
   );
 
-  const hasRequired =
-    emrName.trim() !== "" &&
-    daysLeft.trim() !== "" &&
-    sigName.trim() !== "" &&
-    signature.trim() !== "";
-
   const handleCopy = async (label: string, content: string) => {
     try {
       await navigator.clipboard.writeText(content);
@@ -113,7 +107,6 @@ export function EmrTrainingTimeCard() {
         <div className="flex flex-wrap gap-2">
           <Button
             size="sm"
-            disabled={!hasRequired}
             onClick={() => handleCopy("Email", emailBB)}
             className="px-6"
           >
@@ -123,7 +116,6 @@ export function EmrTrainingTimeCard() {
           <Button
             size="sm"
             variant="secondary"
-            disabled={!hasRequired}
             onClick={() => handleCopy("Profile post", profileBB)}
             className="px-6"
           >

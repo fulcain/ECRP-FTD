@@ -118,6 +118,17 @@ function PhaseOneNotes() {
           </li>
           <li>Direct the FTO trainee to the EMR Student Profiles.</li>
           <li>
+            Direct the FTO trainee to the{" "}
+            <a
+              href="https://gov.eclipse-rp.net/viewforum.php?f=1161"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              FTO Student Profiles
+            </a>.
+          </li>
+          <li>
             Go over <b>all</b> of the Regular EMR Profile, and cover from{" "}
             <b>Introduction</b> to <b>Certification</b>. Simply go through it and{" "}
             <b>emphasize</b> anything that may be important (usually bolded), you do not need
@@ -315,23 +326,6 @@ export default function FtiPage() {
     }
   };
 
-  const certReady =
-    studentName.trim() !== "" &&
-    studentRank.trim() !== "" &&
-    certifiedBy.trim() !== "" &&
-    answer1.trim() !== "" &&
-    answer2.trim() !== "" &&
-    answer3.trim() !== "" &&
-    answer4.trim() !== "" &&
-    answer5.trim() !== "" &&
-    sigName.trim() !== "" &&
-    completionDate.trim() !== "";
-
-  const divisionalReady =
-    studentName.trim() !== "" &&
-    certifiedBy.trim() !== "" &&
-    completionDate.trim() !== "";
-
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
@@ -394,7 +388,6 @@ export default function FtiPage() {
 
           <Button
             size="sm"
-            disabled={certifiedBy.trim() === "" || completionDate.trim() === ""}
             onClick={() => copyToClipboard(trainerInfoBBCode, "Trainer info")}
             className="px-4 mt-3"
           >
@@ -506,7 +499,6 @@ export default function FtiPage() {
 
             <Button
               size="sm"
-              disabled={!certReady}
               onClick={() => copyToClipboard(certBBCode, "Certification paperwork")}
               className="px-6"
             >
@@ -531,7 +523,6 @@ export default function FtiPage() {
 
             <Button
               size="sm"
-              disabled={!divisionalReady}
               onClick={() => copyToClipboard(divisionalBBCode, "Divisional file")}
               className="px-6"
             >

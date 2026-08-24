@@ -30,8 +30,6 @@ export function FtiPromotionCard() {
     [sigName, sigRank, ftdRank, signature, date],
   );
 
-  const hasRequired = sigName.trim() !== "" && signature.trim() !== "";
-
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(bbcode);
@@ -87,7 +85,6 @@ export function FtiPromotionCard() {
 
         <Button
           size="sm"
-          disabled={!hasRequired}
           onClick={copyToClipboard}
           className="px-6"
         >
