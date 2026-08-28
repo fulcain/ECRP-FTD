@@ -67,10 +67,14 @@ export const ROUTE_ACCESS: Record<string, RouteRoleRule> = {
 };
 
 /**
- * Discord user IDs that bypass every role check. Useful for bootstrapping
- * (add yourself while you're setting things up) and for true operators.
+ * Discord user IDs that bypass every role check.
  *
+ * Set `DISCORD_ADMIN_IDS` to a comma-separated list of Discord user IDs.
+ * An empty or unset value disables the admin bypass.
  */
-export const ADMIN_USER_IDS: ReadonlySet<string> = new Set([
-  "290467278540242944",
-]);
+export const ADMIN_USER_IDS: ReadonlySet<string> = new Set(
+  (process.env.DISCORD_ADMIN_IDS ?? "")
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean),
+);
