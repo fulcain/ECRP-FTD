@@ -147,7 +147,7 @@ export function ReinstatementPhase1Notes() {
         </BulletList>
       </Category>
 
-      <Category title="Backup Alarms">
+      <Category title="Backup/Panic Alarms">
         <BulletList>
           <Item>
             Explain to the reinstatee the difference between a panic
@@ -156,42 +156,14 @@ export function ReinstatementPhase1Notes() {
           <Item>
             Inform the reinstatee that if they require a backup
             alarm they&rsquo;ll need to provide a brief description
-            as to the situation, and specify if it&rsquo;s MD only.{" "}
+            as to the situation.{" "}
             <OOC>
               <Command>/backup [text]</Command>
             </OOC>
           </Item>
           <Item>
-            Tell the reinstatee that if they ask for backup they must
-            stay put at the location as these are associated with
-            their cruiser.
-          </Item>
-          <Item>
-            Explain that an EMR&rsquo;s panic button is connected to
-            the location of their radio. Let them know that panics
-            cannot have reasonings specified when creating them{" "}
-            <OOC>CTRL + E</OOC>.
-          </Item>
-          <Item>
-            Let the reinstatee know that our panics/backups now
-            appear in PD / SD dispatch, and if they create a
-            panic/backup for a situation that doesn&rsquo;t require
-            PD/SD support, they should use the department radio to
-            inform those departments to disregard it.{" "}
-            <OOC>
-              <Command>/calls</Command>
-            </OOC>
-            .
-          </Item>
-          <Item>
-            Tell the reinstatee that if they need help from PD or
-            SD, they should use the department radio and provide
-            them with the backup/panic call number to provide more
-            information.{" "}
-            <OOC>
-              <Command>/dep</Command>
-            </OOC>
-            .
+            Inform them that our backups/panics now go to all other
+            departments.
           </Item>
           <Item>
             Ask the reinstatee if they would do a backup or panic
@@ -311,7 +283,27 @@ export function ReinstatementPhase1Notes() {
           </Item>
           <Item>
             Inform the EMR that before conducting a breathalyzer
-            they must have the consent of the patient.
+            they must have the consent of the patient. Explain that
+            if consent is not given, and this is linked to a
+            potential criminal charge, they are required to notify
+            the patient that separate charges can be levied for
+            &lsquo;Failure to Comply&rsquo; or potentially
+            &lsquo;Tampering with Evidence&rsquo;.
+          </Item>
+          <Item>
+            Inform the EMR that if a patient&rsquo;s blood alcohol
+            percentage is 0.08% and above, they are legally
+            considered intoxicated as per the San Andreas Penal
+            Code.
+          </Item>
+          <Item>
+            Remind the EMR that we can offer intoxicated patients
+            water, food, and/or a safe ride home by requesting a
+            taxi or calling a friend depending on the situation. If
+            they witness an intoxicated patient attempting to
+            operate a vehicle following a breathalyzer test, that
+            PD/SD should be contacted via department radio as it
+            poses a risk to their safety and the safety of others.
           </Item>
           <Item>
             <OOC>
@@ -359,6 +351,22 @@ export function ReinstatementPhase1Notes() {
           <Item>
             Show the reinstatee how to block incoming traffic using
             the ambulance.
+          </Item>
+          <Item>
+            Remind the reinstatee that they should never park the
+            ambulance on train tracks.
+          </Item>
+          <Item>
+            Remind the reinstatee that medics and patients should
+            wear seatbelts in the ambulance whenever possible. Make
+            sure patients are properly secured before transport. If
+            they are on a stretcher, use the stretcher straps.
+          </Item>
+          <Item>
+            <OOC>
+              Remind them to RP securing the patient and have the
+              other player press <Command>B</Command>.
+            </OOC>
           </Item>
           <Item>
             Take the reinstatee on a public road, park the

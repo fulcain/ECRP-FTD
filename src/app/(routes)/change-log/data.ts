@@ -32,6 +32,16 @@ export type ChangeLogDay = {
  */
 export const changeLog: ChangeLogDay[] = [
   {
+    date: "2026-09-05",
+    entries: [
+      {
+        type: "changed",
+        description:
+          "Updated Phase 3 and Reinstatement Phase 1 phase notes & scripts - Phase 3 now covers seatbelt safety and train tracks, and Reinstatement Phase 1 has the new scene management for seatbelts and train tracks.",
+      },
+    ],
+  },
+  {
     date: "2026-08-25",
     entries: [
       {

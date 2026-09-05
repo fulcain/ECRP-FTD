@@ -16,6 +16,10 @@ export const PHASE3_SPOKEN = [
 
   "Lock your ambulance, always. Double-checking is better than not checking.",
 
+  "Seatbelts for both medics and patients whenever possible - make sure the patient is properly secured before beginning transport. On a stretcher, use the stretcher straps. (( You RP securing them, and they press `B` on their keyboard. ))",
+
+  "Never park the ambulance on train tracks.",
+
   "Code 2 vs Code 3, and how to run the lights and sirens. Toggles lights using this button on the dashboard `/E` ,This button toggles sirens on dashboard. `/Q`. Code 4 is lights and sirens off, driving normally.",
 
   "(( Only a Command+ member can authorize changing your vehicle's colour - otherwise it's IC repercussions. ))",

@@ -54,6 +54,24 @@ export function Phase3Notes() {
           is better than not checking.
         </Item>
         <Item>
+          Inform the EMR that both medics and patients should have their
+          seatbelts fastened while inside the ambulance whenever possible.{" "}
+          <OOC>
+            <Command>B</Command>
+          </OOC>{" "}
+          The medic should make sure the patient is properly secured before
+          beginning transport. If the patient is on a stretcher, make sure
+          they are secured to the stretcher using the appropriate straps.{" "}
+          <OOC>
+            Tell them they must RP securing the patient and ask the other
+            player to press <Command>B</Command> on their keyboard.
+          </OOC>
+        </Item>
+        <Item>
+          Remind the EMR that they must not park the ambulance on train
+          tracks.
+        </Item>
+        <Item>
           Explain to the EMR what the difference between Code 2 and Code 3 is
           and how to use the lights and sirens.
           <div className="mt-1">
@@ -68,7 +86,7 @@ export function Phase3Notes() {
             Explain to EMRs that only under direct permission from a
             Command+ member are they allowed to change the colour of their
             vehicles. If found to have changed the colour of their vehicle
-            without permission this will result in IC reprecussions.
+            without permission this will result in IC repercussions.
           </OOC>
         </Item>
         <Item>

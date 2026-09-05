@@ -55,32 +55,25 @@ export const REINSTATEMENT_PHASE1_SPOKEN = [
 
   "And what do you say once you've delivered the patient to the hospital?",
 
-  "## Backup alarms",
+  "## Backup/panic alarms",
 
   "Panic alarm vs backup call - what's the difference?",
 
-  "If you call a backup - brief description of the situation, and specify if it's MD only. `/backup [text]`.",
+  "If you call a backup - brief description of the situation. `/backup [text]`.",
 
-  "Asked for backup? Stay put - it's tied to your cruiser.",
+  "Our backups and panics now go to all other departments.",
 
-  "Your panic button is tied to your radio's location, and you can't add a reason. `CTRL + E`.",
-
-  "Our panics and backups show in PD/SD dispatch - if it doesn't need them, tell those departments to disregard it on department radio. (( `/dep` ))",
-
-  "Need PD or SD? Department radio with the call number.",
-
-  "Scenario time - would you back up or panic? You flip the ambulance.",
-  "Armed people are standing over your patient making threats. (( Remember FearRP - no panics while under it! ))",
-  "You run out of fuel.", 
-  "You're badly injured after a severe accident. (( And if you're scriptly injured, call 911 in addition to the panic! ))",
+  "Scenario time - would you back up or panic? You flip your ambulance.",
+  "Armed assailants are standing over your patient and screaming threats.",
+  "You're involved in an accident and break a few ribs.",
+  "You run out of fuel in your ambulance.",
 
   "## Treatment",
 
-  "Tell me how you'd treat these - a closed fracture on a patient's leg.", 
-  "A gunshot wound to the chest.", 
-  "1st, 2nd and 3rd degree burns.", 
-  "Stab wounds.", 
-  "A concussion.",
+  "Tell me how you'd treat these - a broken arm or leg.", 
+  "1st and 3rd-degree burns.", 
+  "A stomach gunshot wound.", 
+  "An arm/leg gunshot wound.",
 
   "## Fire calls",
 
@@ -89,12 +82,6 @@ export const REINSTATEMENT_PHASE1_SPOKEN = [
   "To extinguish just take the pin out and shoot straight into the fire (( press `E` on the floating UI, then `/extinguish` )).",
 
   "Watch for lingering flames - check the surroundings thoroughly. (( Some fires are glitched and only show in the UI when you're physically close. ))",
-
-  "(( Unattended fires get handled by roadworkers after 5 minutes - that doesn't mean you leave a fire unattended. ))",
-
-  "Fire calls don't close themselves. `/closecall ID`.",
-
-  "And put the extinguisher back when you're done.",
 
   "## Methadone",
 
@@ -106,13 +93,21 @@ export const REINSTATEMENT_PHASE1_SPOKEN = [
 
   "## Breathalyser",
 
-  "The breathalyzer process, (( `/breathanalyse` )) Consent first, always. (( And RP before the command. ))",
+  "The breathalyzer process, (( `/breathanalyse` )) Consent first, always. (( If consent isn't given and it's linked to a potential criminal charge, you must notify the patient that separate charges can be levied for 'Failure to Comply' or potentially 'Tampering with Evidence'. ))",
+
+  "0.08% blood alcohol and above is legally intoxicated, per the San Andreas Penal Code.",
+
+  "We can offer intoxicated patients water, food, or a safe ride home - taxi or a friend, depending on the situation. If they try to drive anyway after a test, contact PD/SD over department radio - it's a risk to their safety and everyone else's. (( And RP before the command, always. ))",
 
   "## Scene management",
 
    "(( Our blockades - `arrow`, `barrier`, `barrier2`, `cone`, `stretcher`, `backboard`, `tent`, `bls`. ))",
   "(( You can place them by /blockade [name] for example: /blockade arrow ))",
   "(( You can also see the full list by doing `/blockade a` ))",
+
+  "Never park the ambulance on train tracks.",
+
+  "Seatbelts for both medics and patients whenever possible - make sure patients are properly secured before transport, and use the stretcher straps if they're on a stretcher. (( You RP securing them and they press `B`. ))",
 
   "## Department radio",
 
@@ -139,6 +134,10 @@ export const REINSTATEMENT_PHASE1_SPOKEN = [
   "Ask twice rather than get IA'd for stealing a 10-15.",
 
   "## Teamspeak (OOC)",
+
+  "(( Join TeamSpeak 3 and make sure you're in the Zulu unit - TS info - IP: ts.eclipse-rp.net ; Password: ecrpsagov. ))",
+  "(( Set up the unit tag before your name, for example [Z-11]. ))",
+  "(( If we use VOIP we say Zulu, if we use chat we type Z. ))",
 
   "## Jointed Tac",
 
